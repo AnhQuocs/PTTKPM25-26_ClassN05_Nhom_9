@@ -17,6 +17,6 @@
 | Hà Mạnh Long     | 23010390      |
 | Bùi Anh Quốc     | 23010328      |
 
-- **Wiki dự án:** Đường link wiki (giới thiệu, các sơ đồ use case, sơ đồ uml,...)
+- **Wiki dự án:** https://github.com/AnhQuocs/PTTKPM25-26_ClassN05_Nhom_9/wiki
 
 

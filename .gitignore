@@ -37,5 +37,5 @@ captures/
 # === Project Specific ===
 # Bỏ qua Documents và Design (không theo dõi thay đổi hằng ngày)
 # nhưng nếu cần có thể add -f để force commit
-/Documents/
-/Design/
+# /Documents/
+# /Design/

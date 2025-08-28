@@ -1,0 +1,39 @@
+Tuần 1 - Phân Tích Yêu Cầu
+
+1. Actors (Vai trò)
+
++ Người hiến máu:
+  * Đăng nhập/Đăng ký hiến máu.
+  * Hủy đăng ký.
+  * Xem lịch hẹn hiến máu.
+  * Xem lịch sử hiến máu.
+
++ Nhân viên y tế:
+  * Quản lý lịch hiến máu.
+  * Xác nhận đăng ký hiến máu.
+  * Ghi nhận kết quả hiến máu.
+
++ Quản trị viên:
+  * Quản lý người hiến máu.
+  * Quản lý sự kiện hiến máu.
+  * Quản lý địa điểm hiến máu.
+
++ Hệ thống:
+  * Kiểm tra điều kiện hiến máu (tuổi, sức khỏe, khoảng cách ngày hiến máu trước đó…).
+  * Gửi thông báo nhắc nhở trước lịch hẹn.
+  * Lưu trữ và backup dữ liệu.
+
+2. Yêu cầu chức năng (Functional Requirements)
+* Hệ thống cho phép người hiến máu tạo tài khoản và đăng ký hiến máu trong các sự kiện còn chỗ.
+* Người hiến máu có thể hủy đăng ký trong thời gian cho phép.
+* Nhân viên y tế có thể quản lý danh sách đăng ký, xác nhận và cập nhật trạng thái hiến máu.
+* Quản trị viên có thể quản lý thông tin sự kiện, địa điểm, và người hiến máu.
+* Hệ thống gửi thông báo nhắc nhở trước lịch hiến máu ít nhất 1 ngày.
+
+3. Yêu cầu phi chức năng (Non-functional Requirements)
+* Bảo mật: Bảo vệ thông tin cá nhân và y tế, xác thực đăng nhập an toàn.
+* Hiệu năng: Thời gian phản hồi tra cứu sự kiện ≤ 2 giây.
+* Sẵn sàng: Hệ thống hoạt động ổn định, có thể phục vụ ≥ 500 người dùng cùng lúc.
+* Khả năng mở rộng: Có thể mở rộng số lượng sự kiện và địa điểm dễ dàng.
+* Dễ dùng: Giao diện rõ ràng, hỗ trợ mobile-first.
+* Bảo toàn dữ liệu: Sao lưu định kỳ và khôi phục nhanh khi có sự cố.

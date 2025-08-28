@@ -8,6 +8,8 @@
 ## NHÓM THỰC HÀNH: NHÓM 9
 
 ## GIẢNG VIÊN: 
+- Vũ Quang Dũng
+- Nguyễn Xuân Quế
 
 ## THÀNH VIÊN NHÓM:
 | Họ và tên        | Mã sinh viên  |
@@ -16,4 +18,5 @@
 | Bùi Anh Quốc     | 23010328      |
 
 - **Wiki dự án:** Đường link wiki (giới thiệu, các sơ đồ use case, sơ đồ uml,...)
+
 

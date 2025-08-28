@@ -1,0 +1,41 @@
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE settings
+.idea/
+*.iml
+
+# Ignore Gradle build
+.gradle/
+build/
+*/build/
+
+# Ignore local properties
+local.properties
+
+# Ignore logs
+*.log
+
+# Ignore cache
+.cxx/
+captures/
+
+# Ignore generated files
+*.apk
+*.ap_
+*.dex
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignore Keystore (nếu có)
+*.jks
+*.keystore
+
+# === Project Specific ===
+# Bỏ qua Documents và Design (không theo dõi thay đổi hằng ngày)
+# nhưng nếu cần có thể add -f để force commit
+/Documents/
+/Design/

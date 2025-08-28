@@ -30,12 +30,5 @@ captures/
 *.war
 *.ear
 
-# Ignore Keystore (nếu có)
 *.jks
 *.keystore
-
-# === Project Specific ===
-# Bỏ qua Documents và Design (không theo dõi thay đổi hằng ngày)
-# nhưng nếu cần có thể add -f để force commit
-# /Documents/
-# /Design/

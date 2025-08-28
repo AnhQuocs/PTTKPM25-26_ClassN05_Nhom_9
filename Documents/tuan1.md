@@ -22,7 +22,7 @@ Tuần 1 - Phân Tích Yêu Cầu
   + Gửi thông báo nhắc nhở trước lịch hẹn.
   + Lưu trữ và backup dữ liệu.
 
-2. Tổng quan hệ thốn
+2. Tổng quan hệ thốngthống
 - Mục tiêu hệ thống:
   + Kết nối người hiến máu, nhân viên y tế và ban tổ chức.
   + Hỗ trợ quy trình đăng ký, quản lý, nhắc nhở và lưu trữ lịch sử.
@@ -56,4 +56,7 @@ Tuần 1 - Phân Tích Yêu Cầu
 - Bảo toàn dữ liệu: Sao lưu định kỳ và khôi phục nhanh khi có sự cố.
 - Khả năng truy cập: Hỗ trợ đa ngôn ngữ (Việt – Anh).
 
-5. Biểu đồ UseCase (PlantUML)
+5. Biểu đồ UseCase
+
+<img width="1249" height="770" alt="Sơ đồ UseCase" src="https://github.com/user-attachments/assets/9c64d959-737c-44b6-bc33-f7c149183c04" />
+

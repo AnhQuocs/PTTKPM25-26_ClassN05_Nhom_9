@@ -22,7 +22,7 @@ Tuần 1 - Phân Tích Yêu Cầu
   + Gửi thông báo nhắc nhở trước lịch hẹn.
   + Lưu trữ và backup dữ liệu.
 
-2. Tổng quan hệ thốngthống
+2. Tổng quan hệ thống
 - Mục tiêu hệ thống:
   + Kết nối người hiến máu, nhân viên y tế và ban tổ chức.
   + Hỗ trợ quy trình đăng ký, quản lý, nhắc nhở và lưu trữ lịch sử.

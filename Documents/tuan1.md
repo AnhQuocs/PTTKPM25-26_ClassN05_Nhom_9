@@ -3,24 +3,27 @@
 ## 1. Actors (Vai trò)
 
 ### Người hiến máu
-- Đăng nhập/Đăng ký hiến máu.
-- Hủy đăng ký.
+- Đăng nhập/Đăng ký(tài khoản).
+- Đăng ký/Hủy đăng ký hiếm máu.
 - Xem lịch hẹn hiến máu.
 - Xem lịch sử hiến máu.
 
 ### Nhân viên y tế
+- Đăng nhập/Đăng ký(có mã code riêng do QTV cấp).
 - Quản lý lịch hiến máu.
 - Xác nhận đăng ký hiến máu.
 - Ghi nhận kết quả hiến máu.
 
 ### Quản trị viên
+- Đăng nhập.
+- Quản lý nhân sự.
 - Quản lý người hiến máu.
 - Quản lý sự kiện hiến máu.
 - Quản lý địa điểm hiến máu.
 
 ### Hệ thống
 - Kiểm tra điều kiện hiến máu (tuổi, sức khỏe, khoảng cách ngày hiến máu trước đó…).
-- Gửi thông báo nhắc nhở trước lịch hẹn.
+- Gửi thông báo nhắc nhở lịch hẹn.
 - Lưu trữ và backup dữ liệu.
 
 ---

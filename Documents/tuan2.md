@@ -2,7 +2,7 @@
 
 ## 1. Biểu đồ Use Case
 
-![Sơ đồ UseCase](https://github.com/user-attachments/assets/1f4f8547-dff4-4a1d-a952-560948bd8120)
+![Sơ đồ UseCase](https://github.com/user-attachments/assets/281afe11-c6ea-4d36-9e4f-2a79fa2bea63)
 
 ---
 

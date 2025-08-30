@@ -18,6 +18,3 @@
 | Bùi Anh Quốc     | 23010328      |
 
 - ### **Wiki dự án:** https://github.com/AnhQuocs/PTTKPM25-26_ClassN05_Nhom_9/wiki
-
-
-

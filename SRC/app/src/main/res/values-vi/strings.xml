@@ -1,4 +1,33 @@
 <resources>
     <string name="app_name">Heart Beat</string>
 
+    <!-- Onboarding -->
+    <string name="donate_blood">Hiến máu</string>
+    <string name="donate_blood_desc">Trao đi sự sống. Một giọt máu cho đi, một cuộc đời ở lại</string>
+    <string name="save_lives">Cứu sống</string>
+    <string name="save_lives_desc">Mỗi lần hiến máu là một cơ hội cứu sống. Hãy trở thành anh hùng thầm lặng</string>
+    <string name="get_connect">Kết nối cộng đồng</string>
+    <string name="get_connect_desc">Kết nối cộng đồng nhân ái, cùng nhau lan tỏa tình yêu thương và sẻ chia</string>
+    <string name="next">Tiếp theo</string>
+    <string name="get_started">Bắt đầu ngay</string>
+
+    <!-- Login -->
+    <string name="welcome">Chào mừng đến với Heart Beat!</string>
+    <string name="welcome_des">Nhập email và mật khẩu để đăng nhập</string>
+    <string name="email">Email</string>
+    <string name="email_placeholder">example@gmail.com</string>
+    <string name="password">Mật khẩu</string>
+    <string name="password_placeholder">Nhập mật khẩu của bạn</string>
+    <string name="login">Đăng nhập</string>
+    <string name="do_not_have_account">Chưa có tài khoản?</string>
+
+    <!-- Sign up -->
+    <string name="username">Tên người dùng</string>
+    <string name="username_placeholder">Nhập tên người dùng của bạn</string>
+    <string name="create_account">Tạo tài khoản</string>
+    <string name="create_account_des">Hãy tạo tài khoản và điền thông tin bên dưới để bắt đầu</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="already_have_account">Đã có tài khoản?</string>
+
+
 </resources>

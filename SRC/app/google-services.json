@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "134818134126",
+    "project_id": "heart-e4cee",
+    "storage_bucket": "heart-e4cee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134818134126:android:0ca37f82e34703817ace7f",
+        "android_client_info": {
+          "package_name": "com.example.heartbeat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtW3ykoSi0We5p1rKyV13uXCzkKGuq7q0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

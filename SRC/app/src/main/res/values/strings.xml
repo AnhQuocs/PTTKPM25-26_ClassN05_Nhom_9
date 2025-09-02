@@ -1,4 +1,32 @@
 <resources>
     <string name="app_name">Heart Beat</string>
 
+    <!-- Onboarding -->
+    <string name="donate_blood">Donate Blood</string>
+    <string name="donate_blood_desc">Give life. One drop of blood can save a life</string>
+    <string name="save_lives">Save Lives</string>
+    <string name="save_lives_desc">Every donation is a chance to save lives. Be a silent hero</string>
+    <string name="get_connect">Get Connect Community</string>
+    <string name="get_connect_desc">Join a caring community, together we spread love and kindness</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+
+    <!-- Login -->
+    <string name="welcome">Welcome to Heart Beat!</string>
+    <string name="welcome_des">Enter your email address and password to login</string>
+    <string name="email">Email</string>
+    <string name="email_placeholder">example@gmail.com</string>
+    <string name="password">Password</string>
+    <string name="password_placeholder">Enter your password</string>
+    <string name="login">Login</string>
+    <string name="do_not_have_account">Don\'t have an account?</string>
+
+    <!-- Sign up -->
+    <string name="username">Username</string>
+    <string name="username_placeholder">Enter your username</string>
+    <string name="create_account">Create an account</string>
+    <string name="create_account_des">Create your account and fill in the form below to get started</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_have_account">Already have an account?</string>
+
 </resources>

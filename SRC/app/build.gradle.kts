@@ -73,4 +73,13 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-compiler:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    // BOM
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+
+    // Firebase Auth
+    implementation("com.google.firebase:firebase-auth")
+
+    // Firebase Fire store
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }

@@ -75,9 +75,6 @@ fun LoginScreen(
     val isLoading by authViewModel.isLoading.collectAsState()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
-    var isLogin by remember { mutableStateOf(true) }
-
-    val usernameError by authViewModel.usernameError.collectAsState()
     val emailError by authViewModel.emailError.collectAsState()
     val passwordError by authViewModel.passwordError.collectAsState()
 
@@ -109,17 +106,12 @@ fun LoginScreen(
         }
     }
 
-//    LaunchedEffect(isLoading, authState, lastAction) {
-//        if (!isLoading && authState?.isSuccess == true && lastAction == AuthActionType.SIGN_UP) {
-//            isLogin = true
-//        }
-//    }
-
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
             navController.navigate("main") {
                 popUpTo("login") { inclusive = true }
             }
+            authViewModel.clearAuthState()
         }
     }
 

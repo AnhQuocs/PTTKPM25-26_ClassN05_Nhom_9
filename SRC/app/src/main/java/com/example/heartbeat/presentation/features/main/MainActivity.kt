@@ -48,6 +48,10 @@ class MainActivity : BaseComponentActivity() {
                 composable("signUp") {
                     SignUpScreen(navController)
                 }
+
+                composable("main") {
+                    MainScreen()
+                }
             }
         }
     }

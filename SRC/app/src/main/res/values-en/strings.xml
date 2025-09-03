@@ -20,6 +20,18 @@
     <string name="password_placeholder">Enter your password</string>
     <string name="login">Login</string>
     <string name="do_not_have_account">Don\'t have an account?</string>
+    <string name="forgot_pass">Forgot Password</string>
+    <string name="forgot_pass_desc">Enter your email address and we will send you a verification email to reset your password</string>
+    <string name="forgot_pass_sent">We\'ve sent a verification email to your email address. Check your inbox to reset your password</string>
+    <string name="forgot_pass_error">An error has occurred, please check the information and try again</string>
+    <string name="forgot_pass_if_exists">If the email exists in our system, a password reset link will be sent</string>
+
+    <string name="login_success">Login successful!</string>
+    <string name="sign_up_success">Sign up successful! Please log in to use the service.</string>
+    <string name="login_failed">Login failed. Please check your information.</string>
+    <string name="sign_up_failed">Sign up failed. Please check your information.</string>
+    <string name="unknown_error">An unknown error has occurred.</string>
+    <string name="email_already_exists">Email already exists. Please use a different email.</string>
 
     <!-- Sign up -->
     <string name="username">Username</string>
@@ -28,5 +40,8 @@
     <string name="create_account_des">Create your account and fill in the form below to get started</string>
     <string name="sign_up">Sign Up</string>
     <string name="already_have_account">Already have an account?</string>
+
+    <!-- Others -->
+    <string name="send">Send</string>
 
 </resources>

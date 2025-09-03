@@ -43,6 +43,15 @@ class AuthViewModel @Inject constructor(
     private val _isUserLoading = MutableStateFlow(false)
     val isUserLoading: StateFlow<Boolean> = _isUserLoading
 
+    private val _isSendEmail = MutableStateFlow(false)
+    val isSendEmail: StateFlow<Boolean> = _isSendEmail
+
+    private val _isSendLoading = MutableStateFlow(false)
+    val isSendLoading: StateFlow<Boolean> = _isSendLoading
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+
     fun signUp(email: String, password: String, username: String) {
         var isValid = true
         _lastAuthAction.value = AuthActionType.SIGN_UP
@@ -118,6 +127,31 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun resetPassword(email: String) {
+        var isValid = true
+        if(!Validator.isValidEmail(email)) {
+            _emailError.value = "Invalid email format"
+            isValid = false
+        } else {
+            _emailError.value = null
+        }
+
+        if (!isValid) return
+
+        viewModelScope.launch {
+            _isSendEmail.value = false
+            _isSendLoading.value = true
+            val result = authUseCases.resetPassword(email)
+            result.onSuccess {
+                _isSendEmail.value = true
+                _isSendLoading.value = false
+            }.onFailure {
+                _isSendEmail.value = false
+                _errorMessage.value = it.message ?: "Failed to send email"
+            }
+        }
+    }
+
     init {
         loadCurrentUser()
     }
@@ -146,6 +180,9 @@ class AuthViewModel @Inject constructor(
     fun clearEmailError() { _emailError.value = null }
     fun clearPasswordError() { _passwordError.value = null }
     fun clearUsernameError() { _usernameError.value = null }
+    fun clearErrorMessage() {
+        _errorMessage.value = null
+    }
 
     val isLoggedIn: StateFlow<Boolean> = authState
         .map { result -> result?.isSuccess == true && result.getOrNull() != null }

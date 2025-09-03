@@ -7,5 +7,6 @@ interface AuthRepository {
     suspend fun login(email: String, password: String): Result<AuthUser>
     suspend fun logout()
     suspend fun getCurrentUserFromFirestore(): AuthUser?
+    suspend fun resetPassword(email: String): Result<Unit>
     fun isUserLoggedIn(): Boolean
 }

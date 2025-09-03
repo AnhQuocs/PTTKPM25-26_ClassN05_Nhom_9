@@ -6,6 +6,7 @@ import com.example.heartbeat.domain.usecase.auth.AuthUseCases
 import com.example.heartbeat.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.heartbeat.domain.usecase.auth.LogOutUseCase
 import com.example.heartbeat.domain.usecase.auth.LoginUseCase
+import com.example.heartbeat.domain.usecase.auth.ResetPasswordUseCase
 import com.example.heartbeat.domain.usecase.auth.SignUpUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +35,7 @@ object AuthModule{
         signUp = SignUpUseCase(repository),
         login = LoginUseCase(repository),
         logout = LogOutUseCase(repository),
-        getCurrentUser = GetCurrentUserUseCase(repository)
+        getCurrentUser = GetCurrentUserUseCase(repository),
+        resetPassword = ResetPasswordUseCase(repository)
     )
 }

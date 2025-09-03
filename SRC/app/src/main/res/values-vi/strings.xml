@@ -20,6 +20,18 @@
     <string name="password_placeholder">Nhập mật khẩu của bạn</string>
     <string name="login">Đăng nhập</string>
     <string name="do_not_have_account">Chưa có tài khoản?</string>
+    <string name="forgot_pass">Quên mật khẩu</string>
+    <string name="forgot_pass_desc">Nhập địa chỉ email của bạn và chúng tôi sẽ gửi email xác thực để đặt lại mật khẩu</string>
+    <string name="forgot_pass_sent">Chúng tôi đã gửi email xác thực đến địa chỉ của bạn. Vui lòng kiểm tra hộp thư để đặt lại mật khẩu</string>
+    <string name="forgot_pass_error">Đã xảy ra lỗi, hãy kiểm tra lại thông tin và thử lại</string>
+    <string name="forgot_pass_if_exists">Nếu email tồn tại trong hệ thống của chúng tôi, một liên kết đặt lại mật khẩu sẽ được gửi</string>
+
+    <string name="login_success">Đăng nhập thành công!</string>
+    <string name="sign_up_success">Đăng ký thành công! Hãy đăng nhập để sử dụng dịch vụ!</string>
+    <string name="email_already_exists">Email đã tồn tại. Vui lòng sử dụng email khác.</string>
+    <string name="login_failed">Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.</string>
+    <string name="sign_up_failed">Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.</string>
+    <string name="unknown_error">Đã xảy ra lỗi không xác định.</string>
 
     <!-- Sign up -->
     <string name="username">Tên người dùng</string>
@@ -29,5 +41,7 @@
     <string name="sign_up">Đăng ký</string>
     <string name="already_have_account">Đã có tài khoản?</string>
 
+    <!-- Others -->
+    <string name="send">Gửi</string>
 
 </resources>

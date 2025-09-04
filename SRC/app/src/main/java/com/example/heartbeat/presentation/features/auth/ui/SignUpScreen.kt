@@ -82,20 +82,19 @@ fun SignUpScreen(
 
     val context = LocalContext.current
 
-    // ✅ Show toast khi có lỗi
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            authViewModel.clearErrorMessage() // clear sau khi hiện
+            authViewModel.clearErrorMessage()
         }
     }
 
-    // ✅ Show toast khi đăng ký thành công
+    val welcomeText = stringResource(id = R.string.welcome)
+
     LaunchedEffect(authState) {
         authState?.onSuccess { user ->
-            Toast.makeText(context, "Welcome ${user.username}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "$welcomeText ${user.username}", Toast.LENGTH_SHORT).show()
             navController.navigate("main") {
-                // Xóa stack để không quay lại màn hình signup/login
                 popUpTo("signup") { inclusive = true }
             }
             authViewModel.clearAuthState()

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Heart Beat</string>
+    <string name="welcome">Welcome</string>
 
     <!-- Onboarding -->
     <string name="donate_blood">Donate Blood</string>
@@ -12,7 +13,7 @@
     <string name="get_started">Get Started</string>
 
     <!-- Login -->
-    <string name="welcome">Welcome to Heart Beat!</string>
+    <string name="welcome_app">Welcome to Heart Beat!</string>
     <string name="welcome_des">Enter your email address and password to login</string>
     <string name="email">Email</string>
     <string name="email_placeholder">example@gmail.com</string>

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Heart Beat</string>
+    <string name="welcome">Chào mừng</string>
 
     <!-- Onboarding -->
     <string name="donate_blood">Hiến máu</string>
@@ -12,7 +13,7 @@
     <string name="get_started">Bắt đầu ngay</string>
 
     <!-- Login -->
-    <string name="welcome">Chào mừng đến với Heart Beat!</string>
+    <string name="welcome_app">Chào mừng đến với Heart Beat!</string>
     <string name="welcome_des">Nhập email và mật khẩu để đăng nhập</string>
     <string name="email">Email</string>
     <string name="email_placeholder">example@gmail.com</string>

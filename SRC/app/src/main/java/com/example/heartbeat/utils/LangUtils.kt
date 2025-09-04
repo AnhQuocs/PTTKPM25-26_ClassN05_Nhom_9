@@ -3,7 +3,7 @@ package com.example.heartbeat.utils
 object LangUtils {
     var currentLang: String = "en"
 
-    fun getLocalizedText(map: Map<String, String?>): String {
+    fun getLocalizedText(map: Map<String, String>?): String {
         return map?.get(currentLang) ?: map ?.get("en") ?: ""
     }
 

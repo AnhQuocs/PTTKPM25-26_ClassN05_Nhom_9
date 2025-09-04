@@ -42,7 +42,32 @@
     <string name="sign_up">Sign Up</string>
     <string name="already_have_account">Already have an account?</string>
 
+    <!-- Profile -->
+    <string name="profile">Profile</string>
+    <string name="profile_setup">Profile Setup</string>
+    <string name="profile_setup_desc">Almost done. For set your profile, fill up below information. It\'s easy!</string>
+    <string name="personal_info">Personal Information</string>
+    <string name="basic_info">Basic Information</string>
+    <string name="your_name">Your Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="select_group">Select Group</string>
+    <string name="blood_group">Blood Group</string>
+    <string name="city">Province/City</string>
+    <string name="select_city">Select Province/City</string>
+    <string name="date_of_birth">Date Of Birth</string>
+    <string name="select_date">Select Date</string>
+    <string name="gender">Gender</string>
+    <string name="select_gender">Select Gender</string>
+    <string name="your_age">Your age</string>
+    <string name="want_blood">I want to donate blood</string>
+    <string name="about_yourself">About yourself</string>
+    <string name="type_about_yourself">Type about yourself</string>
+    <string name="upload_your_image">Upload your image</string>
+    <string name="upload_your_photo">Upload your profile photo</string>
+
     <!-- Others -->
     <string name="send">Send</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

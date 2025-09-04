@@ -42,7 +42,32 @@
     <string name="sign_up">Đăng ký</string>
     <string name="already_have_account">Đã có tài khoản?</string>
 
+    <!-- Profile -->
+    <string name="profile">Hồ sơ</string>
+    <string name="profile_setup">Thiết lập hồ sơ</string>
+    <string name="profile_setup_desc">Gần xong rồi. Để thiết lập hồ sơ, hãy điền thông tin dưới đây. Thật dễ dàng!</string>
+    <string name="personal_info">Thông tin cá nhân</string>
+    <string name="basic_info">Thông tin cơ bản</string>
+    <string name="your_name">Họ và tên</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="select_group">Chọn nhóm máu</string>
+    <string name="blood_group">Nhóm máu</string>
+    <string name="city">Tỉnh/Thành phố</string>
+    <string name="select_city">Chọn tỉnh/thành phố</string>
+    <string name="date_of_birth">Ngày sinh</string>
+    <string name="select_date">Chọn ngày sinh</string>
+    <string name="gender">Giới tính</string>
+    <string name="select_gender">Chọn giới tính</string>
+    <string name="your_age">Tuổi của bạn</string>
+    <string name="want_blood">Tôi muốn hiến máu</string>
+    <string name="about_yourself">Về bản thân bạn</string>
+    <string name="type_about_yourself">Viết về bản thân bạn</string>
+    <string name="upload_your_image">Tải lên ảnh của bạn</string>
+    <string name="upload_your_photo">Tải lên ảnh hồ sơ</string>
+
     <!-- Others -->
     <string name="send">Gửi</string>
+    <string name="yes">Đúng</string>
+    <string name="no">Không</string>
 
 </resources>

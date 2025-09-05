@@ -106,8 +106,6 @@ fun ProfileSetupScreen(
         else -> false
     }
 
-    val buttonPadding = PaddingValues(horizontal = Dimens.PaddingM, vertical = Dimens.PaddingS)
-
     val fling = PagerDefaults.flingBehavior(
         state = pagerState,
         pagerSnapDistance = PagerSnapDistance.atMost(1),
@@ -118,7 +116,6 @@ fun ProfileSetupScreen(
         bottomBar = {
             Row(
                 modifier = Modifier
-                    .background(color = Color.White)
                     .fillMaxWidth()
                     .padding(horizontal = Dimens.PaddingM)
                     .padding(bottom = Dimens.PaddingM),
@@ -154,9 +151,8 @@ fun ProfileSetupScreen(
                                 containerColor = Color.Transparent
                             ),
                             shape = RoundedCornerShape(AppShape.MediumShape),
-                            contentPadding = buttonPadding,
                             modifier = Modifier
-                                .fillMaxWidth(0.4f)
+                                .fillMaxWidth(0.3f)
                                 .height(Dimens.HeightDefault)
                         ) {
                             Text(
@@ -172,10 +168,9 @@ fun ProfileSetupScreen(
                                 containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
                             ),
                             shape = RoundedCornerShape(AppShape.MediumShape),
-                            contentPadding = buttonPadding,
                             modifier = Modifier
                                 .height(Dimens.HeightDefault)
-                                .fillMaxWidth(0.4f),
+                                .fillMaxWidth(0.5f),
                         ) {
                             Text(
                                 text = stringResource(id = R.string.next),
@@ -193,7 +188,6 @@ fun ProfileSetupScreen(
                                 containerColor = Color.Transparent
                             ),
                             shape = RoundedCornerShape(AppShape.MediumShape),
-                            contentPadding = buttonPadding,
                             modifier = Modifier
                                 .fillMaxWidth(0.3f)
                                 .height(Dimens.HeightDefault)
@@ -211,10 +205,9 @@ fun ProfileSetupScreen(
                                 containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
                             ),
                             shape = RoundedCornerShape(AppShape.MediumShape),
-                            contentPadding = buttonPadding,
                             modifier = Modifier
                                 .height(Dimens.HeightDefault)
-                                .fillMaxWidth(0.4f),
+                                .fillMaxWidth(0.5f),
                         ) {
                             Text(
                                 text = stringResource(id = R.string.submit),
@@ -230,7 +223,6 @@ fun ProfileSetupScreen(
             modifier = Modifier.fillMaxSize()
                 .background(color = Color.White)
                 .padding(paddingValues)
-                .padding(vertical = Dimens.PaddingM)
                 .padding(top = Dimens.PaddingL),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

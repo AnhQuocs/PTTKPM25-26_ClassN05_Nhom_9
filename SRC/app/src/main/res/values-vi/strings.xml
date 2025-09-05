@@ -55,7 +55,8 @@
     <string name="city">Tỉnh/Thành phố</string>
     <string name="select_city">Chọn tỉnh/thành phố</string>
     <string name="date_of_birth">Ngày sinh</string>
-    <string name="select_date">Chọn ngày sinh</string>
+    <string name="select_dob">Chọn ngày sinh</string>
+    <string name="date_not_allowed">Ngày đã chọn không được phép</string>
     <string name="gender">Giới tính</string>
     <string name="select_gender">Chọn giới tính</string>
     <string name="your_age">Tuổi của bạn</string>
@@ -74,5 +75,6 @@
     <string name="no">Không</string>
     <string name="back">Quay lại</string>
     <string name="submit">Xác nhận</string>
+    <string name="cancel">Quay lại</string>
 
 </resources>

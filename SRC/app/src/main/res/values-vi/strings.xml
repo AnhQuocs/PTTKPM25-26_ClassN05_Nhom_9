@@ -59,15 +59,18 @@
     <string name="gender">Giới tính</string>
     <string name="select_gender">Chọn giới tính</string>
     <string name="your_age">Tuổi của bạn</string>
-    <string name="want_blood">Tôi muốn hiến máu</string>
+    <string name="want_donate_blood">Tôi muốn hiến máu</string>
+    <string name="want_donate_blood_placeholder">Đồng ý hoặc Không</string>
     <string name="about_yourself">Về bản thân bạn</string>
     <string name="type_about_yourself">Viết về bản thân bạn</string>
     <string name="upload_your_image">Tải lên ảnh của bạn</string>
     <string name="upload_your_photo">Tải lên ảnh hồ sơ</string>
+    <string name="male">Nam</string>
+    <string name="female">Nữ</string>
 
     <!-- Others -->
     <string name="send">Gửi</string>
-    <string name="yes">Đúng</string>
+    <string name="yes">Đồng ý</string>
     <string name="no">Không</string>
     <string name="back">Quay lại</string>
     <string name="submit">Xác nhận</string>

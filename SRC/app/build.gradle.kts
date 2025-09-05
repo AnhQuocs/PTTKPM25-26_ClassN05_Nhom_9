@@ -91,6 +91,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    //Date time
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+
     // Icon
     implementation("androidx.compose.material:material-icons-extended")
 

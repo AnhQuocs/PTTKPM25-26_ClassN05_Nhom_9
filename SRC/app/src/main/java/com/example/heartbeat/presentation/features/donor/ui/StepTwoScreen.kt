@@ -1,6 +1,9 @@
 package com.example.heartbeat.presentation.features.donor.ui
 
+import android.icu.util.Calendar
+import android.os.Build
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,15 +14,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.QuestionMark
 import androidx.compose.material.icons.filled.Transgender
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -43,7 +54,18 @@ import com.example.heartbeat.presentation.features.donor.viewmodel.DonorFormStat
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.MaterialDatePicker
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StepTwoScreen(
     formState: DonorFormState,
@@ -51,7 +73,6 @@ fun StepTwoScreen(
 ) {
     var isWillingDonate by remember { mutableStateOf("") }
 
-    val dateOfBirthFocusRequester = remember { FocusRequester() }
     val genderFocusRequester = remember { FocusRequester() }
     val willingToDonateFocusRequester = remember { FocusRequester() }
     val aboutFocusRequester = remember { FocusRequester() }
@@ -69,6 +90,11 @@ fun StepTwoScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
+    var dobText by remember { mutableStateOf(formState.dateOfBirth) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showError by remember { mutableStateOf(false) }
+    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -77,7 +103,6 @@ fun StepTwoScreen(
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Date
         Text(
             text = stringResource(id = R.string.date_of_birth),
             style = MaterialTheme.typography.titleSmall,
@@ -88,23 +113,116 @@ fun StepTwoScreen(
         Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
         OutlinedTextField(
-            value = formState.dateOfBirth,
-            onValueChange = {
-                onUpdate(it, 19, formState.gender, false, formState.about)
-            },
+            value = dobText,
+            onValueChange = {},
             leadingIcon = {
+                Icon(Icons.Default.CalendarToday, contentDescription = null, tint = BloodRed)
+            },
+            trailingIcon = {
                 Icon(
-                    Icons.Default.DateRange,
+                    Icons.Filled.DateRange,
                     contentDescription = null,
-                    tint = BloodRed
+                    modifier = Modifier.clickable { showDatePicker = true }
                 )
             },
+            readOnly = true,
             placeholder = { Text(stringResource(id = R.string.date_of_birth)) },
-            textStyle = TextStyle(
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp
-            ),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = Dimens.PaddingM)
+            textStyle = TextStyle(fontWeight = FontWeight.Medium, fontSize = 16.sp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.PaddingM)
+                .clickable {
+                    showDatePicker = true
+                }
+        )
+
+        if (showDatePicker) {
+            val datePickerState = rememberDatePickerState(
+                selectableDates = object : SelectableDates {
+                    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                        val date = Instant.fromEpochMilliseconds(utcTimeMillis)
+                            .toLocalDateTime(TimeZone.currentSystemDefault())
+                            .date
+                        return date <= today
+                    }
+                }
+            )
+
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let { millis ->
+                                val date = Instant.fromEpochMilliseconds(millis)
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date
+                                if (date > today) {
+                                    showError = true
+                                } else {
+                                    dobText = "${date.dayOfMonth.toString().padStart(2, '0')}/" +
+                                            "${date.monthNumber.toString().padStart(2, '0')}/" +
+                                            "${date.year}"
+
+                                    val age = calculateAge(dobText)
+                                    onUpdate(
+                                        dobText,
+                                        age,
+                                        formState.gender,
+                                        formState.willingToDonate,
+                                        formState.about
+                                    )
+                                    showDatePicker = false
+                                    showError = false
+                                }
+                            }
+                        }
+                    ) { Text("OK", color = BloodRed) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDatePicker = false }) {
+                        Text("Cancel", color = BloodRed)
+                    }
+                }
+            ) {
+                Column {
+                    DatePicker(
+                        state = datePickerState,
+                        headline = {
+                            Text(
+                                text = "Select Date of Birth",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = BloodRed,
+                                modifier = Modifier.padding(Dimens.PaddingM)
+                            )
+                        },
+                        modifier = Modifier
+                    )
+
+                    if (showError) {
+                        Text(
+                            "Selected date is not allowed.",
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(Dimens.PaddingM)
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(AppSpacing.Medium))
+
+        val age = if (formState.age != 0) formState.age else 0
+
+        Text(
+            text = stringResource(id = R.string.your_age) + " - " + age,
+            style = MaterialTheme.typography.titleSmall,
+            color = Color.Black,
+            textAlign = TextAlign.End,
+            modifier = Modifier
+                .padding(end = Dimens.PaddingM + 4.dp)
+                .fillMaxWidth()
         )
 
         ProfileSetupTextField(
@@ -113,7 +231,7 @@ fun StepTwoScreen(
             onValueChange = {
                 onUpdate(formState.dateOfBirth, formState.age, it, false, formState.about)
             },
-            placeholder = stringResource(id = R.string.select_group),
+            placeholder = stringResource(id = R.string.select_gender),
             leadingIcon = Icons.Default.Transgender,
             isTrailingIcon = true,
             focusRequester = genderFocusRequester,
@@ -180,5 +298,24 @@ fun StepTwoScreen(
                 .height(Dimens.HeightXL2)
                 .focusRequester(aboutFocusRequester)
         )
+    }
+}
+
+fun calculateAge(dateString: String): Int {
+    return try {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val dob = sdf.parse(dateString) ?: return 0
+
+        val dobCalendar = Calendar.getInstance().apply { time = dob }
+        val today = Calendar.getInstance()
+
+        var age = today.get(Calendar.YEAR) - dobCalendar.get(Calendar.YEAR)
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dobCalendar.get(Calendar.DAY_OF_YEAR)) {
+            age--
+        }
+        age
+    } catch (e: Exception) {
+        0
     }
 }

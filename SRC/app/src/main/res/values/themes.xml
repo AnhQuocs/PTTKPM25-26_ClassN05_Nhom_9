@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.HeartBeat" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.HeartBeat" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+        <!-- MaterialDatePicker theme (optional, default) -->
+        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar</item>
+    </style>
+
 </resources>

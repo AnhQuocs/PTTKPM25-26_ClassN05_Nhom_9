@@ -22,8 +22,6 @@ import com.example.heartbeat.presentation.features.donor.viewmodel.DonorFormStat
 fun StepThreeScreen(
     formState: DonorFormState,
     onUpdate: (profileAvatar: String) -> Unit,
-    onBack: () -> Unit,
-    onSubmit: () -> Unit
 ) {
     var profileAvatar by remember { mutableStateOf(formState.profileAvatar) }
 
@@ -33,20 +31,7 @@ fun StepThreeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        profileAvatar = ""
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    onUpdate(profileAvatar)
-                    onSubmit()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Send")
-            }
-        }
+        profileAvatar = "https://"
+        onUpdate(profileAvatar)
     }
 }

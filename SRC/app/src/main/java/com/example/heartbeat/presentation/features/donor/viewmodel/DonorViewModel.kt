@@ -65,7 +65,7 @@ class DonorViewModel @Inject constructor(
     }
 
     fun submitDonor() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "test"
 
         val donor = Donor(
             donorId = userId,

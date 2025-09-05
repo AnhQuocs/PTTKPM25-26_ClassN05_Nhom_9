@@ -25,72 +25,39 @@ import com.example.heartbeat.presentation.features.donor.viewmodel.DonorFormStat
 @Composable
 fun StepTwoScreen(
     formState: DonorFormState,
-    onUpdate: (dateOfBirth: String, age: Int, gender: String, willingToDonate: Boolean, about: String) -> Unit,
-    onBack: () -> Unit,
-    onNext: () -> Unit
+    onUpdate: (dateOfBirth: String, age: Int, gender: String, willingToDonate: Boolean, about: String) -> Unit
 ) {
-    var dateOfBirth by remember { mutableStateOf(formState.dateOfBirth) }
-    var age by remember { mutableIntStateOf(formState.age) }
-    var gender by remember { mutableStateOf(formState.gender) }
-    var willingToDonate by remember { mutableStateOf(formState.willingToDonate) }
-    var about by remember { mutableStateOf(formState.about) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.Top
     ) {
         OutlinedTextField(
-            value = dateOfBirth,
-            onValueChange = { dateOfBirth = it },
+            value = formState.dateOfBirth,
+            onValueChange = {
+                onUpdate(it, 19, formState.gender, false, formState.about)
+            },
             label = { Text("DOB") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        age = 19
-
         OutlinedTextField(
-            value = gender,
-            onValueChange = { gender = it },
+            value = formState.gender,
+            onValueChange = {
+                onUpdate(formState.dateOfBirth, formState.age, it, formState.willingToDonate, formState.about)
+            },
             label = { Text("Gender") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        willingToDonate = true
-
         OutlinedTextField(
-            value = about,
-            onValueChange = { about = it },
+            value = formState.about,
+            onValueChange = {
+                onUpdate(formState.dateOfBirth, formState.age, formState.gender, formState.willingToDonate, it)
+            },
             label = { Text("About") },
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                onClick = {
-                    onBack()
-                },
-                modifier = Modifier
-            ) {
-                Text("Back")
-            }
-
-            Button(
-                onClick = {
-                    onUpdate(dateOfBirth, age, gender, willingToDonate, about)
-                    onNext()
-                },
-                modifier = Modifier
-            ) {
-                Text("Next")
-            }
-        }
     }
 }

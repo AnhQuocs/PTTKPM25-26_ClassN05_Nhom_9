@@ -59,11 +59,14 @@
     <string name="gender">Gender</string>
     <string name="select_gender">Select Gender</string>
     <string name="your_age">Your age</string>
-    <string name="want_blood">I want to donate blood</string>
+    <string name="want_donate_blood">I want to donate blood</string>
+    <string name="want_donate_blood_placeholder">Yes or No</string>
     <string name="about_yourself">About yourself</string>
     <string name="type_about_yourself">Type about yourself</string>
     <string name="upload_your_image">Upload your image</string>
     <string name="upload_your_photo">Upload your profile photo</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
 
     <!-- Others -->
     <string name="send">Send</string>

@@ -53,9 +53,9 @@ class MainActivity : BaseComponentActivity() {
 //                }
 //            }
 
-            AutoComplete()
+//            AutoComplete()
 
-//            ProfileSetupScreen()
+            ProfileSetupScreen()
         }
     }
 }

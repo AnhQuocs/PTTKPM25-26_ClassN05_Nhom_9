@@ -9,15 +9,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bloodtype
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonOutline
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,11 +37,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.donor.viewmodel.DonorFormState
+import com.example.heartbeat.presentation.features.system.province.viewmodel.ProvinceViewModel
+import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
@@ -42,110 +55,87 @@ import com.example.heartbeat.ui.theme.BloodRed
 fun StepOneScreen(
     formState: DonorFormState,
     onUpdate: (name: String, phoneNumber: String, bloodGroup: String, city: String) -> Unit,
-    onNext: () -> Unit
+    provinceViewModel: ProvinceViewModel = hiltViewModel()
 ) {
-    var name by remember { mutableStateOf(formState.name) }
-    var phoneNumber by remember { mutableStateOf(formState.phoneNumber) }
-    var bloodGroup by remember { mutableStateOf(formState.bloodGroup) }
-    var city by remember { mutableStateOf(formState.city) }
-
     val yourNameFocusRequester = remember { FocusRequester() }
     val phoneNumberFocusRequester = remember { FocusRequester() }
     val bloodGroupFocusRequester = remember { FocusRequester() }
     val cityFocusRequester = remember { FocusRequester() }
 
+    val bloodList = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
+    val provinces by provinceViewModel.provinces.collectAsState()
+    val provinceNames: List<String> = provinces.map { it.name }
+
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 16.dp)
-            .padding(top = Dimens.PaddingXL),
+            .background(color = Color.White)
+            .padding(bottom = 16.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(id = R.string.profile_setup),
-            color = Color.Black,
-            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+        ProfileSetupTextField(
+            title = stringResource(id = R.string.your_full_name),
+            value = formState.name,
+            onValueChange = {
+                onUpdate(it, formState.phoneNumber, formState.bloodGroup, formState.city)
+            },
+            placeholder = stringResource(id = R.string.your_full_name),
+            leadingIcon = Icons.Default.Person,
+            focusRequester = yourNameFocusRequester,
+            imeAction = ImeAction.Next,
+            onImeAction = {
+                phoneNumberFocusRequester.requestFocus()
+            }
         )
-
-        Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-        Text(
-            text = stringResource(id = R.string.profile_setup_desc),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        AppLineGrey()
-
-        Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-        Box(
-            modifier = Modifier
-                .size(Dimens.SizeXXLPlus)
-                .background(color = BloodRed.copy(alpha = 0.3f))
-                .clip(CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                Icons.Default.PersonOutline,
-                contentDescription = null,
-                tint = BloodRed,
-                modifier = Modifier
-                    .size(Dimens.SizeL)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(AppSpacing.Medium))
-
-        Text(
-            text = stringResource(id = R.string.personal_info),
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-            color = Color.Black,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(AppSpacing.ExtraLarge))
 
         ProfileSetupTextField(
-            title = stringResource(id = R.string.your_name),
-            value = name,
-            onValueChange = { name = it },
-            placeholder = stringResource(id = R.string.your_name)
-        )
-
-        OutlinedTextField(
-            value = phoneNumber,
-            onValueChange = { phoneNumber = it },
-            label = { Text("Mobile Number") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = bloodGroup,
-            onValueChange = { bloodGroup = it },
-            label = { Text("Blood Group") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = city,
-            onValueChange = { city = it },
-            label = { Text("City") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                onUpdate(name, phoneNumber, bloodGroup, city)
-                onNext()
+            title = stringResource(id = R.string.phone_number),
+            value = formState.phoneNumber,
+            onValueChange = {
+                onUpdate(formState.name, it, formState.bloodGroup, formState.city)
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Next")
-        }
+            placeholder = stringResource(id = R.string.phone_number),
+            leadingIcon = Icons.Default.Phone,
+            focusRequester = phoneNumberFocusRequester,
+            imeAction = ImeAction.Next,
+            onImeAction = {
+                bloodGroupFocusRequester.requestFocus()
+            },
+            keyboardOptions = defaultKeyboardOptions(KeyboardType.Phone)
+        )
+
+        ProfileSetupTextField(
+            title = stringResource(id = R.string.blood_group),
+            value = formState.bloodGroup,
+            onValueChange = {
+                onUpdate(formState.name, formState.phoneNumber, it, formState.city)
+            },
+            placeholder = stringResource(id = R.string.select_group),
+            leadingIcon = Icons.Default.Bloodtype,
+            isTrailingIcon = true,
+            focusRequester = bloodGroupFocusRequester,
+            imeAction = ImeAction.Next,
+            onImeAction = {
+                cityFocusRequester.requestFocus()
+            },
+            list = bloodList
+        )
+
+        ProfileSetupTextField(
+            title = stringResource(id = R.string.city),
+            value = formState.city,
+            onValueChange = {
+                onUpdate(formState.name, formState.phoneNumber, formState.bloodGroup, it)
+            },
+            placeholder = stringResource(id = R.string.select_city),
+            leadingIcon = Icons.Default.LocationOn,
+            isTrailingIcon = true,
+            focusRequester = cityFocusRequester,
+            imeAction = ImeAction.Done,
+            list = provinceNames
+        )
     }
 }

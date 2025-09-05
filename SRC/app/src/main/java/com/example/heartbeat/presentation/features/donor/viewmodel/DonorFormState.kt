@@ -17,4 +17,13 @@ data class DonorFormState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val isSubmitSuccess: Boolean = false
-)
+) {
+    fun isStepOneValid() =
+        name.isNotBlank() && phoneNumber.isNotBlank() && bloodGroup.isNotBlank() && city.isNotBlank()
+
+    fun isStepTwoValid() =
+        dateOfBirth.isNotBlank() && age > 18 && gender.isNotBlank()
+
+    fun isStepThreeValid() =
+        profileAvatar.isNotBlank()
+}

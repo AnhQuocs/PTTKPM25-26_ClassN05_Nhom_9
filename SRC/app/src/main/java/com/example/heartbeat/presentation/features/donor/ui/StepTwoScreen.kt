@@ -181,7 +181,7 @@ fun StepTwoScreen(
                 },
                 dismissButton = {
                     TextButton(onClick = { showDatePicker = false }) {
-                        Text("Cancel", color = BloodRed)
+                        Text(stringResource(id = R.string.cancel), color = BloodRed)
                     }
                 }
             ) {
@@ -190,7 +190,7 @@ fun StepTwoScreen(
                         state = datePickerState,
                         headline = {
                             Text(
-                                text = "Select Date of Birth",
+                                text = stringResource(id = R.string.select_dob),
                                 style = MaterialTheme.typography.titleLarge,
                                 color = BloodRed,
                                 modifier = Modifier.padding(Dimens.PaddingM)
@@ -201,7 +201,7 @@ fun StepTwoScreen(
 
                     if (showError) {
                         Text(
-                            "Selected date is not allowed.",
+                            stringResource(id = R.string.date_not_allowed),
                             color = Color.Red,
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(Dimens.PaddingM)

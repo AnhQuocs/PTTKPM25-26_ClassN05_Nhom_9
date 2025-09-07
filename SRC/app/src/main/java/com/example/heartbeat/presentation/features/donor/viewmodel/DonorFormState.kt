@@ -18,12 +18,23 @@ data class DonorFormState(
     val error: String? = null,
     val isSubmitSuccess: Boolean = false
 ) {
-    fun isStepOneValid() =
-        name.isNotBlank() && phoneNumber.isNotBlank() && bloodGroup.isNotBlank() && city.isNotBlank()
+    fun isStepOneValid(provinceNames: List<String>, bloodList: List<String>): Boolean =
+        name.isNotBlank() &&
+                phoneNumber.isValidPhone() &&
+                bloodList.contains(bloodGroup) &&
+                city.isNotBlank() &&
+                provinceNames.contains(city)
 
-    fun isStepTwoValid() =
-        dateOfBirth.isNotBlank() && age > 18 && gender.isNotBlank()
+    fun isStepTwoValid(genderList: List<String>) =
+        dateOfBirth.isNotBlank()
+                && age > 18
+                && genderList.contains(gender)
 
     fun isStepThreeValid() =
         profileAvatar.isNotBlank()
+}
+
+private fun String.isValidPhone(): Boolean {
+    val regex = Regex("^0\\d{9}$")
+    return matches(regex)
 }

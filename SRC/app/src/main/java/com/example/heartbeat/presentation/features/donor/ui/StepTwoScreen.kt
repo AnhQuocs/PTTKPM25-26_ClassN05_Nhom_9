@@ -169,7 +169,7 @@ fun StepTwoScreen(
                                         dobText,
                                         age,
                                         formState.gender,
-                                        formState.willingToDonate,
+                                        formState.willingToDonate!!,
                                         formState.about
                                     )
                                     showDatePicker = false

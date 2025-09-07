@@ -53,6 +53,7 @@ import com.example.heartbeat.BaseComponentActivity
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.presentation.features.system.province.viewmodel.ProvinceViewModel
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -73,9 +74,19 @@ class ProfileSetupActivity : BaseComponentActivity() {
 
 @Composable
 fun ProfileSetupScreen(
-    donorViewModel: DonorViewModel = hiltViewModel()
+    donorViewModel: DonorViewModel = hiltViewModel(),
+    provinceViewModel: ProvinceViewModel = hiltViewModel()
 ) {
     val formState by donorViewModel.formState.collectAsState()
+    val provinces by provinceViewModel.provinces.collectAsState()
+    val provinceNames = provinces.map { it.name }
+
+    val bloodList = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
+    val genderList = listOf(
+        stringResource(id = R.string.male),
+        stringResource(id = R.string.female)
+    )
+
     val pagerState = rememberPagerState(
         pageCount = { 3 },
         initialPage = 0
@@ -100,8 +111,8 @@ fun ProfileSetupScreen(
     }
 
     val isButtonEnabled = when (pagerState.currentPage) {
-        0 -> formState.isStepOneValid()
-        1 -> formState.isStepTwoValid()
+        0 -> formState.isStepOneValid(provinceNames, bloodList)
+        1 -> formState.isStepTwoValid(genderList)
         2 -> formState.isStepThreeValid()
         else -> false
     }

@@ -10,6 +10,5 @@ data class Donor(
     val age: Int,
     val gender: String,
     val willingToDonate: Boolean,
-    val about: String,
-    val profileAvatar: String
+    val about: String
 )

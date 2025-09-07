@@ -1,8 +1,13 @@
 package com.example.heartbeat.presentation.features.donor.viewmodel
 
+import android.content.Context
+import android.net.Uri
+import android.util.Base64
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.heartbeat.domain.entity.user.Donor
+import com.example.heartbeat.domain.entity.user.DonorAvatar
 import com.example.heartbeat.domain.usecase.donor.DonorUseCase
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,6 +26,7 @@ class DonorViewModel @Inject constructor(
     private val _formState = MutableStateFlow(DonorFormState())
     val formState: StateFlow<DonorFormState> = _formState
 
+    //Personal info
     fun updatePersonalInfo(
         name: String,
         phoneNumber: String,
@@ -36,7 +43,8 @@ class DonorViewModel @Inject constructor(
         }
     }
 
-    fun updateAdditionalInfo(
+    // Basic info
+    fun updateBasicInfo(
         dateOfBirth: String,
         age: Int,
         gender: String,
@@ -54,38 +62,56 @@ class DonorViewModel @Inject constructor(
         }
     }
 
-    fun updatePersonalAvatar(
-        profileAvatar: String
-    ) {
-        _formState.update {
-            it.copy(
-                profileAvatar = profileAvatar
-            )
-        }
+    // Avatar
+    fun setLocalAvatar(uri: Uri?) {
+        _formState.update { it.copy(profileAvatar = uri?.toString() ?: "") }
     }
 
-    fun submitDonor() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "test"
+    // Convert URI sang Base64
+    private fun uriToBase64(uri: Uri, context: Context): String {
+        val inputStream = context.contentResolver.openInputStream(uri)
+            ?: throw IOException("Cannot open input stream from URI: $uri")
+        val bytes = inputStream.readBytes()
+        inputStream.close()
+        return Base64.encodeToString(bytes, Base64.DEFAULT)
+    }
 
-        val donor = Donor(
-            donorId = userId,
-            name = _formState.value.name,
-            phoneNumber = _formState.value.phoneNumber,
-            bloodGroup = _formState.value.bloodGroup,
-            city = _formState.value.city,
-            dateOfBirth = _formState.value.dateOfBirth,
-            age = _formState.value.age,
-            gender = _formState.value.gender,
-            willingToDonate = _formState.value.willingToDonate,
-            about = _formState.value.about,
-            profileAvatar = _formState.value.profileAvatar
-        )
+    // Submit donor + upload avatar
+    fun submitDonor(context: Context) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "test"
 
         viewModelScope.launch {
             try {
                 _formState.update { it.copy(isLoading = true, error = null, isSubmitSuccess = false) }
+
+                // Upload avatar
+                val avatarUri = _formState.value.profileAvatar
+                if (avatarUri.isNotBlank() && avatarUri.startsWith("content://")) {
+                    val base64 = uriToBase64(Uri.parse(avatarUri), context)
+                    val avatarUrl = donorUseCase.uploadAvatarUseCase(userId, base64)
+
+                    val donorAvatar = DonorAvatar(userId, avatarUrl)
+                    donorUseCase.saveAvatarUrlUseCase(donorAvatar)
+                }
+
+                // Donor obj
+                val donor = Donor(
+                    donorId = userId,
+                    name = _formState.value.name,
+                    phoneNumber = _formState.value.phoneNumber,
+                    bloodGroup = _formState.value.bloodGroup,
+                    city = _formState.value.city,
+                    dateOfBirth = _formState.value.dateOfBirth,
+                    age = _formState.value.age,
+                    gender = _formState.value.gender,
+                    willingToDonate = _formState.value.willingToDonate,
+                    about = _formState.value.about
+                )
+
+                // add donor
                 donorUseCase.addDonorUseCase(donor)
-                _formState.update { it.copy(isLoading = false, isSubmitSuccess = true) } // thành công
+
+                _formState.update { it.copy(isLoading = false, isSubmitSuccess = true) }
             } catch (e: Exception) {
                 _formState.update { it.copy(isLoading = false, error = e.message, isSubmitSuccess = false) }
             }

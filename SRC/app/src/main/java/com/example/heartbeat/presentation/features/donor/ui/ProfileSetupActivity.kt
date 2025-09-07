@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
@@ -30,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PersonOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -39,6 +38,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -94,9 +95,10 @@ fun ProfileSetupScreen(
 
     val context = LocalContext.current
 
+    val submittedSuccess = stringResource(id = R.string.submitted_success)
     LaunchedEffect(formState.isSubmitSuccess) {
         if (formState.isSubmitSuccess) {
-            Toast.makeText(context, "Submit thành công!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, submittedSuccess, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -123,207 +125,231 @@ fun ProfileSetupScreen(
         snapAnimationSpec = tween(durationMillis = 400, easing = LinearOutSlowInEasing)
     )
 
-    Scaffold(
-        bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimens.PaddingM)
-                    .padding(bottom = Dimens.PaddingM),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                when (pagerState.currentPage) {
-                    0 -> {
-                        Button(
-                            onClick = { donorViewModel.setStep(1) },
-                            enabled = isButtonEnabled,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
-                            ),
-                            shape = RoundedCornerShape(AppShape.MediumShape),
-                            modifier = Modifier
-                                .height(Dimens.HeightDefault)
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.next),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                            )
-                        }
-                    }
-
-                    1 -> {
-                        OutlinedButton(
-                            onClick = { donorViewModel.setStep(0) },
-                            border = BorderStroke(1.dp, BloodRed),
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = BloodRed,
-                                containerColor = Color.Transparent
-                            ),
-                            shape = RoundedCornerShape(AppShape.MediumShape),
-                            modifier = Modifier
-                                .fillMaxWidth(0.3f)
-                                .height(Dimens.HeightDefault)
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.back),
-                                style = MaterialTheme.typography.titleMedium
-                            )
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Scaffold(
+            bottomBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimens.PaddingM)
+                        .padding(bottom = Dimens.PaddingM),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    when (pagerState.currentPage) {
+                        0 -> {
+                            Button(
+                                onClick = { donorViewModel.setStep(1) },
+                                enabled = isButtonEnabled,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
+                                ),
+                                shape = RoundedCornerShape(AppShape.MediumShape),
+                                modifier = Modifier
+                                    .height(Dimens.HeightDefault)
+                                    .fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.next),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
                         }
 
-                        Button(
-                            onClick = { donorViewModel.setStep(2) },
-                            enabled = isButtonEnabled,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
-                            ),
-                            shape = RoundedCornerShape(AppShape.MediumShape),
-                            modifier = Modifier
-                                .height(Dimens.HeightDefault)
-                                .fillMaxWidth(0.5f),
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.next),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                            )
-                        }
-                    }
+                        1 -> {
+                            OutlinedButton(
+                                onClick = { donorViewModel.setStep(0) },
+                                border = BorderStroke(1.dp, BloodRed),
+                                colors = ButtonDefaults.buttonColors(
+                                    contentColor = BloodRed,
+                                    containerColor = Color.Transparent
+                                ),
+                                shape = RoundedCornerShape(AppShape.MediumShape),
+                                modifier = Modifier
+                                    .fillMaxWidth(0.3f)
+                                    .height(Dimens.HeightDefault)
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.back),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
 
-                    2 -> {
-                        OutlinedButton(
-                            onClick = { donorViewModel.setStep(1) },
-                            border = BorderStroke(1.dp, BloodRed),
-                            colors = ButtonDefaults.buttonColors(
-                                contentColor = BloodRed,
-                                containerColor = Color.Transparent
-                            ),
-                            shape = RoundedCornerShape(AppShape.MediumShape),
-                            modifier = Modifier
-                                .fillMaxWidth(0.3f)
-                                .height(Dimens.HeightDefault)
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.back),
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                            Button(
+                                onClick = { donorViewModel.setStep(2) },
+                                enabled = isButtonEnabled,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
+                                ),
+                                shape = RoundedCornerShape(AppShape.MediumShape),
+                                modifier = Modifier
+                                    .height(Dimens.HeightDefault)
+                                    .fillMaxWidth(0.5f),
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.next),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
                         }
 
-                        Button(
-                            onClick = { donorViewModel.submitDonor() },
-                            enabled = isButtonEnabled,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
-                            ),
-                            shape = RoundedCornerShape(AppShape.MediumShape),
-                            modifier = Modifier
-                                .height(Dimens.HeightDefault)
-                                .fillMaxWidth(0.5f),
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.submit),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                            )
+                        2 -> {
+                            OutlinedButton(
+                                onClick = { donorViewModel.setStep(1) },
+                                border = BorderStroke(1.dp, BloodRed),
+                                colors = ButtonDefaults.buttonColors(
+                                    contentColor = BloodRed,
+                                    containerColor = Color.Transparent
+                                ),
+                                shape = RoundedCornerShape(AppShape.MediumShape),
+                                modifier = Modifier
+                                    .fillMaxWidth(0.3f)
+                                    .height(Dimens.HeightDefault)
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.back),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+
+                            Button(
+                                onClick = { donorViewModel.submitDonor(context = context) },
+                                enabled = isButtonEnabled,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isButtonEnabled) BloodRed else BloodRed.copy(alpha = 0.2f)
+                                ),
+                                shape = RoundedCornerShape(AppShape.MediumShape),
+                                modifier = Modifier
+                                    .height(Dimens.HeightDefault)
+                                    .fillMaxWidth(0.5f),
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.submit),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .background(color = Color.White)
-                .padding(paddingValues)
-                .padding(top = Dimens.PaddingL),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(id = R.string.profile_setup),
-                color = Color.Black,
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-            Text(
-                text = stringResource(id = R.string.profile_setup_desc),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-            AppLineGrey()
-
-            Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-            Box(
+        ) { paddingValues ->
+            Column(
                 modifier = Modifier
-                    .size(Dimens.SizeXXLPlus)
-                    .clip(CircleShape)
-                    .background(color = BloodRed.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize()
+                    .background(color = Color.White)
+                    .padding(paddingValues)
+                    .padding(top = Dimens.PaddingL),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    Icons.Default.PersonOutline,
-                    contentDescription = null,
-                    tint = BloodRed,
-                    modifier = Modifier
-                        .size(Dimens.SizeL)
+                when(pagerState.currentPage) {
+                    0 -> ProfileSetupTitle(title = stringResource(id = R.string.profile_setup))
+                    1 -> ProfileSetupTitle(title = stringResource(id = R.string.basic_info))
+                    2 -> ProfileSetupTitle(title = stringResource(id = R.string.upload_your_image))
+                }
+
+                Spacer(modifier = Modifier.height(AppSpacing.Large))
+
+                Text(
+                    text = stringResource(id = R.string.profile_setup_desc),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
 
-            Spacer(modifier = Modifier.height(AppSpacing.Medium))
+                Spacer(modifier = Modifier.height(AppSpacing.Large))
 
-            Text(
-                text = stringResource(id = R.string.personal_info),
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                color = Color.Black,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+                AppLineGrey()
 
-            Spacer(modifier = Modifier.height(AppSpacing.Medium))
+                Spacer(modifier = Modifier.height(AppSpacing.Large))
 
-            HorizontalPager(
-                state = pagerState,
-                beyondViewportPageCount = 1,
-                userScrollEnabled = false,
-                flingBehavior = fling,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) { page ->
-                when (page) {
-                    0 -> StepOneScreen(
-                        formState = formState,
-                        onUpdate = { name, phoneNumber, bloodGroup, city ->
-                            donorViewModel.updatePersonalInfo(name, phoneNumber, bloodGroup, city)
-                        }
+                Box(
+                    modifier = Modifier
+                        .size(Dimens.SizeXXLPlus)
+                        .clip(CircleShape)
+                        .background(color = BloodRed.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.PersonOutline,
+                        contentDescription = null,
+                        tint = BloodRed,
+                        modifier = Modifier
+                            .size(Dimens.SizeL)
                     )
+                }
 
-                    1 -> StepTwoScreen(
-                        formState = formState,
-                        onUpdate = { dateOfBirth, age, gender, willingToDonate, about ->
-                            donorViewModel.updateAdditionalInfo(
-                                dateOfBirth,
-                                age,
-                                gender,
-                                willingToDonate,
-                                about
-                            )
-                        }
-                    )
+                Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-                    2 -> StepThreeScreen(
-                        formState = formState,
-                        onUpdate = { profileAvatar ->
-                            donorViewModel.updatePersonalAvatar(profileAvatar)
-                        },
-                    )
+                Text(
+                    text = stringResource(id = R.string.personal_info),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(AppSpacing.Medium))
+
+                HorizontalPager(
+                    state = pagerState,
+                    beyondViewportPageCount = 1,
+                    userScrollEnabled = false,
+                    flingBehavior = fling,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) { page ->
+                    when (page) {
+                        0 -> StepOneScreen(
+                            formState = formState,
+                            onUpdate = { name, phoneNumber, bloodGroup, city ->
+                                donorViewModel.updatePersonalInfo(name, phoneNumber, bloodGroup, city)
+                            }
+                        )
+
+                        1 -> StepTwoScreen(
+                            formState = formState,
+                            onUpdate = { dateOfBirth, age, gender, willingToDonate, about ->
+                                donorViewModel.updateBasicInfo(
+                                    dateOfBirth,
+                                    age,
+                                    gender,
+                                    willingToDonate,
+                                    about
+                                )
+                            }
+                        )
+
+                        2 -> StepThreeScreen(
+                            onSelectAvatar = { uri -> donorViewModel.setLocalAvatar(uri) }
+                        )
+                    }
                 }
             }
         }
     }
+
+    if(formState.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Black.copy(alpha = 0.2f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = BloodRed)
+        }
+    }
+}
+
+@Composable
+fun ProfileSetupTitle(title: String) {
+    Text(
+        text = title,
+        color = Color.Black,
+        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
+    )
 }

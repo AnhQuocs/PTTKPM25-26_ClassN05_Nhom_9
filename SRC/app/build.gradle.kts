@@ -115,8 +115,14 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
 
+    // Firebase Storage
+    implementation("com.google.firebase:firebase-storage-ktx")
+
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
+
+    // Loading network image
+    implementation("io.coil-kt:coil-compose:2.7.0")
 }

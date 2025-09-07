@@ -14,8 +14,7 @@ fun DonorDto.toDomain(): Donor {
         age = age ?: 0,
         gender = gender.orEmpty(),
         willingToDonate = willingToDonate ?: false,
-        about = about.orEmpty(),
-        profileAvatar = profileAvatar.orEmpty(),
+        about = about.orEmpty()
     )
 }
 
@@ -30,7 +29,6 @@ fun Donor.toDto(): DonorDto {
         age = age,
         gender = gender,
         willingToDonate = willingToDonate,
-        about = about,
-        profileAvatar = profileAvatar
+        about = about
     )
 }

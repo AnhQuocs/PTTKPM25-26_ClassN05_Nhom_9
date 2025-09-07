@@ -79,7 +79,8 @@ fun StepThreeScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
@@ -89,10 +90,10 @@ fun StepThreeScreen(
                         width = 4f,
                         pathEffect = PathEffect.dashPathEffect(floatArrayOf(12f, 12f))
                     )
-                    drawRoundRect(
+                    drawCircle(
                         color = if (errorMessage.isNotEmpty()) Color.Red else Color.Gray,
-                        style = stroke,
-                        cornerRadius = CornerRadius(30f, 30f)
+                        radius = size.minDimension / 2 - stroke.width / 2,
+                        style = stroke
                     )
                 }
                 .clip(CircleShape)
@@ -103,7 +104,7 @@ fun StepThreeScreen(
                 AsyncImage(
                     model = localImageUri,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize().clip(CircleShape),
+                    modifier = Modifier.fillMaxSize().padding(1.5.dp).clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
             } else {

@@ -68,6 +68,10 @@
     <string name="upload_your_photo">Upload your profile photo</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <!-- Upload image -->
+    <string name="up_to_1MB">Upload up to 1MB</string>
+    <string name="smaller_1MB">The image must be smaller than 1MB</string>
+    <string name="cannot_read_img">Cannot read the image file</string>
 
     <!-- Others -->
     <string name="send">Send</string>
@@ -75,6 +79,7 @@
     <string name="no">No</string>
     <string name="back">Back</string>
     <string name="submit">Submit</string>
+    <string name="submitted_success">Submitted successfully!</string>
     <string name="cancel">Cancel</string>
 
 </resources>

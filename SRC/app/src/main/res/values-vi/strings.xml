@@ -68,6 +68,10 @@
     <string name="upload_your_photo">Tải lên ảnh hồ sơ</string>
     <string name="male">Nam</string>
     <string name="female">Nữ</string>
+    <!-- Upload image -->
+    <string name="up_to_1MB">Tải lên tối đa 1MB</string>
+    <string name="smaller_1MB">Ảnh phải nhỏ hơn 1MB</string>
+    <string name="cannot_read_img">CaKhông thể đọc file ảnh</string>
 
     <!-- Others -->
     <string name="send">Gửi</string>
@@ -75,6 +79,7 @@
     <string name="no">Không</string>
     <string name="back">Quay lại</string>
     <string name="submit">Xác nhận</string>
+    <string name="submitted_success">Đã gửi thành công!</string>
     <string name="cancel">Quay lại</string>
 
 </resources>

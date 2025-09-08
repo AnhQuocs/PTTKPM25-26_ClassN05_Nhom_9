@@ -72,6 +72,9 @@
     <string name="up_to_1MB">Tải lên tối đa 1MB</string>
     <string name="smaller_1MB">Ảnh phải nhỏ hơn 1MB</string>
     <string name="cannot_read_img">CaKhông thể đọc file ảnh</string>
+    <!-- Exit -->
+    <string name="exit_confirmation">Thoát</string>
+    <string name="exit_message">Bạn có chắc muốn thoát? Các thông tin đã nhập sẽ bị mất</string>
 
     <!-- Others -->
     <string name="send">Gửi</string>
@@ -81,5 +84,6 @@
     <string name="submit">Xác nhận</string>
     <string name="submitted_success">Đã gửi thành công!</string>
     <string name="cancel">Quay lại</string>
+    <string name="ok">Đồng ý</string>
 
 </resources>

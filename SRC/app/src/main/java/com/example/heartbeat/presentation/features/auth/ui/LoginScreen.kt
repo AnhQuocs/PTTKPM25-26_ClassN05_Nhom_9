@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -117,6 +118,7 @@ fun LoginScreen(
                     }
                 } else {
                     val intent = Intent(context, ProfileSetupActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     context.startActivity(intent)
                 }
 
@@ -342,7 +344,8 @@ fun LoginScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = Color.Black.copy(alpha = 0.2f)),
+                    .background(color = Color.Black.copy(alpha = 0.2f))
+                    .pointerInput(Unit) { },
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = BloodRed)

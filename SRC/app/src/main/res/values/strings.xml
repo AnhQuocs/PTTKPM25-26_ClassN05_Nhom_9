@@ -72,6 +72,9 @@
     <string name="up_to_1MB">Upload up to 1MB</string>
     <string name="smaller_1MB">The image must be smaller than 1MB</string>
     <string name="cannot_read_img">Cannot read the image file</string>
+    <!-- Exit -->
+    <string name="exit_confirmation">Exit</string>
+    <string name="exit_message">Are you sure you want to exit? Your progress will be lost</string>
 
     <!-- Others -->
     <string name="send">Send</string>
@@ -81,5 +84,6 @@
     <string name="submit">Submit</string>
     <string name="submitted_success">Submitted successfully!</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
 
 </resources>

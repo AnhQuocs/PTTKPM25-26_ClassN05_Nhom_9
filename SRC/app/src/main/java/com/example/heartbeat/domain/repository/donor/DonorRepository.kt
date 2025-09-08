@@ -5,8 +5,9 @@ import com.example.heartbeat.domain.entity.user.DonorAvatar
 
 interface DonorRepository {
     suspend fun addDonor(donor: Donor)
-    suspend fun getDonor(donorId: String): Donor
+    suspend fun getDonor(donorId: String): Donor?
     suspend fun updateDonor(donorId: String, donor: Donor)
+    suspend fun isDonorProfileExist(userId: String): Boolean
 
     // Thay Uri bằng Base64 string
     suspend fun uploadAvatarBase64(donorId: String, base64: String): String

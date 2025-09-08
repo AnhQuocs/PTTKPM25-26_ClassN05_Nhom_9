@@ -26,6 +26,9 @@ class DonorViewModel @Inject constructor(
     private val _formState = MutableStateFlow(DonorFormState())
     val formState: StateFlow<DonorFormState> = _formState
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     //Personal info
     fun updatePersonalInfo(
         name: String,
@@ -120,5 +123,47 @@ class DonorViewModel @Inject constructor(
 
     fun setStep(step: Int) {
         _formState.update { it.copy(currentStep = step) }
+    }
+
+    fun getDonor(onProfileExists: (Boolean) -> Unit = {}) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+
+                val exists = donorUseCase.isDonorProfileExistUseCase(userId)
+
+                if (exists) {
+                    val donor = donorUseCase.getDonorUseCase(userId)!!
+
+                    _formState.update { current ->
+                        current.copy(
+                            name = donor.name,
+                            phoneNumber = donor.phoneNumber,
+                            bloodGroup = donor.bloodGroup,
+                            city = donor.city,
+                            dateOfBirth = donor.dateOfBirth,
+                            age = donor.age,
+                            gender = donor.gender,
+                            willingToDonate = donor.willingToDonate,
+                            about = donor.about
+                        )
+                    }
+                }
+
+                onProfileExists(exists)
+
+            } catch (e: Exception) {
+                _formState.update { it.copy(error = e.message) }
+                onProfileExists(false)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearError() {
+        _formState.update { it.copy(error = null) }
     }
 }

@@ -1,12 +1,11 @@
 package com.example.heartbeat.domain.usecase.donor
 
-import com.example.heartbeat.domain.entity.user.Donor
 import com.example.heartbeat.domain.repository.donor.DonorRepository
 
-class GetDonorUseCase(
+class IsDonorProfileExistUseCase(
     private val repository: DonorRepository
 ) {
-    suspend operator fun invoke(donorId: String): Donor? {
-        return repository.getDonor(donorId)
+    suspend operator fun invoke(userId: String): Boolean {
+        return repository.isDonorProfileExist(userId)
     }
 }

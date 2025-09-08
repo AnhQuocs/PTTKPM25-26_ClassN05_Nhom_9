@@ -1,6 +1,8 @@
 package com.example.heartbeat.presentation.features.donor.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -54,6 +56,7 @@ import com.example.heartbeat.BaseComponentActivity
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.presentation.features.main.MainActivity
 import com.example.heartbeat.presentation.features.system.province.viewmodel.ProvinceViewModel
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
@@ -68,7 +71,7 @@ class ProfileSetupActivity : BaseComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-
+            ProfileSetupScreen()
         }
     }
 }
@@ -96,9 +99,21 @@ fun ProfileSetupScreen(
     val context = LocalContext.current
 
     val submittedSuccess = stringResource(id = R.string.submitted_success)
-    LaunchedEffect(formState.isSubmitSuccess) {
+
+    LaunchedEffect(formState.isSubmitSuccess, formState.error) {
+
         if (formState.isSubmitSuccess) {
             Toast.makeText(context, submittedSuccess, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(context, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(intent)
+        }
+
+        formState.error?.let { errorMsg ->
+            Log.d("ProfileSetupActivity", errorMsg)
+            Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+            donorViewModel.clearError()
         }
     }
 
@@ -245,11 +260,13 @@ fun ProfileSetupScreen(
                     .padding(top = Dimens.PaddingL),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                when(pagerState.currentPage) {
-                    0 -> ProfileSetupTitle(title = stringResource(id = R.string.profile_setup))
-                    1 -> ProfileSetupTitle(title = stringResource(id = R.string.basic_info))
-                    2 -> ProfileSetupTitle(title = stringResource(id = R.string.upload_your_image))
-                }
+                Text(
+                    text = stringResource(id = R.string.profile_setup),
+                    color = Color.Black,
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 Spacer(modifier = Modifier.height(AppSpacing.Large))
 
@@ -283,13 +300,11 @@ fun ProfileSetupScreen(
 
                 Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-                Text(
-                    text = stringResource(id = R.string.personal_info),
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                when(pagerState.currentPage) {
+                    0 -> ProfileSetupTitle(title = stringResource(id = R.string.personal_info))
+                    1 -> ProfileSetupTitle(title = stringResource(id = R.string.basic_info))
+                    2 -> ProfileSetupTitle(title = stringResource(id = R.string.upload_your_image))
+                }
 
                 Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
@@ -347,8 +362,8 @@ fun ProfileSetupScreen(
 fun ProfileSetupTitle(title: String) {
     Text(
         text = title,
+        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
         color = Color.Black,
-        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth()
     )

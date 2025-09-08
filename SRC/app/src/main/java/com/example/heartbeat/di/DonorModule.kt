@@ -6,6 +6,7 @@ import com.example.heartbeat.domain.usecase.donor.AddDonorUseCase
 import com.example.heartbeat.domain.usecase.donor.DonorUseCase
 import com.example.heartbeat.domain.usecase.donor.GetAvatarUseCase
 import com.example.heartbeat.domain.usecase.donor.GetDonorUseCase
+import com.example.heartbeat.domain.usecase.donor.IsDonorProfileExistUseCase
 import com.example.heartbeat.domain.usecase.donor.SaveAvatarUrlUseCase
 import com.example.heartbeat.domain.usecase.donor.UpdateAvatarUseCase
 import com.example.heartbeat.domain.usecase.donor.UpdateDonorUseCase
@@ -34,6 +35,7 @@ object DonorModule {
         addDonorUseCase = AddDonorUseCase(repository),
         getDonorUseCase = GetDonorUseCase(repository),
         updateDonorUseCase = UpdateDonorUseCase(repository),
+        isDonorProfileExistUseCase = IsDonorProfileExistUseCase(repository),
         uploadAvatarUseCase = UploadAvatarUseCase(repository),
         updateAvatarUseCase = UpdateAvatarUseCase(repository),
         saveAvatarUrlUseCase = SaveAvatarUrlUseCase(repository),

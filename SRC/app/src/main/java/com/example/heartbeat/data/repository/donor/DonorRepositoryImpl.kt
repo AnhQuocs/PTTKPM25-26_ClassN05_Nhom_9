@@ -24,10 +24,9 @@ class DonorRepositoryImpl(
             .await()
     }
 
-    override suspend fun getDonor(donorId: String): Donor {
+    override suspend fun getDonor(donorId: String): Donor? {
         val snapshot = donorCollection.document(donorId).get().await()
-        val dto = snapshot.toObject(DonorDto::class.java)
-            ?: throw Exception("Donor not found")
+        val dto = snapshot.toObject(DonorDto::class.java) ?: return null
         return dto.toDomain()
     }
 
@@ -35,6 +34,11 @@ class DonorRepositoryImpl(
         donorCollection.document(donorId)
             .set(donor.toDto(), SetOptions.merge())
             .await()
+    }
+
+    override suspend fun isDonorProfileExist(userId: String): Boolean {
+        val donor = getDonor(userId)
+        return donor != null
     }
 
     // --- Avatar lưu Base64 ---

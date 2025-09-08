@@ -49,18 +49,22 @@ import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppButton
 import com.example.heartbeat.presentation.features.auth.viewmodel.AuthActionType
 import com.example.heartbeat.presentation.features.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.donor.ui.ProfileSetupActivity
+import com.example.heartbeat.presentation.features.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.FacebookBlue
 import com.example.heartbeat.ui.theme.OceanBlue
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
 @Composable
 fun LoginScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    donorViewModel: DonorViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -106,10 +110,18 @@ fun LoginScreen(
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
-            navController.navigate("main") {
-                popUpTo("login") { inclusive = true }
+            donorViewModel.getDonor { exists ->
+                if (exists) {
+                    navController.navigate("main") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                } else {
+                    val intent = Intent(context, ProfileSetupActivity::class.java)
+                    context.startActivity(intent)
+                }
+
+                authViewModel.clearAuthState()
             }
-            authViewModel.clearAuthState()
         }
     }
 

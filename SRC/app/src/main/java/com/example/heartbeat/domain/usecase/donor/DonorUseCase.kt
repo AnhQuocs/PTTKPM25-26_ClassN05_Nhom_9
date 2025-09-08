@@ -4,6 +4,7 @@ data class DonorUseCase(
     val addDonorUseCase: AddDonorUseCase,
     val getDonorUseCase: GetDonorUseCase,
     val updateDonorUseCase: UpdateDonorUseCase,
+    val isDonorProfileExistUseCase: IsDonorProfileExistUseCase,
 
     val uploadAvatarUseCase: UploadAvatarUseCase,
     val updateAvatarUseCase: UpdateAvatarUseCase,

@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.auth.ui
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,6 +50,8 @@ import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppButton
 import com.example.heartbeat.presentation.features.auth.viewmodel.AuthActionType
 import com.example.heartbeat.presentation.features.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.donor.ui.ProfileSetupActivity
+import com.example.heartbeat.presentation.features.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -59,7 +62,8 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 @Composable
 fun SignUpScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    donorViewModel: DonorViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
@@ -70,9 +74,7 @@ fun SignUpScreen(
     val passwordFocusRequester = remember { FocusRequester() }
 
     val authState by authViewModel.authState.collectAsState()
-    val lastAction by authViewModel.lastAuthAction.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
-    val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
     val emailError by authViewModel.emailError.collectAsState()
     val usernameError by authViewModel.usernameError.collectAsState()
@@ -94,9 +96,18 @@ fun SignUpScreen(
     LaunchedEffect(authState) {
         authState?.onSuccess { user ->
             Toast.makeText(context, "$welcomeText ${user.username}", Toast.LENGTH_SHORT).show()
-            navController.navigate("main") {
-                popUpTo("signup") { inclusive = true }
+
+            donorViewModel.getDonor { exists ->
+                if (exists) {
+                    navController.navigate("main") {
+                        popUpTo("signup") { inclusive = true }
+                    }
+                } else {
+                    val intent = Intent(context, ProfileSetupActivity::class.java)
+                    context.startActivity(intent)
+                }
             }
+
             authViewModel.clearAuthState()
         }?.onFailure {
             Toast.makeText(context, it.message ?: "Sign up failed", Toast.LENGTH_SHORT).show()

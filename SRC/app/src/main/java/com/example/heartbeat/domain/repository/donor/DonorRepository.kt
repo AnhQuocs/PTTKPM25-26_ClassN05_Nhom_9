@@ -9,7 +9,6 @@ interface DonorRepository {
     suspend fun updateDonor(donorId: String, donor: Donor)
     suspend fun isDonorProfileExist(userId: String): Boolean
 
-    // Thay Uri bằng Base64 string
     suspend fun uploadAvatarBase64(donorId: String, base64: String): String
     suspend fun updateAvatarBase64(donorId: String, base64: String): String
 

@@ -29,6 +29,9 @@ class DonorViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _donorAvatar = MutableStateFlow<DonorAvatar?>(null)
+    val donorAvatar: StateFlow<DonorAvatar?> = _donorAvatar
+
     //Personal info
     fun updatePersonalInfo(
         name: String,
@@ -159,6 +162,17 @@ class DonorViewModel @Inject constructor(
                 onProfileExists(false)
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun getAvatar(userId: String) {
+        viewModelScope.launch {
+            try {
+                val avatar = donorUseCase.getAvatarUseCase(userId)
+                _donorAvatar.value = avatar
+            } catch (e: Exception) {
+                _formState.update { it.copy(error = e.message) }
             }
         }
     }

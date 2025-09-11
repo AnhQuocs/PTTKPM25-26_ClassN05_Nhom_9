@@ -47,7 +47,7 @@ class MainActivity : BaseComponentActivity() {
                 }
 
                 composable("main") {
-                    MainScreen()
+                    MainApp()
                 }
             }
         }

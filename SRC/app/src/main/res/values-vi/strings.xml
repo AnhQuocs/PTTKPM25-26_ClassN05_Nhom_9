@@ -86,4 +86,26 @@
     <string name="cancel">Quay lại</string>
     <string name="ok">Đồng ý</string>
 
+    <!-- Main App -->
+    <string name="home">Trang chủ</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="setting">Cài đặt</string>
+    <string name="save_a_life">Cứu người</string>
+    <string name="give_blood">Hiến máu</string>
+
+    <string name="box1_title">Mỗi Giọt</string>
+    <string name="box1_subtitle">Đều Quý</string>
+    <string name="box2_title">Trao Tặng</string>
+    <string name="box2_subtitle">Niềm Tin</string>
+    <string name="box3_title">Trở Thành</string>
+    <string name="box3_subtitle">Người Hùng</string>
+    <string name="box4_title">Sống</string>
+    <string name="box4_subtitle">Khỏe</string>
+    <string name="box5_title">Máu</string>
+    <string name="box5_subtitle">Kết Nối</string>
+    <string name="box6_title">Chia Sẻ</string>
+    <string name="box6_subtitle">Sự Sống</string>
+
+    <string name="why_donate">Vì Sao Nên Hiến Máu?</string>
+
 </resources>

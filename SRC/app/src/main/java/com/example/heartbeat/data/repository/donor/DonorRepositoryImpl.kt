@@ -1,5 +1,6 @@
 package com.example.heartbeat.data.repository.donor
 
+import android.util.Log
 import com.example.heartbeat.data.model.dto.DonorAvatarDto
 import com.example.heartbeat.data.model.dto.DonorDto
 import com.example.heartbeat.data.model.mapper.toDomain
@@ -62,8 +63,14 @@ class DonorRepositoryImpl(
 
     override suspend fun getAvatar(donorId: String): DonorAvatar {
         val snapshot = avatarCollection.document(donorId).get().await()
+        if (!snapshot.exists()) {
+            Log.e("DonorRepository", "Avatar doc not found for donorId=$donorId")
+            throw Exception("Donor avatar not found")
+        }
+
         val dto = snapshot.toObject(DonorAvatarDto::class.java)
-            ?: throw Exception("Donor avatar not found")
-        return dto.toDomain()
+        Log.d("DonorRepository", "Loaded avatar dto=$dto")
+
+        return dto?.toDomain() ?: throw Exception("Donor avatar mapping failed")
     }
 }

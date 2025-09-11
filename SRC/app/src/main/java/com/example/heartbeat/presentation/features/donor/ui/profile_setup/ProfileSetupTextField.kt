@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.donor.ui
+package com.example.heartbeat.presentation.features.donor.ui.profile_setup
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background

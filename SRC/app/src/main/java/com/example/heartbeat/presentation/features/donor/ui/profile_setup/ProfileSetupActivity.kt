@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.donor.ui
+package com.example.heartbeat.presentation.features.donor.ui.profile_setup
 
 import android.content.Intent
 import android.os.Bundle

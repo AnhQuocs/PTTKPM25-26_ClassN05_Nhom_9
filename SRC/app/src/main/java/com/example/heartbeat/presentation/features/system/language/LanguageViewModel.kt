@@ -31,6 +31,9 @@ class LanguageViewModel @Inject constructor(
 
     fun changeLanguage(language: AppLanguage) {
         viewModelScope.launch {
+            LangUtils.currentLang = language.code
+            _currentLanguage.value = language
+
             languageUseCase.updateLanguage(language)
         }
     }

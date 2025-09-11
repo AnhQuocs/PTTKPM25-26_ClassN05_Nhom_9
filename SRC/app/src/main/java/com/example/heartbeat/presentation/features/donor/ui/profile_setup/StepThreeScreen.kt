@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.donor.ui
+package com.example.heartbeat.presentation.features.donor.ui.profile_setup
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke

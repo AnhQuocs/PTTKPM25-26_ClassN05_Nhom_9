@@ -16,7 +16,7 @@
         android:theme="@style/Theme.HeartBeat"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.features.donor.ui.ProfileSetupActivity"
+            android:name=".presentation.features.donor.ui.profile_setup.ProfileSetupActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.features.auth.ui.ForgotPassActivity"

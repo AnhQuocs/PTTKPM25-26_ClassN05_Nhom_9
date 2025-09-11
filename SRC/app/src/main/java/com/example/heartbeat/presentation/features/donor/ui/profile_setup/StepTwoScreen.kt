@@ -1,7 +1,6 @@
-package com.example.heartbeat.presentation.features.donor.ui
+package com.example.heartbeat.presentation.features.donor.ui.profile_setup
 
 import android.icu.util.Calendar
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -54,15 +52,11 @@ import com.example.heartbeat.presentation.features.donor.viewmodel.DonorFormStat
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointBackward
-import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)

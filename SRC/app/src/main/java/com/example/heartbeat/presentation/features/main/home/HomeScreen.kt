@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,8 +99,8 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 Surface(
-                    tonalElevation = if(hasScrolled.value) 12.dp else 0.dp,
-                    shadowElevation = if(hasScrolled.value) 12.dp else 0.dp
+                    tonalElevation = if (hasScrolled.value) 12.dp else 0.dp,
+                    shadowElevation = if (hasScrolled.value) 12.dp else 0.dp
                 ) {
                     Box(
                         modifier = Modifier
@@ -125,17 +127,19 @@ fun HomeScreen(
                     )
                     .background(color = Color.White)
             ) {
-                item {
-                    BannerCard()
-                }
+                item { BannerCard() }
 
-                item {
-                    Spacer(modifier = Modifier.height(AppSpacing.Large))
-                }
+                item { Spacer(modifier = Modifier.height(AppSpacing.Large)) }
 
-                item {
-                    WhyDonateList()
-                }
+                item { BloodGroup() }
+
+                item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
+
+                item { WhyDonateList() }
+
+                item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
+
+//                item { UpcomingEvent() }
             }
         }
     }
@@ -201,21 +205,37 @@ fun BannerCard() {
     }
 }
 
+enum class WhyDonateTextList(@StringRes val title: Int, @StringRes val subTitle: Int) {
+    Box1(R.string.box1_title, R.string.box1_subtitle),
+    Box2(R.string.box2_title, R.string.box2_subtitle),
+    Box3(R.string.box3_title, R.string.box3_subtitle),
+    Box4(R.string.box4_title, R.string.box4_subtitle),
+    Box5(R.string.box5_title, R.string.box5_subtitle),
+    Box6(R.string.box6_title, R.string.box6_subtitle),
+}
+
 @Composable
 fun WhyDonateList() {
-    val colorBgrList = listOf(CompassionBlue, HopeGreen, HeroLavender, VitalPink, UnityPeach, SunshineYellow)
-    val colorTextList = listOf(CompassionBlueText, HopeGreenText, HeroLavenderText, VitalPinkText, UnityPeachText, SunshineYellowText)
+    val colorBgrList =
+        listOf(CompassionBlue, HopeGreen, HeroLavender, VitalPink, UnityPeach, SunshineYellow)
+    val colorTextList = listOf(
+        CompassionBlueText,
+        HopeGreenText,
+        HeroLavenderText,
+        VitalPinkText,
+        UnityPeachText,
+        SunshineYellowText
+    )
 
     val textList = WhyDonateTextList.entries.toTypedArray()
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = Dimens.PaddingM),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
     ) {
-        AppTitle(
-            text = stringResource(id = R.string.why_donate)
-        )
+        AppTitle(text = stringResource(id = R.string.why_donate))
 
         repeat(2) { rowIndex ->
             Row(
@@ -230,23 +250,24 @@ fun WhyDonateList() {
                             .weight(1f)
                             .aspectRatio(1.2f)
                             .clip(RoundedCornerShape(AppShape.MediumShape))
-                            .background(color = colorBgrList[index], RoundedCornerShape(AppShape.MediumShape)),
+                            .background(
+                                color = colorBgrList[index],
+                                RoundedCornerShape(AppShape.MediumShape)
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
-                      Column(
-                          horizontalAlignment = Alignment.CenterHorizontally
-                      ){
-                          Text(
-                              text = stringResource(textList[index].title),
-                              style = MaterialTheme.typography.titleMedium,
-                              color = colorTextList[index]
-                          )
-                          Text(
-                              text = stringResource(textList[index].subTitle),
-                              style = MaterialTheme.typography.titleSmall,
-                              color = Color.Gray
-                          )
-                      }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = stringResource(textList[index].title),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = colorTextList[index]
+                            )
+                            Text(
+                                text = stringResource(textList[index].subTitle),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
             }
@@ -254,11 +275,55 @@ fun WhyDonateList() {
     }
 }
 
-enum class WhyDonateTextList(@StringRes  val title: Int, @StringRes val subTitle: Int) {
-    Box1(R.string.box1_title, R.string.box1_subtitle),
-    Box2(R.string.box2_title, R.string.box2_subtitle),
-    Box3(R.string.box3_title, R.string.box3_subtitle),
-    Box4(R.string.box4_title, R.string.box4_subtitle),
-    Box5(R.string.box5_title, R.string.box5_subtitle),
-    Box6(R.string.box6_title, R.string.box6_subtitle),
+@Composable
+fun BloodGroup() {
+    val bloodLists = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.PaddingM),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
+    ) {
+        AppTitle(text = stringResource(id = R.string.blood_group))
+
+        repeat(2) { rowIndex ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
+            ) {
+                repeat(4) { columnIndex ->
+                    val index = rowIndex * 4 + columnIndex
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1.2f)
+                            .clip(RoundedCornerShape(AppShape.MediumShape))
+                            .border(
+                                1.dp,
+                                color = BloodRed,
+                                shape = RoundedCornerShape(AppShape.MediumShape)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_blood),
+                            contentDescription = null,
+                            modifier = Modifier.padding(Dimens.PaddingSM)
+                        )
+
+                        Text(
+                            text = bloodLists[index],
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.White,
+                            modifier = Modifier.padding(top = 2.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

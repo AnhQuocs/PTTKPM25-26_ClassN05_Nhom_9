@@ -5,12 +5,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,8 +24,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -38,8 +45,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,6 +74,8 @@ import com.example.heartbeat.ui.theme.HeroLavenderText
 import com.example.heartbeat.ui.theme.HopeGreen
 import com.example.heartbeat.ui.theme.HopeGreenText
 import com.example.heartbeat.ui.theme.PeachBackground
+import com.example.heartbeat.ui.theme.Purple40
+import com.example.heartbeat.ui.theme.Purple80
 import com.example.heartbeat.ui.theme.SunshineYellow
 import com.example.heartbeat.ui.theme.SunshineYellowText
 import com.example.heartbeat.ui.theme.UnityPeach
@@ -105,7 +117,7 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(Dimens.HeightXL3 + 10.dp)
+                            .height(Dimens.HeightXL2)
                             .background(color = PeachBackground),
                         contentAlignment = Alignment.Center
                     ) {
@@ -122,10 +134,8 @@ fun HomeScreen(
                 state = scrollState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = paddingValues.calculateTopPadding()
-                    )
                     .background(color = Color.White)
+                    .padding(top = paddingValues.calculateTopPadding())
             ) {
                 item { BannerCard() }
 
@@ -139,7 +149,7 @@ fun HomeScreen(
 
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
 
-//                item { UpcomingEvent() }
+                item { UpcomingEventCard() }
             }
         }
     }
@@ -311,17 +321,126 @@ fun BloodGroup() {
                         Image(
                             painter = painterResource(id = R.drawable.ic_blood),
                             contentDescription = null,
+                            colorFilter = ColorFilter.tint(BloodRed),
                             modifier = Modifier.padding(Dimens.PaddingSM)
                         )
 
                         Text(
                             text = bloodLists[index],
-                            fontSize = 14.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.White,
-                            modifier = Modifier.padding(top = 2.dp)
+                            modifier = Modifier.padding(top = 5.dp)
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun UpcomingEventCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.PaddingM, vertical = Dimens.PaddingS),
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
+    ) {
+        AppTitle(
+            text = stringResource(id = R.string.upcoming_event)
+        )
+
+        Card(
+            modifier = Modifier
+                .height(Dimens.HeightXL3)
+                .aspectRatio(2f),
+            shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = Dimens.PaddingM, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_blood),
+                        contentDescription = null,
+                        tint = BloodRed,
+                        modifier = Modifier.size(Dimens.SizeSM)
+                    )
+                    Spacer(Modifier.width(AppSpacing.Small))
+                    Text(
+                        text = "One Drop, One Life",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = BloodRed
+                        )
+                    )
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = null,
+                        tint = UnityPeachText,
+                        modifier = Modifier.size(Dimens.SizeSM)
+                    )
+                    Spacer(Modifier.width(AppSpacing.Small + 2.dp))
+                    Text(
+                        text = "25/09/2025 - 08:00 AM",
+                        style = MaterialTheme.typography.bodyMedium.copy(color = UnityPeachText)
+                    )
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_hospital),
+                        contentDescription = null,
+                        tint = CompassionBlueText,
+                        modifier = Modifier.size(Dimens.SizeSM)
+                    )
+                    Spacer(Modifier.width(AppSpacing.Small + 2.dp))
+                    Text(
+                        text = "Ha Dong General Hospital",
+                        style = MaterialTheme.typography.bodyMedium.copy(color = CompassionBlueText)
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(AppShape.MediumShape))
+                                .background(Color(0xFFEEEEEE))
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.71f)
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(AppShape.MediumShape))
+                                .background(BloodRed)
+                        )
+                    }
+                    Spacer(Modifier.height(AppSpacing.Small))
+                    Text(
+                        text = "Progress: 71/100",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = BloodRed
+                        )
+                    )
                 }
             }
         }

@@ -92,6 +92,51 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun signUpWithStaffCode(email: String, password: String, username: String, staffCode: String) {
+        var isValid = true
+        _lastAuthAction.value = AuthActionType.SIGN_UP
+
+        if (!Validator.isValidEmail(email)) {
+            _emailError.value = "Invalid email format"
+            isValid = false
+        } else {
+            _emailError.value = null
+        }
+
+        if (!Validator.isValidPassword(password)) {
+            _passwordError.value = "Password must be at least 8 characters long"
+            isValid = false
+        } else {
+            _passwordError.value = null
+        }
+
+        if (!Validator.isValidUsername(username)) {
+            _usernameError.value = "Username cannot be empty"
+            isValid = false
+        } else {
+            _usernameError.value = null
+        }
+
+        if (staffCode.isBlank()) {
+            _errorMessage.value = "Staff code cannot be empty"
+            isValid = false
+        }
+
+        if (!isValid) return
+
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                val result = authUseCases.signUpWithStaffCode(email, password, username, staffCode)
+                _authState.value = result
+            } catch (e: Exception) {
+                _authState.value = Result.failure(e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     fun login(email: String, password: String) {
         var isValid = true
         _lastAuthAction.value = AuthActionType.LOGIN

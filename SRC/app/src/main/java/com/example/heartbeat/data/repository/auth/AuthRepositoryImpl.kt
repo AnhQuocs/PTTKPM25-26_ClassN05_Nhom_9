@@ -18,8 +18,37 @@ class AuthRepositoryImpl(
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid ?: return Result.failure(Exception("User is null"))
 
-            val user = AuthUser(uid, email, username)
+            val user = AuthUser(uid, email, username, role = "user")
             firestore.collection("users").document(uid).set(user.toDto()).await()
+
+            Result.success(user)
+        } catch (e: Exception) {
+            auth.currentUser?.delete()?.await()
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun signUpWithStaffCode(
+        email: String,
+        password: String,
+        username: String,
+        staffCode: String
+    ): Result<AuthUser> {
+        return try {
+            // check staff code
+            val staffDoc = firestore.collection("staffCodes").document(staffCode).get().await()
+            if(!staffDoc.exists() || staffDoc.getString("usedBy") != null) {
+                return Result.failure(Exception("Invalid or already used staff code"))
+            }
+
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            val uid = result.user?.uid ?: return Result.failure(Exception("User is null"))
+
+            val user = AuthUser(uid = uid, email = email, username = username, role = "staff")
+            firestore.collection("users").document(uid).set(user.toDto()).await()
+
+            // update staffCodes -> assign usedBy
+            firestore.collection("staffCodes").document(staffCode).update("usedBy", uid).await()
 
             Result.success(user)
         } catch (e: Exception) {

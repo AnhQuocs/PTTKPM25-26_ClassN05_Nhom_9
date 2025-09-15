@@ -5,6 +5,7 @@ import com.example.heartbeat.domain.repository.auth.AuthRepository
 
 data class AuthUseCases(
     val signUp: SignUpUseCase,
+    val signUpWithStaffCode: SignUpWithStaffCodeUseCase,
     val login: LoginUseCase,
     val logout: LogOutUseCase,
     val resetPassword: ResetPasswordUseCase,
@@ -14,6 +15,11 @@ data class AuthUseCases(
 class SignUpUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, password: String, username: String) =
         repository.signUp(email, password, username)
+}
+
+class SignUpWithStaffCodeUseCase(private val repository: AuthRepository) {
+    suspend operator fun invoke(email: String, password: String, username: String, staffCode: String) =
+        repository.signUpWithStaffCode(email, password, username, staffCode)
 }
 
 class LoginUseCase(private val repository: AuthRepository) {

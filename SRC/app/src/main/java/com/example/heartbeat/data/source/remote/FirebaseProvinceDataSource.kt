@@ -5,7 +5,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
-class ProvinceDataSource() {
+class FirebaseProvinceDataSource() {
 
     private val collection = Firebase.firestore.collection("provinces")
 

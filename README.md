@@ -5,6 +5,7 @@
 ![MVVM](https://img.shields.io/badge/MVVM-FF6F00?style=for-the-badge&logo=android&logoColor=white)
 ![Clean Architecture](https://img.shields.io/badge/Clean%20Architecture-009688?style=for-the-badge&logo=architecture&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
 ![DataStore](https://img.shields.io/badge/DataStore-3DDC84?style=for-the-badge&logo=android&logoColor=white)
 ![Gradle Kotlin DSL](https://img.shields.io/badge/Gradle%20Kotlin%20DSL-02303A?style=for-the-badge&logo=gradle&logoColor=white)
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
@@ -68,3 +69,4 @@ Tài liệu chi tiết: [Wiki Project](https://github.com/AnhQuocs/PTTKPM25-26_C
 - Xây dựng hệ thống đăng ký hiến máu trực tuyến đơn giản, an toàn và tiện lợi.  
 - Kết nối cộng đồng, khuyến khích tinh thần hiến máu nhân đạo.  
 - Hỗ trợ đơn vị tổ chức quản lý sự kiện nhanh chóng và hiệu quả.  
+

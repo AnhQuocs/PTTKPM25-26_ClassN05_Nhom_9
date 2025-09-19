@@ -24,14 +24,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
+import com.example.heartbeat.presentation.features.auth.viewmodel.OnboardingDataStore
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.ApiStatus.Experimental
@@ -81,7 +84,9 @@ fun OnboardingPager(
     item: List<OnboardingData>,
     pagerState: PagerState,
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    onboardingDataStore: OnboardingDataStore = LocalContext.current.applicationContext
+        .let { context -> OnboardingDataStore(context) }
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -137,6 +142,9 @@ fun OnboardingPager(
 
             Button(
                 onClick = {
+                    coroutineScope.launch {
+                        onboardingDataStore.setHasOnboarded(true)
+                    }
                     if(pagerState.currentPage < item.lastIndex) {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)

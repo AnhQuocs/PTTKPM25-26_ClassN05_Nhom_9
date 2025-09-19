@@ -1,5 +1,7 @@
 package com.example.heartbeat.presentation.features.auth.viewmodel
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.heartbeat.domain.entity.user.AuthUser
@@ -206,11 +208,10 @@ class AuthViewModel @Inject constructor(
             _isUserLoading.value = true
             try {
                 val user = authUseCases.getCurrentUser()
-                if (user != null) {
-                    _authState.value = Result.success(user)
-                } else {
-                    _authState.value = null
-                }
+                if (user != null) _authState.value = Result.success(user) else _authState.value = null
+            } catch (e: Exception) {
+                Log.e(TAG, "failed to load current user", e)
+                _authState.value = Result.failure(e)
             } finally {
                 _isUserLoading.value = false
             }

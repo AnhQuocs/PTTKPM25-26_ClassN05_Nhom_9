@@ -34,6 +34,10 @@ object AppModule {
 
     // HOSPITAL
     @Provides
+    fun provideHospitalDataSource(): FirebaseHospitalDataSource =
+        FirebaseHospitalDataSource()
+
+    @Provides
     @Singleton
     fun provideHospitalRepository(
         dataSource: FirebaseHospitalDataSource

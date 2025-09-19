@@ -10,78 +10,51 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImpl(
-    private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
-): AuthRepository {
-    override suspend fun signUp(email: String, password: String, username: String): Result<AuthUser> {
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            val uid = result.user?.uid ?: return Result.failure(Exception("User is null"))
+    private val auth: FirebaseAuth, private val firestore: FirebaseFirestore
+) : AuthRepository {
 
-            val user = AuthUser(uid, email, username, role = "user")
-            firestore.collection("users").document(uid).set(user.toDto()).await()
+    override suspend fun signUp(
+        email: String, password: String, username: String
+    ): Result<AuthUser> = runCatching {
+        val uid = createFirebaseUser(email, password)
+        val user = AuthUser(uid, email, username, role = "user")
 
-            Result.success(user)
-        } catch (e: Exception) {
-            auth.currentUser?.delete()?.await()
-            Result.failure(e)
-        }
+        saveUserToFirestore(uid, user)
+        user
+    }.onFailure {
+        deleteCurrentUserIfExists()
     }
 
     override suspend fun signUpWithStaffCode(
-        email: String,
-        password: String,
-        username: String,
-        staffCode: String
-    ): Result<AuthUser> {
-        return try {
-            // check staff code
-            val staffDoc = firestore.collection("staffCodes").document(staffCode).get().await()
-            if(!staffDoc.exists() || staffDoc.getString("usedBy") != null) {
-                return Result.failure(Exception("Invalid or already used staff code"))
-            }
+        email: String, password: String, username: String, staffCode: String
+    ): Result<AuthUser> = runCatching {
+        validateStaffCode(staffCode)
 
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            val uid = result.user?.uid ?: return Result.failure(Exception("User is null"))
+        val uid = createFirebaseUser(email, password)
+        val user = AuthUser(uid, email, username, role = "staff")
 
-            val user = AuthUser(uid = uid, email = email, username = username, role = "staff")
-            firestore.collection("users").document(uid).set(user.toDto()).await()
+        saveUserToFirestore(uid, user)
+        markStaffCodeAsUsed(staffCode, uid)
 
-            // update staffCodes -> assign usedBy
-            firestore.collection("staffCodes").document(staffCode).update("usedBy", uid).await()
-
-            Result.success(user)
-        } catch (e: Exception) {
-            auth.currentUser?.delete()?.await()
-            Result.failure(e)
-        }
+        user
+    }.onFailure {
+        deleteCurrentUserIfExists()
     }
 
-    override suspend fun login(email: String, password: String): Result<AuthUser> {
-        return try {
-            val result = auth.signInWithEmailAndPassword(email, password).await()
-            val uid = result.user?.uid ?: return Result.failure(Exception("User is null"))
-
-            val snapshot = firestore.collection("users").document(uid).get().await()
-            val userDto = snapshot.toObject(AuthUserDto::class.java)
-                ?: return Result.failure(Exception("User not found"))
-            Result.success(userDto.toDomain())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override suspend fun login(
+        email: String, password: String
+    ): Result<AuthUser> = runCatching {
+        val result = auth.signInWithEmailAndPassword(email, password).await()
+        val uid = result.user?.uid ?: throw Exception("User is null")
+        getUserFromFirestore(uid) ?: throw Exception("User not found")
     }
 
     override suspend fun logout() {
         auth.signOut()
     }
 
-    override suspend fun resetPassword(email: String): Result<Unit> {
-        return try {
-            auth.sendPasswordResetEmail(email).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override suspend fun resetPassword(email: String): Result<Unit> = runCatching {
+        auth.sendPasswordResetEmail(email).await()
     }
 
     override suspend fun getCurrentUserFromFirestore(): AuthUser? {
@@ -93,5 +66,36 @@ class AuthRepositoryImpl(
 
     override fun isUserLoggedIn(): Boolean {
         return auth.currentUser != null
+    }
+
+    // ===================== PRIVATE HELPERS =====================
+
+    private suspend fun createFirebaseUser(email: String, password: String): String {
+        val result = auth.createUserWithEmailAndPassword(email, password).await()
+        return result.user?.uid ?: throw Exception("User is null")
+    }
+
+    private suspend fun saveUserToFirestore(uid: String, user: AuthUser) {
+        firestore.collection("users").document(uid).set(user.toDto()).await()
+    }
+
+    private suspend fun getUserFromFirestore(uid: String): AuthUser? {
+        val snapshot = firestore.collection("users").document(uid).get().await()
+        return snapshot.toObject(AuthUserDto::class.java)?.toDomain()
+    }
+
+    private suspend fun validateStaffCode(staffCode: String) {
+        val staffDoc = firestore.collection("staffCodes").document(staffCode).get().await()
+        if (!staffDoc.exists() || staffDoc.getString("usedBy") != null) {
+            throw Exception("Invalid or already used staff code")
+        }
+    }
+
+    private suspend fun markStaffCodeAsUsed(staffCode: String, uid: String) {
+        firestore.collection("staffCodes").document(staffCode).update("usedBy", uid).await()
+    }
+
+    private suspend fun deleteCurrentUserIfExists() {
+        auth.currentUser?.delete()?.await()
     }
 }

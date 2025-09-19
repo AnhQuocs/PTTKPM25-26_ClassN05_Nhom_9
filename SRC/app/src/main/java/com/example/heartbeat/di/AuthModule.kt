@@ -3,6 +3,7 @@ package com.example.heartbeat.di
 import com.example.heartbeat.data.repository.auth.AuthRepositoryImpl
 import com.example.heartbeat.domain.repository.auth.AuthRepository
 import com.example.heartbeat.domain.usecase.auth.AuthUseCases
+import com.example.heartbeat.domain.usecase.auth.CheckUserLoggedInUseCase
 import com.example.heartbeat.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.heartbeat.domain.usecase.auth.LogOutUseCase
 import com.example.heartbeat.domain.usecase.auth.LoginUseCase
@@ -38,6 +39,7 @@ object AuthModule{
         login = LoginUseCase(repository),
         logout = LogOutUseCase(repository),
         getCurrentUser = GetCurrentUserUseCase(repository),
-        resetPassword = ResetPasswordUseCase(repository)
+        resetPassword = ResetPasswordUseCase(repository),
+        checkUserLoggedInUseCase = CheckUserLoggedInUseCase(repository)
     )
 }

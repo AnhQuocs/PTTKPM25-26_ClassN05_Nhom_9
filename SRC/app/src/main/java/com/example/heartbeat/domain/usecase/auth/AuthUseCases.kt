@@ -2,6 +2,7 @@ package com.example.heartbeat.domain.usecase.auth
 
 import com.example.heartbeat.domain.entity.user.AuthUser
 import com.example.heartbeat.domain.repository.auth.AuthRepository
+import javax.inject.Inject
 
 data class AuthUseCases(
     val signUp: SignUpUseCase,
@@ -9,7 +10,8 @@ data class AuthUseCases(
     val login: LoginUseCase,
     val logout: LogOutUseCase,
     val resetPassword: ResetPasswordUseCase,
-    val getCurrentUser: GetCurrentUserUseCase
+    val getCurrentUser: GetCurrentUserUseCase,
+    val checkUserLoggedInUseCase: CheckUserLoggedInUseCase
 )
 
 class SignUpUseCase(private val repository: AuthRepository) {
@@ -39,5 +41,13 @@ class ResetPasswordUseCase(private val repository: AuthRepository) {
 class GetCurrentUserUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(): AuthUser? {
         return repository.getCurrentUserFromFirestore()
+    }
+}
+
+class CheckUserLoggedInUseCase @Inject constructor(
+    private val repository: AuthRepository
+) {
+    operator fun invoke(): Boolean {
+        return repository.isUserLoggedIn()
     }
 }

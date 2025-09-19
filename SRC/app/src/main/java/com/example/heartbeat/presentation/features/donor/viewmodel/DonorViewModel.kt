@@ -84,7 +84,7 @@ class DonorViewModel @Inject constructor(
 
     // Submit donor + upload avatar
     fun submitDonor(context: Context) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "test"
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         viewModelScope.launch {
             try {

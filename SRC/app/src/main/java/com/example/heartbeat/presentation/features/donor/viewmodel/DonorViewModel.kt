@@ -131,6 +131,8 @@ class DonorViewModel @Inject constructor(
     fun getDonor(onProfileExists: (Boolean) -> Unit = {}) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        Log.d("DonorViewModel", "User id: $userId")
+
         viewModelScope.launch {
             try {
                 _isLoading.value = true

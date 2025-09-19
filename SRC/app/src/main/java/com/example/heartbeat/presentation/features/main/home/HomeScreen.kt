@@ -1,11 +1,10 @@
 package com.example.heartbeat.presentation.features.main.home
 
-import androidx.annotation.DrawableRes
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,11 +24,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -46,13 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,8 +67,6 @@ import com.example.heartbeat.ui.theme.HeroLavenderText
 import com.example.heartbeat.ui.theme.HopeGreen
 import com.example.heartbeat.ui.theme.HopeGreenText
 import com.example.heartbeat.ui.theme.PeachBackground
-import com.example.heartbeat.ui.theme.Purple40
-import com.example.heartbeat.ui.theme.Purple80
 import com.example.heartbeat.ui.theme.SunshineYellow
 import com.example.heartbeat.ui.theme.SunshineYellowText
 import com.example.heartbeat.ui.theme.UnityPeach
@@ -89,67 +80,85 @@ fun HomeScreen(
     donorViewModel: DonorViewModel = hiltViewModel()
 ) {
     val authState by authViewModel.authState.collectAsState()
-    val avatar by donorViewModel.donorAvatar.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
+    val avatar by donorViewModel.donorAvatar.collectAsState()
+    val isLoading by donorViewModel.isLoading.collectAsState()
 
     val scrollState = rememberLazyListState()
-    val hasScrolled = remember {
+    val hasScrolled by remember {
         derivedStateOf {
             scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0
         }
     }
 
+    val user = authState?.getOrNull()
+
     LaunchedEffect(authState) {
-        val user = authState?.getOrNull()
-        if (user != null) {
+        user?.let {
+            Log.d("HomeScreen", "Fetching donor data for ${it.uid}")
             donorViewModel.getDonor()
-            donorViewModel.getAvatar(user.uid)
+            donorViewModel.getAvatar(it.uid)
         }
     }
 
-    authState?.onSuccess { user ->
-        Scaffold(
-            topBar = {
-                Surface(
-                    tonalElevation = if (hasScrolled.value) 12.dp else 0.dp,
-                    shadowElevation = if (hasScrolled.value) 12.dp else 0.dp
+    Scaffold(
+        topBar = {
+            Surface(
+                tonalElevation = if (hasScrolled) 12.dp else 0.dp,
+                shadowElevation = if (hasScrolled) 12.dp else 0.dp
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(Dimens.HeightXL2)
+                        .background(PeachBackground),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(Dimens.HeightXL2)
-                            .background(color = PeachBackground),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    user?.let {
                         UserTopBar(
                             avatar = avatar,
                             formState = formState,
-                            user = user
+                            user = it
                         )
                     }
                 }
             }
-        ) { paddingValues ->
+        }
+    ) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(48.dp)
+                )
+            }
+
             LazyColumn(
                 state = scrollState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = Color.White)
+                    .background(Color.White)
                     .padding(top = paddingValues.calculateTopPadding())
             ) {
                 item { BannerCard() }
-
                 item { Spacer(modifier = Modifier.height(AppSpacing.Large)) }
-
                 item { BloodGroup() }
-
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
-
                 item { WhyDonateList() }
-
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
-
                 item { UpcomingEventCard() }
+            }
+
+            formState.error?.let { errorMsg ->
+                Text(
+                    text = errorMsg,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                )
             }
         }
     }
@@ -157,7 +166,6 @@ fun HomeScreen(
 
 @Composable
 fun BannerCard() {
-
     val colorList = listOf(BloodRed, AquaDeep, AquaMist)
 
     Card(

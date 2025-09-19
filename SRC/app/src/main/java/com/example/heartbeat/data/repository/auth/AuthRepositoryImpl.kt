@@ -10,7 +10,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class AuthRepositoryImpl(
-    private val auth: FirebaseAuth, private val firestore: FirebaseFirestore
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : AuthRepository {
 
     override suspend fun signUp(
@@ -57,11 +58,14 @@ class AuthRepositoryImpl(
         auth.sendPasswordResetEmail(email).await()
     }
 
-    override suspend fun getCurrentUserFromFirestore(): AuthUser? {
-        val uid = auth.currentUser?.uid ?: return null
-        val snapshot = firestore.collection("users").document(uid).get().await()
-        val userDto = snapshot.toObject(AuthUserDto::class.java) ?: return null
-        return userDto.toDomain()
+    override suspend fun getCurrentUser(): AuthUser? {
+        val user = auth.currentUser ?: return null
+        return AuthUser(
+            uid = user.uid,
+            email = user.email,
+            username = user.displayName,
+            role = "user"
+        )
     }
 
     override fun isUserLoggedIn(): Boolean {

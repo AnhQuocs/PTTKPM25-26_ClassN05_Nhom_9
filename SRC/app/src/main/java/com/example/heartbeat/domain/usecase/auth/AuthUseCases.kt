@@ -38,15 +38,15 @@ class ResetPasswordUseCase(private val repository: AuthRepository) {
         repository.resetPassword(email)
 }
 
-class GetCurrentUserUseCase(private val repository: AuthRepository) {
+class GetCurrentUserUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+) {
     suspend operator fun invoke(): AuthUser? {
-        return repository.getCurrentUserFromFirestore()
+        return authRepository.getCurrentUser()
     }
 }
 
-class CheckUserLoggedInUseCase @Inject constructor(
-    private val repository: AuthRepository
-) {
+class CheckUserLoggedInUseCase(private val repository: AuthRepository) {
     operator fun invoke(): Boolean {
         return repository.isUserLoggedIn()
     }

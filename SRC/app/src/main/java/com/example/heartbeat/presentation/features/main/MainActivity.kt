@@ -59,6 +59,10 @@ fun SplashScreen(
     val hasOnboarded by viewModel.hasOnboarded.collectAsState(initial = false)
     val isLoading by viewModel.isLoading.collectAsState()
 
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Loading...")
+    }
+
     LaunchedEffect(isLoading) {
         if (!isLoading) {
             when {

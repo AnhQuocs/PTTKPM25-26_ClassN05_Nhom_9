@@ -3,14 +3,11 @@ package com.example.heartbeat.presentation.features.main.home
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,7 +30,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.user.AuthUser
 import com.example.heartbeat.domain.entity.user.DonorAvatar
@@ -41,7 +37,6 @@ import com.example.heartbeat.presentation.features.donor.viewmodel.DonorFormStat
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.Green500
-import com.example.heartbeat.ui.theme.PeachBackground
 
 fun base64ToImageBitmap(base64: String): ImageBitmap? {
     return try {

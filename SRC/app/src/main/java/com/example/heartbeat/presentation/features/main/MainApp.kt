@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
 import com.example.heartbeat.presentation.components.BottomAppBar
 import com.example.heartbeat.presentation.features.main.home.HomeScreen
 import com.example.heartbeat.presentation.features.search.SearchScreen
@@ -29,7 +30,7 @@ import com.example.heartbeat.presentation.features.system.setting.SettingScreen
 import com.example.heartbeat.ui.dimens.Dimens
 
 @Composable
-fun MainApp() {
+fun MainApp(navController: NavController) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var previousTabIndex by remember { mutableIntStateOf(0) }
 
@@ -93,7 +94,7 @@ fun MainApp() {
             when(tab) {
                 0 -> HomeScreen()
                 1 -> SearchScreen()
-                2 -> SettingScreen()
+                2 -> SettingScreen(navController)
             }
         }
     }

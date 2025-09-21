@@ -26,6 +26,8 @@
     <string name="forgot_pass_sent">Chúng tôi đã gửi email xác thực đến địa chỉ của bạn. Vui lòng kiểm tra hộp thư để đặt lại mật khẩu</string>
     <string name="forgot_pass_error">Đã xảy ra lỗi, hãy kiểm tra lại thông tin và thử lại</string>
     <string name="forgot_pass_if_exists">Nếu email tồn tại trong hệ thống của chúng tôi, một liên kết đặt lại mật khẩu sẽ được gửi</string>
+    <string name="staff_or_admin_code">Mã nhân viên/quản trị viên</string>
+    <string name="code">Mã truy cập</string>
 
     <string name="login_success">Đăng nhập thành công!</string>
     <string name="sign_up_success">Đăng ký thành công! Hãy đăng nhập để sử dụng dịch vụ!</string>

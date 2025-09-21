@@ -99,7 +99,7 @@ fun SignUpScreen(
             donorViewModel.getDonor { exists ->
                 if (exists) {
                     navController.navigate("main") {
-                        popUpTo("signup") { inclusive = true }
+                        popUpTo("signUp") { inclusive = true }
                     }
                 } else {
                     val intent = Intent(context, ProfileSetupActivity::class.java)

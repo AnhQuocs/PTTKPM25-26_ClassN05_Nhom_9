@@ -26,16 +26,37 @@ class AuthRepositoryImpl(
         deleteCurrentUserIfExists()
     }
 
-    override suspend fun signUpWithStaffCode(
-        email: String, password: String, username: String, staffCode: String
+    override suspend fun signUpWithCode(
+        email: String,
+        password: String,
+        username: String,
+        roleCode: String
     ): Result<AuthUser> = runCatching {
-        validateStaffCode(staffCode)
-
         val uid = createFirebaseUser(email, password)
-        val user = AuthUser(uid, email, username, role = "staff")
 
+        val role = when {
+            roleCode == "HBAM999" -> "admin"
+            else -> {
+                val codeDoc = firestore.collection("roleCodes")
+                    .document(roleCode)
+                    .get()
+                    .await()
+                if (!codeDoc.exists() || codeDoc.getString("usedBy") != null) {
+                    throw Exception("Invalid or already used staff code")
+                }
+                "staff"
+            }
+        }
+
+        val user = AuthUser(uid, email, username, role)
         saveUserToFirestore(uid, user)
-        markStaffCodeAsUsed(staffCode, uid)
+
+        if (role == "staff") {
+            firestore.collection("roleCodes")
+                .document(roleCode)
+                .update("usedBy", uid)
+                .await()
+        }
 
         user
     }.onFailure {
@@ -50,6 +71,38 @@ class AuthRepositoryImpl(
         getUserFromFirestore(uid) ?: throw Exception("User not found")
     }
 
+    override suspend fun loginWithCode(
+        email: String,
+        password: String,
+        roleCode: String
+    ): Result<AuthUser> {
+        return try {
+            val result = auth.signInWithEmailAndPassword(email, password).await()
+            val user = result.user ?: return Result.failure(Exception("Login failed"))
+
+            val role = if (roleCode == "HBAM999") {
+                "admin"
+            } else {
+                val codeDoc = firestore.collection("roleCodes")
+                    .document(roleCode)
+                    .get()
+                    .await()
+                if (codeDoc.exists()) codeDoc.getString("role") ?: "user" else "user"
+            }
+
+            Result.success(
+                AuthUser(
+                    uid = user.uid,
+                    email = user.email ?: "",
+                    username = user.displayName,
+                    role = role
+                )
+            )
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun logout() {
         auth.signOut()
     }
@@ -60,12 +113,8 @@ class AuthRepositoryImpl(
 
     override suspend fun getCurrentUser(): AuthUser? {
         val user = auth.currentUser ?: return null
-        return AuthUser(
-            uid = user.uid,
-            email = user.email,
-            username = user.displayName,
-            role = "user"
-        )
+        val doc = firestore.collection("users").document(user.uid).get().await()
+        return doc.toObject(AuthUserDto::class.java)?.toDomain()
     }
 
     override fun isUserLoggedIn(): Boolean {

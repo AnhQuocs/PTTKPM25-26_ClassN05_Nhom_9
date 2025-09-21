@@ -142,9 +142,6 @@ fun OnboardingPager(
 
             Button(
                 onClick = {
-                    coroutineScope.launch {
-                        onboardingDataStore.setHasOnboarded(true)
-                    }
                     if(pagerState.currentPage < item.lastIndex) {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)

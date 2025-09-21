@@ -26,6 +26,8 @@
     <string name="forgot_pass_sent">We\'ve sent a verification email to your email address. Check your inbox to reset your password</string>
     <string name="forgot_pass_error">An error has occurred, please check the information and try again</string>
     <string name="forgot_pass_if_exists">If the email exists in our system, a password reset link will be sent</string>
+    <string name="staff_or_admin_code">Staff/Admin Code</string>
+    <string name="code">Code</string>
 
     <string name="login_success">Login successful!</string>
     <string name="sign_up_success">Sign up successful! Please log in to use the service.</string>

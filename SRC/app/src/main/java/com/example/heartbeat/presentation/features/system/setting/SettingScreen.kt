@@ -27,13 +27,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.heartbeat.domain.entity.system.AppLanguage
+import com.example.heartbeat.presentation.components.AppButton
+import com.example.heartbeat.presentation.features.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.system.language.LanguageViewModel
 import com.example.heartbeat.utils.LangUtils
 
 @Composable
 fun SettingScreen(
-    languageViewModel: LanguageViewModel = hiltViewModel()
+    navController: NavController,
+    languageViewModel: LanguageViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val activity = context as? ComponentActivity
@@ -101,5 +106,15 @@ fun SettingScreen(
         ) {
             Text("Change")
         }
+
+        AppButton(
+            onClick = {
+                authViewModel.logout()
+                navController.navigate("login") {
+                    popUpTo("main") { inclusive = true }
+                }
+            },
+            text = "Logout"
+        )
     }
 }

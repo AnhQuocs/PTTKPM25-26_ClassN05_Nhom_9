@@ -7,9 +7,10 @@ import com.example.heartbeat.domain.usecase.auth.CheckUserLoggedInUseCase
 import com.example.heartbeat.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.heartbeat.domain.usecase.auth.LogOutUseCase
 import com.example.heartbeat.domain.usecase.auth.LoginUseCase
+import com.example.heartbeat.domain.usecase.auth.LoginWithCodeUseCase
 import com.example.heartbeat.domain.usecase.auth.ResetPasswordUseCase
 import com.example.heartbeat.domain.usecase.auth.SignUpUseCase
-import com.example.heartbeat.domain.usecase.auth.SignUpWithStaffCodeUseCase
+import com.example.heartbeat.domain.usecase.auth.SignUpWithCodeUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -35,8 +36,9 @@ object AuthModule{
     @Provides
     fun provideAuthUseCase(repository: AuthRepository) = AuthUseCases(
         signUp = SignUpUseCase(repository),
-        signUpWithStaffCode = SignUpWithStaffCodeUseCase(repository),
+        signUpWithCode = SignUpWithCodeUseCase(repository),
         login = LoginUseCase(repository),
+        loginWithCode = LoginWithCodeUseCase(repository),
         logout = LogOutUseCase(repository),
         getCurrentUser = GetCurrentUserUseCase(repository),
         resetPassword = ResetPasswordUseCase(repository),

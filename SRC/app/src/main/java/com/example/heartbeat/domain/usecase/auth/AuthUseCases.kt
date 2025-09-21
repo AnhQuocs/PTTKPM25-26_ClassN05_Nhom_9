@@ -6,8 +6,9 @@ import javax.inject.Inject
 
 data class AuthUseCases(
     val signUp: SignUpUseCase,
-    val signUpWithStaffCode: SignUpWithStaffCodeUseCase,
+    val signUpWithCode: SignUpWithCodeUseCase,
     val login: LoginUseCase,
+    val loginWithCode: LoginWithCodeUseCase,
     val logout: LogOutUseCase,
     val resetPassword: ResetPasswordUseCase,
     val getCurrentUser: GetCurrentUserUseCase,
@@ -19,14 +20,19 @@ class SignUpUseCase(private val repository: AuthRepository) {
         repository.signUp(email, password, username)
 }
 
-class SignUpWithStaffCodeUseCase(private val repository: AuthRepository) {
+class SignUpWithCodeUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, password: String, username: String, staffCode: String) =
-        repository.signUpWithStaffCode(email, password, username, staffCode)
+        repository.signUpWithCode(email, password, username, staffCode)
 }
 
 class LoginUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, password: String) =
         repository.login(email, password)
+}
+
+class LoginWithCodeUseCase(private val repository: AuthRepository) {
+    suspend operator fun invoke(email: String, password: String, staffCode: String) =
+        repository.loginWithCode(email, password, staffCode)
 }
 
 class LogOutUseCase(private val repository: AuthRepository) {

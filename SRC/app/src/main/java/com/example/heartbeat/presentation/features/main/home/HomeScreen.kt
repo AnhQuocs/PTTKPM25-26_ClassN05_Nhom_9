@@ -93,11 +93,15 @@ fun HomeScreen(
 
     val user = authState?.getOrNull()
 
+    LaunchedEffect(Unit) {
+        authViewModel.loadCurrentUser()
+    }
+
     LaunchedEffect(authState) {
-        user?.let {
-            Log.d("HomeScreen", "Fetching donor data for ${it.uid}")
+        authState?.getOrNull()?.let { user ->
+            Log.d("HomeScreen", "Fetching donor data for ${user.uid}")
             donorViewModel.getDonor()
-            donorViewModel.getAvatar(it.uid)
+            donorViewModel.getAvatar(user.uid)
         }
     }
 

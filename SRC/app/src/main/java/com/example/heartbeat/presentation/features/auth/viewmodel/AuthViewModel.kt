@@ -39,6 +39,9 @@ class AuthViewModel @Inject constructor(
     private val _usernameError = MutableStateFlow<String?>(null)
     val usernameError: StateFlow<String?> = _usernameError
 
+    private val _codeError = MutableStateFlow<String?>(null)
+    val codeError: StateFlow<String?> = _codeError
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -94,7 +97,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signUpWithStaffCode(email: String, password: String, username: String, staffCode: String) {
+    fun signUpWithStaffCode(email: String, password: String, username: String, code: String) {
         var isValid = true
         _lastAuthAction.value = AuthActionType.SIGN_UP
 
@@ -119,8 +122,8 @@ class AuthViewModel @Inject constructor(
             _usernameError.value = null
         }
 
-        if (staffCode.isBlank()) {
-            _errorMessage.value = "Staff code cannot be empty"
+        if (code.isBlank()) {
+            _codeError.value = "Staff code cannot be empty"
             isValid = false
         }
 
@@ -129,7 +132,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val result = authUseCases.signUpWithStaffCode(email, password, username, staffCode)
+                val result = authUseCases.signUpWithCode(email, password, username, code)
                 _authState.value = result
             } catch (e: Exception) {
                 _authState.value = Result.failure(e)
@@ -163,6 +166,48 @@ class AuthViewModel @Inject constructor(
             _isLoading.value = true
             _authState.value = authUseCases.login(email, password)
             _isLoading.value = false
+        }
+    }
+
+    fun loginWithCode(email: String, password: String, code: String) {
+        var isValid = true
+        _lastAuthAction.value = AuthActionType.LOGIN
+
+        if (!Validator.isValidEmail(email)) {
+            _emailError.value = "Invalid email format"
+            isValid = false
+        } else {
+            _emailError.value = null
+        }
+
+        if (!Validator.isValidPassword(password)) {
+            _passwordError.value = "Password must be at least 8 characters long"
+            isValid = false
+        } else {
+            _passwordError.value = null
+        }
+
+        if (code.isBlank()) {
+            _codeError.value = "Staff code cannot be empty"
+            isValid = false
+        }
+
+        if (!isValid) return
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val result = authUseCases.loginWithCode(email, password, code)
+                if (result.getOrNull() == null) {
+                    _authState.value = Result.failure(Exception("Login failed"))
+                } else {
+                    _authState.value = result
+                }
+            } catch (e: Exception) {
+                _authState.value = Result.failure(e)
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 

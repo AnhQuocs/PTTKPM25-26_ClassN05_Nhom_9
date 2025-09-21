@@ -24,6 +24,7 @@ import com.example.heartbeat.presentation.features.auth.ui.LoginScreen
 import com.example.heartbeat.presentation.features.auth.ui.SignUpScreen
 import com.example.heartbeat.presentation.features.auth.viewmodel.SplashViewModel
 import com.example.heartbeat.presentation.features.onboarding.OnboardingScreen
+import com.example.heartbeat.presentation.features.staff.ui.StaffLoginScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,41 +46,34 @@ class MainActivity : BaseComponentActivity() {
                 composable("onboarding") { OnboardingScreen(navController) }
                 composable("login") { LoginScreen(navController) }
                 composable("signUp") { SignUpScreen(navController) }
-                composable("main") { MainApp() }
+                composable("main") { MainApp(navController) }
+                composable("staff_login") { StaffLoginScreen(navController) }
             }
         }
     }
 }
+
 @Composable
 fun SplashScreen(
     navController: NavController,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     val currentUser by viewModel.currentUser.collectAsState()
-    val hasOnboarded by viewModel.hasOnboarded.collectAsState(initial = false)
     val isLoading by viewModel.isLoading.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Loading...")
     }
 
-    LaunchedEffect(isLoading) {
+    LaunchedEffect(isLoading, currentUser) {
         if (!isLoading) {
-            when {
-                currentUser == null -> {
-                    navController.navigate("login") {
-                        popUpTo("splash") { inclusive = true }
-                    }
+            if (currentUser == null) {
+                navController.navigate("onboarding") {
+                    popUpTo("splash") { inclusive = true }
                 }
-                !hasOnboarded -> {
-                    navController.navigate("onboarding") {
-                        popUpTo("splash") { inclusive = true }
-                    }
-                }
-                else -> {
-                    navController.navigate("main") {
-                        popUpTo("splash") { inclusive = true }
-                    }
+            } else {
+                navController.navigate("main") {
+                    popUpTo("splash") { inclusive = true }
                 }
             }
         }

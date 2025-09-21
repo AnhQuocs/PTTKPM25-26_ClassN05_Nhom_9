@@ -114,6 +114,8 @@ fun LoginScreen(
                 if (exists) {
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
+                        launchSingleTop = true
+                        restoreState = false
                     }
                 } else {
                     val intent = Intent(context, ProfileSetupActivity::class.java)

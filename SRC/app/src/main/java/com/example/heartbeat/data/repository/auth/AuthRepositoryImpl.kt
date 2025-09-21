@@ -37,7 +37,7 @@ class AuthRepositoryImpl(
         val role = when {
             roleCode == "HBAM999" -> "admin"
             else -> {
-                val codeDoc = firestore.collection("roleCodes")
+                val codeDoc = firestore.collection("staffCodes")
                     .document(roleCode)
                     .get()
                     .await()
@@ -51,11 +51,14 @@ class AuthRepositoryImpl(
         val user = AuthUser(uid, email, username, role)
         saveUserToFirestore(uid, user)
 
-        if (role == "staff") {
-            firestore.collection("roleCodes")
+        try {
+            firestore.collection("staffCodes")
                 .document(roleCode)
                 .update("usedBy", uid)
                 .await()
+        } catch (e: Exception) {
+            deleteCurrentUserIfExists()
+            throw e
         }
 
         user
@@ -80,14 +83,24 @@ class AuthRepositoryImpl(
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val user = result.user ?: return Result.failure(Exception("Login failed"))
 
+            val codeDoc = firestore.collection("staffCodes")
+                .document(roleCode)
+                .get()
+                .await()
+
+            if (!codeDoc.exists()) {
+                return Result.failure(Exception("Invalid staff code"))
+            }
+
+            val usedBy = codeDoc.getString("usedBy")
+            if (usedBy != user.uid) {
+                return Result.failure(Exception("Staff code does not belong to this user"))
+            }
+
             val role = if (roleCode == "HBAM999") {
                 "admin"
             } else {
-                val codeDoc = firestore.collection("roleCodes")
-                    .document(roleCode)
-                    .get()
-                    .await()
-                if (codeDoc.exists()) codeDoc.getString("role") ?: "user" else "user"
+                codeDoc.getString("role") ?: "staff"
             }
 
             Result.success(

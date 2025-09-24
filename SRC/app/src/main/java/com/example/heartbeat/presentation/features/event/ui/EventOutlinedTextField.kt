@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.users.donor.ui.profile_setup
+package com.example.heartbeat.presentation.features.event.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -39,7 +39,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -49,6 +48,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import com.example.heartbeat.presentation.features.users.donor.ui.profile_setup.CategoryItems
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -58,12 +58,11 @@ fun defaultKeyboardOptions(type: KeyboardType = KeyboardType.Text) =
     KeyboardOptions(keyboardType = type)
 
 @Composable
-fun ProfileSetupTextField(
+fun EventOutlinedTextField(
     title: String,
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    leadingIcon: ImageVector? = null,
     isTrailingIcon: Boolean = false,
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
@@ -71,7 +70,7 @@ fun ProfileSetupTextField(
     imeAction: ImeAction = ImeAction.Next,
     onImeAction: () -> Unit = {},
     keyboardOptions: KeyboardOptions = defaultKeyboardOptions(),
-    list: List<String> = emptyList(),
+    list: List<String> = emptyList()
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -97,7 +96,7 @@ fun ProfileSetupTextField(
 
     Column(
         modifier = Modifier
-            .padding(horizontal = Dimens.PaddingM)
+            .fillMaxWidth()
             .padding(vertical = Dimens.PaddingSM)
             .fillMaxWidth()
             .clickable(
@@ -130,11 +129,6 @@ fun ProfileSetupTextField(
                         expanded = true
                     },
                     placeholder = { Text(placeholder, fontSize = 15.sp) },
-                    leadingIcon = leadingIcon?.let {
-                        {
-                            Icon(imageVector = it, contentDescription = null, tint = BloodRed)
-                        }
-                    },
                     trailingIcon = {
                         if (isTrailingIcon) {
                             IconButton(
@@ -214,25 +208,5 @@ fun ProfileSetupTextField(
                 )
             )
         }
-    }
-}
-
-@Composable
-fun CategoryItems(
-    title: String,
-    onSelect: (String) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onSelect(title)
-            }
-            .padding(10.dp)
-    ) {
-        Text(
-            text = title,
-            fontSize = 16.sp
-        )
     }
 }

@@ -1,6 +1,6 @@
 package com.example.heartbeat.presentation.features.users.auth.util
 
-object Validator {
+object AuthValidator {
     fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }

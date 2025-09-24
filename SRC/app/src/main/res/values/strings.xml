@@ -112,4 +112,25 @@
     <string name="why_donate">Why Donate?</string>
     <string name="upcoming_event">Upcoming Event</string>
 
+    <!-- Event Form -->
+    <string name="event_title">Event Title</string>
+    <string name="enter_title">Enter title</string>
+    <string name="description">Description</string>
+    <string name="enter_description">Enter description</string>
+    <string name="date">Date</string>
+    <string name="select_date">Select date</string>
+    <string name="time">Time</string>
+    <string name="start_time">Start time</string>
+    <string name="finish_time">Finish time</string>
+    <string name="deadline">Deadline</string>
+    <string name="select_deadline">Select deadline</string>
+    <string name="capacity">Capacity</string>
+    <string name="enter_capacity">Enter capacity</string>
+    <string name="validate_title_empty">The event title must not be empty</string>
+    <string name="validate_title_too_long">The event title must not exceed 15 words</string>
+    <string name="validate_description_empty">The description must not be empty</string>
+    <string name="validate_description_too_long">The event title must not exceed 30 words</string>
+    <string name="validate_capacity_empty">The description must not be empty</string>
+    <string name="validate_capacity_exceed">The number must not exceed 300 people</string>
+
 </resources>

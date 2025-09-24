@@ -4,9 +4,9 @@ import com.example.heartbeat.domain.entity.users.Donor
 import com.google.firebase.Timestamp
 
 data class EventDto(
+    val locationId: String? = null,
     val name: String? = null,
     val description: String? = null,
-    val location: String? = null,
     val date: String? = null,
     val time: String? = null,
     val deadline: Timestamp? = null,

@@ -44,4 +44,13 @@ class EventRepositoryImpl(
     override suspend fun deleteEvent(eventId: String) {
         collection.document(eventId).delete().await()
     }
+
+    override fun observeDonorCount(eventId: String, onUpdate: (Int) -> Unit) {
+        firestore.collection("donations")
+            .whereEqualTo("eventId", eventId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null || snapshot == null) return@addSnapshotListener
+                onUpdate(snapshot.size())
+            }
+    }
 }

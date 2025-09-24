@@ -89,11 +89,13 @@ class AuthRepositoryImpl(
                 .await()
 
             if (!codeDoc.exists()) {
+                auth.signOut()
                 return Result.failure(Exception("Invalid staff code"))
             }
 
             val usedBy = codeDoc.getString("usedBy")
             if (usedBy != user.uid) {
+                auth.signOut()
                 return Result.failure(Exception("Staff code does not belong to this user"))
             }
 

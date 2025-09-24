@@ -14,9 +14,9 @@ import java.util.Date
 fun EventDto.toDomain(id: String): Event {
     return Event(
         id = id,
+        locationId = locationId.orEmpty(),
         name = name.orEmpty(),
         description = description.orEmpty(),
-        location = location.orEmpty(),
         date = date.orEmpty(),
         time = time.orEmpty(),
         deadline = deadline?.toDate()
@@ -32,9 +32,9 @@ fun EventDto.toDomain(id: String): Event {
 
 fun Event.toDto(): EventDto {
     return EventDto(
+        locationId = locationId,
         name = name,
         description = description,
-        location = location,
         date = date,
         time = time,
         deadline = Timestamp(

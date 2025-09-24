@@ -2,6 +2,7 @@ package com.example.heartbeat.presentation.features.users.staff.ui
 
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,9 +32,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -124,8 +132,30 @@ fun StaffLoginScreen(
                 .fillMaxSize()
                 .background(color = Color.White)
                 .padding(Dimens.PaddingM)
-                .padding(vertical = Dimens.PaddingUltra),
+                .padding(vertical = Dimens.PaddingL),
         ) {
+            Box(
+                modifier = Modifier
+                    .size(Dimens.SizeL)
+                    .background(color = Color.Black.copy(alpha = 0.6f), CircleShape)
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate("login") {
+                            popUpTo("staff_login") { inclusive = true }
+                        }
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(Dimens.SizeM).align(Alignment.Center)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
+
             Text(
                 text = stringResource(id = R.string.welcome_app),
                 color = Color.Black,
@@ -238,7 +268,11 @@ fun StaffLoginScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Sign Up as an employee",
+                    stringResource(id = R.string.do_not_have_account) + " "
+                )
+
+                Text(
+                    stringResource(id = R.string.sign_up),
                     color = BloodRed,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.clickable {
@@ -249,6 +283,18 @@ fun StaffLoginScreen(
                         }
                     }
                 )
+            }
+        }
+
+        if(isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Black.copy(alpha = 0.2f))
+                    .pointerInput(Unit) { },
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = BloodRed)
             }
         }
     }

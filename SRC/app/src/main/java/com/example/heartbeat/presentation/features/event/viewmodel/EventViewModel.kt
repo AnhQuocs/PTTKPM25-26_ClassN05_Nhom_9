@@ -29,15 +29,15 @@ class EventViewModel @Inject constructor(
 
     fun getAllEvents() {
         viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
             try {
-                val result = eventUseCase.getAllEventsUseCase()
-                _events.value = result
+                val events = eventUseCase.getAllEventsUseCase()
+                _events.value = events
+
+                events.forEach { event ->
+                    observeDonorCount(event.id)
+                }
             } catch (e: Exception) {
                 _error.value = e.message
-            } finally {
-                _isLoading.value = false
             }
         }
     }
@@ -82,6 +82,15 @@ class EventViewModel @Inject constructor(
                 getAllEvents()
             } catch (e: Exception) {
                 _error.value = e.message
+            }
+        }
+    }
+
+    private fun observeDonorCount(eventId: String) {
+        eventUseCase.observeDonorCountUseCase(eventId) { donorCount ->
+            _events.value = _events.value.map { event ->
+                if (event.id == eventId) event.copy(donorCount = donorCount)
+                else event
             }
         }
     }

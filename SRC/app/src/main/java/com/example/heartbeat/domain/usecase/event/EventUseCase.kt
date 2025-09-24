@@ -5,5 +5,6 @@ class EventUseCase (
     val getEventByIdUseCase: GetEventByIdUseCase,
     val getAllEventsUseCase: GetAllEventsUseCase,
     val updateEventUseCase: UpdateEventUseCase,
-    val deleteEventUseCase: DeleteEventUseCase
+    val deleteEventUseCase: DeleteEventUseCase,
+    val observeDonorCountUseCase: ObserveDonorCountUseCase
 )

@@ -35,6 +35,7 @@
     <string name="unknown_error">An unknown error has occurred.</string>
     <string name="email_already_exists">Email already exists. Please use a different email.</string>
     <string name="code">Code</string>
+    <string name="login_employee">LOGIN AS AN EMPLOYEE</string>
 
     <!-- Sign up -->
     <string name="username">Username</string>

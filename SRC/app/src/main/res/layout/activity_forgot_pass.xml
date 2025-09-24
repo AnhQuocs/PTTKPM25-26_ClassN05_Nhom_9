@@ -5,6 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.features.auth.ui.ForgotPassActivity">
+    tools:context=".presentation.features.users.auth.ui.ForgotPassActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

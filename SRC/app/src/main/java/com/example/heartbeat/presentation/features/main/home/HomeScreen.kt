@@ -51,8 +51,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppTitle
-import com.example.heartbeat.presentation.features.auth.viewmodel.AuthViewModel
-import com.example.heartbeat.presentation.features.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens

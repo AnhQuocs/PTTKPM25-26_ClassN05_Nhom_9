@@ -1,7 +1,7 @@
 package com.example.heartbeat.data.model.mapper
 
 import com.example.heartbeat.data.model.dto.DonorDto
-import com.example.heartbeat.domain.entity.user.Donor
+import com.example.heartbeat.domain.entity.users.Donor
 
 fun DonorDto.toDomain(): Donor {
     return Donor(

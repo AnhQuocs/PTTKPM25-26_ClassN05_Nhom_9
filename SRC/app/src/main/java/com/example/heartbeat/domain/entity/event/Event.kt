@@ -1,6 +1,6 @@
 package com.example.heartbeat.domain.entity.event
 
-import com.example.heartbeat.domain.entity.user.Donor
+import com.example.heartbeat.domain.entity.users.Donor
 import kotlinx.datetime.LocalDateTime
 
 data class Event(

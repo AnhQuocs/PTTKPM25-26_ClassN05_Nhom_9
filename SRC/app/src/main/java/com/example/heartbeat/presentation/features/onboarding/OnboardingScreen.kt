@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
-import com.example.heartbeat.presentation.features.auth.viewmodel.OnboardingDataStore
+import com.example.heartbeat.presentation.features.users.auth.viewmodel.OnboardingDataStore
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.ApiStatus.Experimental

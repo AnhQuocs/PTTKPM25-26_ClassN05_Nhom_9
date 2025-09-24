@@ -1,16 +1,16 @@
 package com.example.heartbeat.di
 
-import com.example.heartbeat.data.repository.auth.AuthRepositoryImpl
-import com.example.heartbeat.domain.repository.auth.AuthRepository
-import com.example.heartbeat.domain.usecase.auth.AuthUseCases
-import com.example.heartbeat.domain.usecase.auth.CheckUserLoggedInUseCase
-import com.example.heartbeat.domain.usecase.auth.GetCurrentUserUseCase
-import com.example.heartbeat.domain.usecase.auth.LogOutUseCase
-import com.example.heartbeat.domain.usecase.auth.LoginUseCase
-import com.example.heartbeat.domain.usecase.auth.LoginWithCodeUseCase
-import com.example.heartbeat.domain.usecase.auth.ResetPasswordUseCase
-import com.example.heartbeat.domain.usecase.auth.SignUpUseCase
-import com.example.heartbeat.domain.usecase.auth.SignUpWithCodeUseCase
+import com.example.heartbeat.data.repository.users.auth.AuthRepositoryImpl
+import com.example.heartbeat.domain.repository.users.auth.AuthRepository
+import com.example.heartbeat.domain.usecase.users.auth.AuthUseCases
+import com.example.heartbeat.domain.usecase.users.auth.CheckUserLoggedInUseCase
+import com.example.heartbeat.domain.usecase.users.auth.GetCurrentUserUseCase
+import com.example.heartbeat.domain.usecase.users.auth.LogOutUseCase
+import com.example.heartbeat.domain.usecase.users.auth.LoginUseCase
+import com.example.heartbeat.domain.usecase.users.auth.LoginWithCodeUseCase
+import com.example.heartbeat.domain.usecase.users.auth.ResetPasswordUseCase
+import com.example.heartbeat.domain.usecase.users.auth.SignUpUseCase
+import com.example.heartbeat.domain.usecase.users.auth.SignUpWithCodeUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module

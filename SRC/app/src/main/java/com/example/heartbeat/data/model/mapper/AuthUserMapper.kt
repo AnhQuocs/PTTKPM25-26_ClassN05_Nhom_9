@@ -1,7 +1,7 @@
 package com.example.heartbeat.data.model.mapper
 
 import com.example.heartbeat.data.model.dto.AuthUserDto
-import com.example.heartbeat.domain.entity.user.AuthUser
+import com.example.heartbeat.domain.entity.users.AuthUser
 
 fun AuthUserDto.toDomain(): AuthUser {
     return AuthUser(uid, email, username, role)

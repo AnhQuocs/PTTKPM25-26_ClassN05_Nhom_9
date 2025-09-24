@@ -31,9 +31,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.heartbeat.R
-import com.example.heartbeat.domain.entity.user.AuthUser
-import com.example.heartbeat.domain.entity.user.DonorAvatar
-import com.example.heartbeat.presentation.features.donor.viewmodel.DonorFormState
+import com.example.heartbeat.domain.entity.users.AuthUser
+import com.example.heartbeat.domain.entity.users.DonorAvatar
+import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.Green500

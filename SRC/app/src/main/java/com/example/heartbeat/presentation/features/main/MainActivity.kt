@@ -15,14 +15,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.heartbeat.BaseComponentActivity
-import com.example.heartbeat.presentation.features.admin.AdminScreen
-import com.example.heartbeat.presentation.features.auth.ui.LoginScreen
-import com.example.heartbeat.presentation.features.auth.ui.SignUpScreen
-import com.example.heartbeat.presentation.features.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.users.admin.AdminScreen
+import com.example.heartbeat.presentation.features.users.auth.ui.LoginScreen
+import com.example.heartbeat.presentation.features.users.auth.ui.SignUpScreen
+import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.onboarding.OnboardingScreen
-import com.example.heartbeat.presentation.features.staff.ui.StaffLoginScreen
-import com.example.heartbeat.presentation.features.staff.ui.StaffScreen
-import com.example.heartbeat.presentation.features.staff.ui.StaffSignUpScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.StaffLoginScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.StaffScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.StaffSignUpScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -112,4 +112,25 @@
     <string name="why_donate">Vì Sao Nên Hiến Máu?</string>
     <string name="upcoming_event">Sự kiện sắp tới</string>
 
+    <!-- Event Form -->
+    <string name="event_title">Tiêu đề sự kiện</string>
+    <string name="enter_title">Nhập tiêu đề</string>
+    <string name="description">Mô tả</string>
+    <string name="enter_description">Nhập mô tả</string>
+    <string name="date">Ngày</string>
+    <string name="select_date">Chọn ngày</string>
+    <string name="time">Thời gian</string>
+    <string name="start_time">TG bắt đầu</string>
+    <string name="finish_time">TG kết thúc</string>
+    <string name="deadline">Hạn đăng ký</string>
+    <string name="select_deadline">Chọn hạn đăng ký</string>
+    <string name="capacity">Số lượng</string>
+    <string name="enter_capacity">Nhập số lượng</string>
+    <string name="validate_title_empty">Tiêu đề sự kiện không được để trống</string>
+    <string name="validate_title_too_long">Tiêu đề sự kiện không được vượt quá 15 từ</string>
+    <string name="validate_description_empty">Mô tả không được để trống</string>
+    <string name="validate_description_too_long">Mô tả không được vượt quá 30 từ</string>
+    <string name="validate_capacity_empty">Số lượng không được để trống</string>
+    <string name="validate_capacity_exceed">Số lượng không được vượt quá 300 người</string>
+
 </resources>

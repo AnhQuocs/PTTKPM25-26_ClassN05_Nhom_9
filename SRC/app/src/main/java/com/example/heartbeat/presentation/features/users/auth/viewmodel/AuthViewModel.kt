@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.heartbeat.domain.entity.users.AuthUser
 import com.example.heartbeat.domain.usecase.users.auth.AuthUseCases
-import com.example.heartbeat.presentation.features.users.auth.util.Validator
+import com.example.heartbeat.presentation.features.users.auth.util.AuthValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -61,21 +61,21 @@ class AuthViewModel @Inject constructor(
         var isValid = true
         _lastAuthAction.value = AuthActionType.SIGN_UP
 
-        if(!Validator.isValidEmail(email)) {
+        if(!AuthValidator.isValidEmail(email)) {
             _emailError.value = "Invalid email format"
             isValid = false
         } else {
             _emailError.value = null
         }
 
-        if(!Validator.isValidPassword(password)) {
+        if(!AuthValidator.isValidPassword(password)) {
             _passwordError.value = "Password must be at least 8 characters long"
             isValid = false
         } else {
             _passwordError.value = null
         }
 
-        if(!Validator.isValidUsername(username)) {
+        if(!AuthValidator.isValidUsername(username)) {
             _usernameError.value = "Username cannot be empty"
             isValid = false
         } else {
@@ -101,21 +101,21 @@ class AuthViewModel @Inject constructor(
         var isValid = true
         _lastAuthAction.value = AuthActionType.SIGN_UP
 
-        if (!Validator.isValidEmail(email)) {
+        if (!AuthValidator.isValidEmail(email)) {
             _emailError.value = "Invalid email format"
             isValid = false
         } else {
             _emailError.value = null
         }
 
-        if (!Validator.isValidPassword(password)) {
+        if (!AuthValidator.isValidPassword(password)) {
             _passwordError.value = "Password must be at least 8 characters long"
             isValid = false
         } else {
             _passwordError.value = null
         }
 
-        if (!Validator.isValidUsername(username)) {
+        if (!AuthValidator.isValidUsername(username)) {
             _usernameError.value = "Username cannot be empty"
             isValid = false
         } else {
@@ -146,14 +146,14 @@ class AuthViewModel @Inject constructor(
         var isValid = true
         _lastAuthAction.value = AuthActionType.LOGIN
 
-        if(!Validator.isValidEmail(email)) {
+        if(!AuthValidator.isValidEmail(email)) {
             _emailError.value = "Invalid email format"
             isValid = false
         } else {
             _emailError.value = null
         }
 
-        if(!Validator.isValidPassword(password)) {
+        if(!AuthValidator.isValidPassword(password)) {
             _passwordError.value = "Password must be at least 8 characters long"
             isValid = false
         } else {
@@ -173,14 +173,14 @@ class AuthViewModel @Inject constructor(
         var isValid = true
         _lastAuthAction.value = AuthActionType.LOGIN
 
-        if (!Validator.isValidEmail(email)) {
+        if (!AuthValidator.isValidEmail(email)) {
             _emailError.value = "Invalid email format"
             isValid = false
         } else {
             _emailError.value = null
         }
 
-        if (!Validator.isValidPassword(password)) {
+        if (!AuthValidator.isValidPassword(password)) {
             _passwordError.value = "Password must be at least 8 characters long"
             isValid = false
         } else {
@@ -221,7 +221,7 @@ class AuthViewModel @Inject constructor(
 
     fun resetPassword(email: String) {
         var isValid = true
-        if(!Validator.isValidEmail(email)) {
+        if(!AuthValidator.isValidEmail(email)) {
             _emailError.value = "Invalid email format"
             isValid = false
         } else {

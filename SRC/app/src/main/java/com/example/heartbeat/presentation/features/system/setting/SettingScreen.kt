@@ -30,7 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.domain.entity.system.AppLanguage
 import com.example.heartbeat.presentation.components.AppButton
-import com.example.heartbeat.presentation.features.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.system.language.LanguageViewModel
 import com.example.heartbeat.utils.LangUtils
 

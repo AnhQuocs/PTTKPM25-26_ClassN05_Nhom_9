@@ -16,10 +16,10 @@
         android:theme="@style/Theme.HeartBeat"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.features.donor.ui.profile_setup.ProfileSetupActivity"
+            android:name=".presentation.features.users.donor.ui.profile_setup.ProfileSetupActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.features.auth.ui.ForgotPassActivity"
+            android:name=".presentation.features.users.auth.ui.ForgotPassActivity"
             android:exported="false" />
         <activity
             android:name=".BaseComponentActivity"

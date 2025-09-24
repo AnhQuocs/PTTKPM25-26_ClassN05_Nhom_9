@@ -1,6 +1,6 @@
 package com.example.heartbeat.data.model.dto
 
-import com.example.heartbeat.domain.entity.user.Donor
+import com.example.heartbeat.domain.entity.users.Donor
 import com.google.firebase.Timestamp
 
 data class EventDto(

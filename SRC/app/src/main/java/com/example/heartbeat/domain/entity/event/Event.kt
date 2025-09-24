@@ -5,9 +5,9 @@ import kotlinx.datetime.LocalDateTime
 
 data class Event(
     val id: String,
+    val locationId: String,
     val name: String,
     val description: String,
-    val location: String,
     val date: String,
     val time: String,
     val deadline: LocalDateTime,

@@ -207,6 +207,25 @@ fun StaffSignUpScreen(
                 imeAction = ImeAction.Done
             )
 
+            Spacer(modifier = Modifier.height(AppSpacing.LargePlus))
+
+            Text(
+                text = stringResource(id = R.string.code),
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            OutlinedTextFieldAuth(
+                value = code,
+                onValueChange = { code = it },
+                label = stringResource(id = R.string.code),
+                placeholder = stringResource(id = R.string.staff_or_admin_code),
+                icon = Icons.Default.Key,
+                focusRequester = codeFocusRequester,
+                isError = codeError != null,
+                errorMessage = codeError,
+                imeAction = ImeAction.Done,
+            )
+
             Spacer(modifier = Modifier.height(40.dp))
 
             AppButton(
@@ -245,23 +264,6 @@ fun StaffSignUpScreen(
             }
 
             Spacer(modifier = Modifier.height(AppSpacing.MediumLarge))
-
-            Text(
-                text = stringResource(id = R.string.code),
-                style = MaterialTheme.typography.titleSmall
-            )
-
-            OutlinedTextFieldAuth(
-                value = code,
-                onValueChange = { code = it },
-                label = stringResource(id = R.string.code),
-                placeholder = stringResource(id = R.string.staff_or_admin_code),
-                icon = Icons.Default.Key,
-                focusRequester = codeFocusRequester,
-                isError = codeError != null,
-                errorMessage = codeError,
-                imeAction = ImeAction.Done,
-            )
         }
 
         if(isLoading) {

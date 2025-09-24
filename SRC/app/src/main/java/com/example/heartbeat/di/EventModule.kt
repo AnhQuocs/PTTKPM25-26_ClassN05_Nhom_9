@@ -7,6 +7,7 @@ import com.example.heartbeat.domain.usecase.event.DeleteEventUseCase
 import com.example.heartbeat.domain.usecase.event.EventUseCase
 import com.example.heartbeat.domain.usecase.event.GetAllEventsUseCase
 import com.example.heartbeat.domain.usecase.event.GetEventByIdUseCase
+import com.example.heartbeat.domain.usecase.event.ObserveDonorCountUseCase
 import com.example.heartbeat.domain.usecase.event.UpdateEventUseCase
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -34,6 +35,7 @@ object EventModule {
         getEventByIdUseCase = GetEventByIdUseCase(repository),
         getAllEventsUseCase = GetAllEventsUseCase(repository),
         updateEventUseCase = UpdateEventUseCase(repository),
-        deleteEventUseCase = DeleteEventUseCase(repository)
+        deleteEventUseCase = DeleteEventUseCase(repository),
+        observeDonorCountUseCase = ObserveDonorCountUseCase(repository)
     )
 }

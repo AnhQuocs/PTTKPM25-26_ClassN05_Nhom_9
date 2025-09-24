@@ -8,4 +8,5 @@ interface EventRepository {
     suspend fun updateEvent(eventId: String, event: Event)
     suspend fun deleteEvent(eventId: String)
     suspend fun getAllEvents(): List<Event>
+    fun observeDonorCount(eventId: String, onUpdate: (Int) -> Unit)
 }

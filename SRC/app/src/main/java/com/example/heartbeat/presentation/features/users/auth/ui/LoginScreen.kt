@@ -223,6 +223,27 @@ fun LoginScreen(
                 text = stringResource(id = R.string.login)
             )
 
+            Spacer(modifier = Modifier.height(AppSpacing.MediumLarge))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.login_employee),
+                    color = Color(0xFF0068FF),
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.clickable {
+                        navController.navigate("staff_login") {
+                            popUpTo("login") {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+            }
+
             Spacer(modifier = Modifier.height(AppSpacing.Jumbo))
 
             Row(
@@ -315,28 +336,7 @@ fun LoginScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(AppSpacing.Jumbo + 8.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Login as an employee",
-                    color = BloodRed,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.clickable {
-                        navController.navigate("staff_login") {
-                            popUpTo("login") {
-                                inclusive = true
-                            }
-                        }
-                    }
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(AppSpacing.Jumbo))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

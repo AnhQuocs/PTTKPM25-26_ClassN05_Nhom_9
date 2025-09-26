@@ -117,6 +117,8 @@
     <string name="enter_title">Nhập tiêu đề</string>
     <string name="description">Mô tả</string>
     <string name="enter_description">Nhập mô tả</string>
+    <string name="hospital">Bệnh viện</string>
+    <string name="select_hospital">Chọn bệnh viện</string>
     <string name="date">Ngày</string>
     <string name="select_date">Chọn ngày</string>
     <string name="time">Thời gian</string>
@@ -126,11 +128,13 @@
     <string name="select_deadline">Chọn hạn đăng ký</string>
     <string name="capacity">Số lượng</string>
     <string name="enter_capacity">Nhập số lượng</string>
-    <string name="validate_title_empty">Tiêu đề sự kiện không được để trống</string>
-    <string name="validate_title_too_long">Tiêu đề sự kiện không được vượt quá 15 từ</string>
-    <string name="validate_description_empty">Mô tả không được để trống</string>
-    <string name="validate_description_too_long">Mô tả không được vượt quá 30 từ</string>
-    <string name="validate_capacity_empty">Số lượng không được để trống</string>
-    <string name="validate_capacity_exceed">Số lượng không được vượt quá 300 người</string>
+
+    <string name="validate_title_empty">Vui lòng nhập tiêu đề sự kiện</string>
+    <string name="validate_title_too_long">Tiêu đề sự kiện tối đa 15 từ</string>
+    <string name="validate_description_empty">Vui lòng nhập mô tả</string>
+    <string name="validate_description_too_long">Mô tả tối đa 30 từ</string>
+    <string name="validate_capacity_empty">Vui lòng nhập số lượng</string>
+    <string name="validate_capacity_exceed">Số lượng tối đa 300 người</string>
+    <string name="validate_hospital_empty">Vui lòng chọn bệnh viện</string>
 
 </resources>

@@ -7,7 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -53,12 +53,14 @@ import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
+import com.example.heartbeat.ui.theme.PinkLight
 
 fun defaultKeyboardOptions(type: KeyboardType = KeyboardType.Text) =
     KeyboardOptions(keyboardType = type)
 
 @Composable
 fun EventOutlinedTextField(
+    modifier: Modifier = Modifier,
     title: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -66,6 +68,7 @@ fun EventOutlinedTextField(
     isTrailingIcon: Boolean = false,
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
+    isSingleLine: Boolean = true,
     errorMessage: String? = null,
     imeAction: ImeAction = ImeAction.Next,
     onImeAction: () -> Unit = {},
@@ -95,10 +98,8 @@ fun EventOutlinedTextField(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = Dimens.PaddingSM)
-            .fillMaxWidth()
+        modifier = modifier
+            .padding(vertical = Dimens.PaddingXSPlus)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -112,16 +113,10 @@ fun EventOutlinedTextField(
             style = MaterialTheme.typography.titleSmall
         )
 
-        Spacer(modifier = Modifier.height(AppSpacing.Medium))
+        Spacer(modifier = Modifier.height(AppSpacing.Small))
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
+        Column {
+            Row {
                 OutlinedTextField(
                     value = value,
                     onValueChange = {
@@ -146,11 +141,16 @@ fun EventOutlinedTextField(
                         fontSize = 16.sp
                     ),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent,
+                        disabledBorderColor = Color.Transparent,
+                        errorBorderColor = Color.Transparent,
+                        unfocusedContainerColor = PinkLight.copy(alpha = 0.2f),
+                        focusedContainerColor = PinkLight.copy(alpha = 0.2f),
+                        errorContainerColor = PinkLight.copy(alpha = 0.2f)
                     ),
-                    singleLine = true,
-                    shape = RoundedCornerShape(AppShape.MediumShape),
+                    singleLine = isSingleLine,
+                    shape = RoundedCornerShape(AppShape.ExtraLargeShape),
                     isError = isError,
                     keyboardOptions = keyboardOptions.copy(
                         imeAction = imeAction
@@ -163,9 +163,8 @@ fun EventOutlinedTextField(
                             if (imeAction == ImeAction.Done) focusManager.clearFocus()
                         }
                     ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(heightTextField)
+                    modifier = modifier
+                        .defaultMinSize(minHeight = heightTextField)
                         .focusRequester(focusRequester)
                         .onGloballyPositioned { coordinates ->
                             textFieldSize = coordinates.size.toSize()
@@ -175,15 +174,17 @@ fun EventOutlinedTextField(
 
             AnimatedVisibility(visible = expanded) {
                 Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = PinkLight.copy(alpha = 0.2f)
+                    ),
                     modifier = Modifier
-                        .padding(horizontal = 5.dp)
+                        .padding(horizontal = 2.dp)
                         .width(textFieldSize.width.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
+                    shape = RoundedCornerShape(6.dp),
+                    ) {
                     LazyColumn(
                         modifier = Modifier
-                            .background(color = Color.White)
+                            .background(color = PinkLight.copy(alpha = 0.1f))
                             .heightIn(max = 150.dp)
                     ) {
                         items(filteredList) { item ->

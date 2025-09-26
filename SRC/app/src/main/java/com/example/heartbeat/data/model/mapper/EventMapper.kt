@@ -39,8 +39,8 @@ fun Event.toDto(): EventDto {
         time = time,
         deadline = Timestamp(
             Date.from(
-                deadline.toInstant(TimeZone.currentSystemDefault())
-                    .toJavaInstant()
+                deadline?.toInstant(TimeZone.currentSystemDefault())
+                    ?.toJavaInstant()
             )
         ),
         donorList = donorList,

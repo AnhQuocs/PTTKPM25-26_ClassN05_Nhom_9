@@ -26,7 +26,7 @@ import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.presentation.components.AppButton
 import com.example.heartbeat.presentation.components.DatePickerField
-import com.example.heartbeat.presentation.components.DateTimePickerField
+import com.example.heartbeat.presentation.components.DeadlinePickerField
 import com.example.heartbeat.presentation.components.TimePickerField
 import com.example.heartbeat.presentation.features.event.util.EventValidator
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
@@ -49,7 +49,7 @@ fun EventForm(
     var deadline by remember { mutableStateOf("") }
     var capacity by remember { mutableStateOf("") }
 
-    val currentDate = LocalDate.now().plusDays(2)
+    val currentDate = LocalDate.now().plusDays(10)
         .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     var selectedDate by remember { mutableStateOf(currentDate) }
 
@@ -146,6 +146,7 @@ fun EventForm(
             onValueChange = { nameSelected ->
                 hospitalName = nameSelected
                 hospitalId = list.firstOrNull { it.hospitalName == nameSelected }?.hospitalId ?: ""
+                if(!hosTouched) hosTouched = true
             },
             placeholder = stringResource(id = R.string.select_hospital),
             isTrailingIcon = true,
@@ -217,10 +218,11 @@ fun EventForm(
 
         Spacer(modifier = Modifier.height(AppSpacing.Small))
 
-        DateTimePickerField(
+        DeadlinePickerField(
             selectedDateTime = deadline,
             onDateTimeChange = { deadline = it },
             placeholder = stringResource(id = R.string.select_deadline),
+            eventDate = selectedDate,
             modifier = Modifier.fillMaxWidth()
         )
 

@@ -48,7 +48,7 @@ fun DatePickerField(
     modifier: Modifier = Modifier
 ) {
     val today = remember { LocalDate.now() }
-    val minDate = today.plusDays(2)
+    val minDate = today.plusDays(10)
 
     var showDatePicker by remember { mutableStateOf(false) }
 

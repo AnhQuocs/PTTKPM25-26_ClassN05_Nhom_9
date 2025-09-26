@@ -10,7 +10,7 @@ data class Event(
     val description: String,
     val date: String,
     val time: String,
-    val deadline: LocalDateTime,
+    val deadline: LocalDateTime?,
     val donorList: List<Donor>,
     val capacity: Int,
     val donorCount: Int

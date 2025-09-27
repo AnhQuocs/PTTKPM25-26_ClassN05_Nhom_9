@@ -113,6 +113,7 @@
     <string name="upcoming_event">Sự kiện sắp tới</string>
 
     <!-- Event Form -->
+    <string name="events">Sự kiện</string>
     <string name="event_title">Tiêu đề sự kiện</string>
     <string name="enter_title">Nhập tiêu đề</string>
     <string name="description">Mô tả</string>

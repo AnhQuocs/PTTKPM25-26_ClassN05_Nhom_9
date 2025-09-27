@@ -113,6 +113,7 @@
     <string name="upcoming_event">Upcoming Event</string>
 
     <!-- Event Form -->
+    <string name="events">Events</string>
     <string name="event_title">Event Title</string>
     <string name="enter_title">Enter title</string>
     <string name="description">Description</string>

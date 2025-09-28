@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val PinkLight = Color(0xFFFFB5C5)
 val BloodRed = Color(0xFFFF4747)
+val VividOrange = Color(0xFFF77307)
 val FacebookBlue = Color(0xFF1877F2)
 
 val MintGreen = Color(0xFF46DFB1)
@@ -36,3 +37,9 @@ val HeroLavenderText = Color(0xFF5E35B1)
 val VitalPinkText = Color(0xFFC2185B)
 val UnityPeachText = Color(0xFFE65100)
 val SunshineYellowText = Color(0xFFF57F17)
+
+val SunsetOrange = Color(0xFFF77307)
+val AquaMint     = Color(0xFF00BFA6)
+val RoyalPurple  = Color(0xFF7E57C2)
+val GoldenGlow   = Color(0xFFFFB300)
+val CoralRed     = Color(0xFFFF5252)

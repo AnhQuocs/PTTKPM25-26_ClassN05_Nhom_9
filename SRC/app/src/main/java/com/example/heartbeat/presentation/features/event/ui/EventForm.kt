@@ -69,7 +69,7 @@ fun EventForm(
     val nameError = if (nameTouched) {
         EventValidator.isValidEventText(
             text = name,
-            maxWords = 15,
+            maxWords = 10,
             emptyError = R.string.validate_title_empty,
             tooLongError = R.string.validate_title_too_long
         )
@@ -78,7 +78,7 @@ fun EventForm(
     val desError = if(desTouched) {
         EventValidator.isValidEventText(
             text = description,
-            maxWords = 30,
+            maxWords = 20,
             emptyError = R.string.validate_description_empty,
             tooLongError = R.string.validate_description_too_long
         )

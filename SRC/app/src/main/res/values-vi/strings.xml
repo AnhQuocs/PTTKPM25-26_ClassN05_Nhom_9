@@ -131,9 +131,9 @@
     <string name="enter_capacity">Nhập số lượng</string>
 
     <string name="validate_title_empty">Vui lòng nhập tiêu đề sự kiện</string>
-    <string name="validate_title_too_long">Tiêu đề sự kiện tối đa 15 từ</string>
+    <string name="validate_title_too_long">Tiêu đề sự kiện tối đa 10 từ</string>
     <string name="validate_description_empty">Vui lòng nhập mô tả</string>
-    <string name="validate_description_too_long">Mô tả tối đa 30 từ</string>
+    <string name="validate_description_too_long">Mô tả tối đa 20 từ</string>
     <string name="validate_capacity_empty">Vui lòng nhập số lượng</string>
     <string name="validate_capacity_exceed">Số lượng tối đa 300 người</string>
     <string name="validate_hospital_empty">Vui lòng chọn bệnh viện</string>

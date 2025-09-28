@@ -88,6 +88,7 @@
     <string name="submitted_success">Submitted successfully!</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="create">Create</string>
 
     <!-- Main App -->
     <string name="home">Home</string>

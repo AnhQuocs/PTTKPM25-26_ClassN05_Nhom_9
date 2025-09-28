@@ -88,6 +88,7 @@
     <string name="submitted_success">Đã gửi thành công!</string>
     <string name="cancel">Quay lại</string>
     <string name="ok">Đồng ý</string>
+    <string name="create">Tạo mới</string>
 
     <!-- Main App -->
     <string name="home">Trang chủ</string>

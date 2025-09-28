@@ -30,18 +30,21 @@ import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.GraySecondary
 
-enum class TabItem(@DrawableRes val iconsRes: Int, @StringRes val label: Int) {
+enum class TabItem(
+    @DrawableRes override val iconRes: Int,
+    @StringRes override val labelRes: Int
+) : TabEnum {
     Home(R.drawable.ic_home, R.string.home),
     Search(R.drawable.ic_search, R.string.search),
     Setting(R.drawable.ic_setting, R.string.setting)
 }
 
 @Composable
-fun BottomAppBar(
+fun <T> BottomAppBar(
+    tabs: Array<T>,
     currentIndex: Int,
     onTabSelected: (Int) -> Unit
-) {
-    val tabs = TabItem.entries.toTypedArray()
+) where T : Enum<T>, T : TabEnum {
 
     Box(
         modifier = Modifier
@@ -77,14 +80,14 @@ fun BottomAppBar(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Image(
-                                painter = painterResource(id = tab.iconsRes),
+                                painter = painterResource(id = tab.iconRes),
                                 contentDescription = null,
                                 modifier = Modifier.size(Dimens.SizeML),
                                 colorFilter = if(selected) ColorFilter.tint(BloodRed) else ColorFilter.tint(GraySecondary)
                             )
 
                             Text(
-                                text = stringResource(id = tab.label),
+                                text = stringResource(id = tab.labelRes),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = if(selected) BloodRed else GraySecondary
                             )

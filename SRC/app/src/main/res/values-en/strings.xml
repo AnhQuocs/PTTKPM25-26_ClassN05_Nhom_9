@@ -131,9 +131,9 @@
     <string name="enter_capacity">Enter capacity</string>
 
     <string name="validate_title_empty">Event title cannot be empty</string>
-    <string name="validate_title_too_long">Event title cannot exceed 15 words</string>
+    <string name="validate_title_too_long">Event title cannot exceed 10 words</string>
     <string name="validate_description_empty">Description cannot be empty</string>
-    <string name="validate_description_too_long">Description cannot exceed 30 words</string>
+    <string name="validate_description_too_long">Description cannot exceed 20 words</string>
     <string name="validate_capacity_empty">Capacity cannot be empty</string>
     <string name="validate_capacity_exceed">Capacity cannot exceed 300 people</string>
     <string name="validate_hospital_empty">Hospital cannot be empty</string>

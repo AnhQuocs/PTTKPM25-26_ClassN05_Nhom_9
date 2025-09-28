@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.heartbeat.presentation.components.BottomAppBar
+import com.example.heartbeat.presentation.components.TabItem
 import com.example.heartbeat.presentation.features.main.home.HomeScreen
 import com.example.heartbeat.presentation.features.search.SearchScreen
 import com.example.heartbeat.presentation.features.system.setting.SettingScreen
@@ -44,6 +45,7 @@ fun MainApp(navController: NavController) {
         },
         bottomBar = {
             BottomAppBar(
+                tabs = TabItem.entries.toTypedArray(),
                 currentIndex = selectedTabIndex,
                 onTabSelected = { newIndex ->
                     previousTabIndex = selectedTabIndex

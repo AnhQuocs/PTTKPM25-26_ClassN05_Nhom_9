@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.heartbeat.BaseComponentActivity
@@ -21,7 +20,7 @@ import com.example.heartbeat.presentation.features.users.auth.ui.SignUpScreen
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.onboarding.OnboardingScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.StaffLoginScreen
-import com.example.heartbeat.presentation.features.users.staff.ui.StaffScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.StaffMainScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.StaffSignUpScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +50,7 @@ class MainActivity : BaseComponentActivity() {
                 composable("admin_main") { AdminScreen() }
                 composable("staff_login") { StaffLoginScreen(navController) }
                 composable("staff_signUp") { StaffSignUpScreen(navController) }
-                composable("staff_main") { StaffScreen() }
+                composable("staff_main") { StaffMainScreen() }
             }
 
             LaunchedEffect(isLoading, authState) {

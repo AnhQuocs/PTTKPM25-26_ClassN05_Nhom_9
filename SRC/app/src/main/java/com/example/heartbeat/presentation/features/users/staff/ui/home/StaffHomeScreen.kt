@@ -124,38 +124,9 @@ fun StaffHomeScreen(
                         .padding(vertical = Dimens.PaddingM),
                 )
             }
-        },
-        bottomBar = {
-            BottomAppBar(
-                tabs = BottomBarItem.entries.toTypedArray(),
-                currentIndex = selectedTabIndex,
-                onTabSelected = { newIndex ->
-                    previousTabIndex = selectedTabIndex
-                    selectedTabIndex = newIndex
-                }
-            )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(top = Dimens.PaddingL)
-                .padding(horizontal = Dimens.PaddingM)
-        ) {
-            val event = Event(
-                id = "event_001",
-                locationId = "location_phenikaa",
-                name = "Giọt Hồng Yêu Thương",
-                description = "Chương trình hiến máu nhân đạo cho sinh viên & giảng viên tại ĐH Phenikaa.",
-                date = "2025-10-05",
-                time = "08:00",
-                deadline = LocalDateTime(2025, 10, 5, 23, 59, 0),
-                donorList = emptyList(),
-                capacity = 200,
-                donorCount = 75
-            )
-
-//            LazyColumn {
+//        LazyColumn {
 //                itemsIndexed(events) { index, event ->
 //                    val gradient = gradients[index % gradients.size]
 //                    EventCard(
@@ -166,8 +137,26 @@ fun StaffHomeScreen(
 //            }
 
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
+                verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
+                    .padding(top = Dimens.PaddingL)
+                    .padding(horizontal = Dimens.PaddingM)
             ) {
+                val event = Event(
+                    id = "event_001",
+                    locationId = "location_phenikaa",
+                    name = "Giọt Hồng Yêu Thương",
+                    description = "Chương trình hiến máu nhân đạo cho sinh viên & giảng viên tại ĐH Phenikaa.",
+                    date = "2025-10-05",
+                    time = "08:00",
+                    deadline = LocalDateTime(2025, 10, 5, 23, 59, 0),
+                    donorList = emptyList(),
+                    capacity = 200,
+                    donorCount = 75
+                )
+
                 items(6) { index ->
                     val gradient = gradients[index % gradients.size]
                     val accentColor = accentColors[index % accentColors.size]
@@ -178,8 +167,6 @@ fun StaffHomeScreen(
                     )
                 }
             }
-
-        }
     }
 }
 

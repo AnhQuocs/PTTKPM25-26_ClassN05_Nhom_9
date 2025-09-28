@@ -19,48 +19,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.heartbeat.presentation.components.BottomAppBar
 import com.example.heartbeat.presentation.features.users.staff.ui.create.CreateEventScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.home.StaffHomeScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.setting.StaffSettingScreen
-import com.example.heartbeat.ui.theme.AquaMint
-import com.example.heartbeat.ui.theme.CoralRed
-import com.example.heartbeat.ui.theme.GoldenGlow
-import com.example.heartbeat.ui.theme.RoyalPurple
-import com.example.heartbeat.ui.theme.SunsetOrange
 
 @Composable
-fun StaffScreen() {
+fun StaffMainScreen() {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var previousTabIndex by remember { mutableIntStateOf(0) }
-
-    val gradients = listOf(
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFEAEFFF), Color(0xFFFAF9FF))
-        ),
-
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFEDFFFB), Color(0xFFFFEBF4))
-        ),
-
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFFFFAF3), Color(0xFFECEFFF))
-        ),
-
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFEFFFF4), Color(0xFFFFFFEB))
-        )
-    )
-
-    val accentColors = listOf(
-        SunsetOrange,
-        AquaMint,
-        RoyalPurple,
-        GoldenGlow,
-        CoralRed
-    )
 
     Scaffold(
         topBar = {

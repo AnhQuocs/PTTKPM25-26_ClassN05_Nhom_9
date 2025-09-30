@@ -94,6 +94,7 @@
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="setting">Setting</string>
+    <string name="calendar">Calendar</string>
     <string name="save_a_life">Save a life</string>
     <string name="give_blood">Give Blood</string>
 
@@ -138,5 +139,10 @@
     <string name="validate_capacity_empty">Capacity cannot be empty</string>
     <string name="validate_capacity_exceed">Capacity cannot exceed 300 people</string>
     <string name="validate_hospital_empty">Hospital cannot be empty</string>
+
+    <!-- Event Status -->
+    <string name="upcoming">Upcoming</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="ended">Ended</string>
 
 </resources>

@@ -94,6 +94,7 @@
     <string name="home">Trang chủ</string>
     <string name="search">Tìm kiếm</string>
     <string name="setting">Cài đặt</string>
+    <string name="calendar">Lịch trình</string>
     <string name="save_a_life">Cứu người</string>
     <string name="give_blood">Hiến máu</string>
 
@@ -138,5 +139,10 @@
     <string name="validate_capacity_empty">Vui lòng nhập số lượng</string>
     <string name="validate_capacity_exceed">Số lượng tối đa 300 người</string>
     <string name="validate_hospital_empty">Vui lòng chọn bệnh viện</string>
+
+    <!-- Event Status -->
+    <string name="upcoming">Sắp diễn ra</string>
+    <string name="ongoing">Đang diễn ra</string>
+    <string name="ended">Đã kết thúc</string>
 
 </resources>

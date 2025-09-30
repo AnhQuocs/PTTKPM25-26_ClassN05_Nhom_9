@@ -45,5 +45,6 @@ object Dimens {
     val HeightShimmer = 400.dp
 
     // Width
+    val WidthM = 80.dp
     val WidthXL = 180.dp
 }

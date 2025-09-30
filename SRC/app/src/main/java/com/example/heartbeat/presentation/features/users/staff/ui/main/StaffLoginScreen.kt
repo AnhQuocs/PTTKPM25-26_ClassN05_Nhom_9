@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.users.staff.ui
+package com.example.heartbeat.presentation.features.users.staff.ui.main
 
 import android.content.Intent
 import android.widget.Toast
@@ -15,15 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,8 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -50,75 +48,83 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppButton
+import com.example.heartbeat.presentation.features.users.auth.ui.ForgotPassActivity
 import com.example.heartbeat.presentation.features.users.auth.ui.OutlinedTextFieldAuth
 import com.example.heartbeat.presentation.features.users.auth.ui.PasswordOutlinedTextField
+import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthActionType
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
-import com.example.heartbeat.presentation.features.users.donor.ui.profile_setup.ProfileSetupActivity
-import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
-import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
-import com.example.heartbeat.ui.theme.FacebookBlue
+import com.example.heartbeat.ui.theme.OceanBlue
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
 @Composable
-fun StaffSignUpScreen(
+fun StaffLoginScreen(
     navController: NavController,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var code by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("")}
+    var password by remember { mutableStateOf("")}
+    var code by remember { mutableStateOf("")}
 
     val emailFocusRequester = remember { FocusRequester() }
-    val usernameFocusRequester = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
     val codeFocusRequester = remember { FocusRequester() }
 
-    val authState by authViewModel.authState.collectAsState()
-    val isLoading by authViewModel.isLoading.collectAsState()
-
     val emailError by authViewModel.emailError.collectAsState()
-    val usernameError by authViewModel.usernameError.collectAsState()
     val passwordError by authViewModel.passwordError.collectAsState()
     val codeError by authViewModel.codeError.collectAsState()
 
-    val errorMessage by authViewModel.errorMessage.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
+    val lastAction by authViewModel.lastAuthAction.collectAsState()
+    val isLoading by authViewModel.isLoading.collectAsState()
+    val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
     val context = LocalContext.current
+    val currentUser = authState?.getOrNull()
 
-    LaunchedEffect(errorMessage) {
-        errorMessage?.let {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            authViewModel.clearErrorMessage()
+    LaunchedEffect(authState) {
+        authState?.onSuccess {
+            val message = when (lastAction) {
+                AuthActionType.LOGIN -> context.getString(R.string.login_success)
+                AuthActionType.SIGN_UP -> context.getString(R.string.sign_up_success)
+                else -> null
+            }
+            message?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+            authViewModel.clearAuthState()
+        }
+
+        authState?.onFailure { throwable ->
+            val message = when {
+                throwable is FirebaseAuthUserCollisionException -> context.getString(R.string.email_already_exists)
+                lastAction == AuthActionType.LOGIN -> context.getString(R.string.login_failed)
+                lastAction == AuthActionType.SIGN_UP -> context.getString(R.string.sign_up_failed)
+                else -> context.getString(R.string.unknown_error)
+            }
+
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            authViewModel.clearAuthState()
         }
     }
 
-    val welcomeText = stringResource(id = R.string.welcome)
-
-    LaunchedEffect(authState) {
-        authState?.onSuccess { user ->
-            Toast.makeText(context, "$welcomeText ${user.username}", Toast.LENGTH_SHORT).show()
-
-            when (user.role) {
-                "admin" -> navController.navigate("admin_main") {
-                    popUpTo("staff_signUp") { inclusive = true }
-                }
-                "staff" -> navController.navigate("staff_main") {
-                    popUpTo("staff_signUp") { inclusive = true }
-                }
+    if (isLoggedIn && currentUser != null) {
+        when (currentUser.role) {
+            "admin" -> navController.navigate("admin_main") {
+                popUpTo("staff_login") { inclusive = true }
             }
-
-            authViewModel.clearAuthState()
-        }?.onFailure {
-            Toast.makeText(context, it.message ?: "Sign up failed", Toast.LENGTH_SHORT).show()
-            authViewModel.clearAuthState()
+            "staff" -> navController.navigate("staff_main") {
+                popUpTo("staff_login") { inclusive = true }
+            }
         }
+        authViewModel.clearAuthState()
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -126,10 +132,32 @@ fun StaffSignUpScreen(
                 .fillMaxSize()
                 .background(color = Color.White)
                 .padding(Dimens.PaddingM)
-                .padding(vertical = Dimens.PaddingUltra),
+                .padding(vertical = Dimens.PaddingL),
         ) {
+            Box(
+                modifier = Modifier
+                    .size(Dimens.SizeL)
+                    .background(color = Color.Black.copy(alpha = 0.6f), CircleShape)
+                    .clip(CircleShape)
+                    .clickable {
+                        navController.navigate("login") {
+                            popUpTo("staff_login") { inclusive = true }
+                        }
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(Dimens.SizeM).align(Alignment.Center)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
+
             Text(
-                text = stringResource(id = R.string.create_account),
+                text = stringResource(id = R.string.welcome_app),
                 color = Color.Black,
                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
                 textAlign = TextAlign.Center,
@@ -139,34 +167,12 @@ fun StaffSignUpScreen(
             Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
             Text(
-                text = stringResource(id = R.string.create_account_des),
+                text = stringResource(id = R.string.welcome_des),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
-
-            Text(
-                text = stringResource(id = R.string.username),
-                style = MaterialTheme.typography.titleSmall
-            )
-
-            OutlinedTextFieldAuth(
-                value = username,
-                onValueChange = { username = it },
-                label = stringResource(id = R.string.username),
-                placeholder = stringResource(id = R.string.username_placeholder),
-                icon = Icons.Default.Person,
-                focusRequester = usernameFocusRequester,
-                isError = usernameError != null,
-                errorMessage = usernameError,
-                imeAction = ImeAction.Next,
-                onImeAction = {
-                    emailFocusRequester.requestFocus()
-                }
-            )
-
-            Spacer(modifier = Modifier.height(AppSpacing.LargePlus))
+            Spacer(modifier = Modifier.height(48.dp))
 
             Text(
                 text = stringResource(id = R.string.email),
@@ -188,7 +194,7 @@ fun StaffSignUpScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(AppSpacing.LargePlus))
+            Spacer(modifier = Modifier.height(AppSpacing.Jumbo))
 
             Text(
                 text = stringResource(id = R.string.password),
@@ -204,10 +210,29 @@ fun StaffSignUpScreen(
                 isError = passwordError != null,
                 errorMessage = passwordError,
                 focusRequester = passwordFocusRequester,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next,
+                onImeAction = {
+                    codeFocusRequester.requestFocus()
+                }
             )
 
-            Spacer(modifier = Modifier.height(AppSpacing.LargePlus))
+            Spacer(modifier = Modifier.height(AppSpacing.MediumLarge))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    text = stringResource(id = R.string.forgot_pass) + "?",
+                    color = OceanBlue,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .clickable {
+                            val intent = Intent(context, ForgotPassActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                )
+            }
 
             Text(
                 text = stringResource(id = R.string.code),
@@ -230,13 +255,10 @@ fun StaffSignUpScreen(
 
             AppButton(
                 onClick = {
-                    authViewModel.signUpWithStaffCode(email, password, username, code)
+                    authViewModel.loginWithCode(email, password, code)
                 },
-                text = stringResource(id = R.string.sign_up)
+                text = stringResource(id = R.string.login)
             )
-
-            Spacer(modifier = Modifier.height(AppSpacing.Jumbo))
-
 
             Spacer(modifier = Modifier.height(AppSpacing.Jumbo + 8.dp))
 
@@ -246,24 +268,22 @@ fun StaffSignUpScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    stringResource(id = R.string.already_have_account) + " "
+                    stringResource(id = R.string.do_not_have_account) + " "
                 )
 
                 Text(
-                    stringResource(id = R.string.login),
+                    stringResource(id = R.string.sign_up),
                     color = BloodRed,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.clickable {
-                        navController.navigate("staff_login") {
-                            popUpTo("staff_signUp") {
+                        navController.navigate("staff_signUp") {
+                            popUpTo("staff_login") {
                                 inclusive = true
                             }
                         }
                     }
                 )
             }
-
-            Spacer(modifier = Modifier.height(AppSpacing.MediumLarge))
         }
 
         if(isLoading) {

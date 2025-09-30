@@ -19,9 +19,9 @@ import com.example.heartbeat.presentation.features.users.auth.ui.LoginScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.SignUpScreen
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.onboarding.OnboardingScreen
-import com.example.heartbeat.presentation.features.users.staff.ui.StaffLoginScreen
-import com.example.heartbeat.presentation.features.users.staff.ui.StaffMainScreen
-import com.example.heartbeat.presentation.features.users.staff.ui.StaffSignUpScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.main.StaffLoginScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.main.StaffMainScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.main.StaffSignUpScreen
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.users.staff.ui
+package com.example.heartbeat.presentation.features.users.staff.ui.main
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.heartbeat.presentation.components.BottomAppBar
+import com.example.heartbeat.presentation.features.users.staff.ui.calendar.StaffCalendarScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.create.CreateEventScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.home.StaffHomeScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.setting.StaffSettingScreen
@@ -91,7 +92,8 @@ fun StaffMainScreen() {
             when (tab) {
                 0 -> StaffHomeScreen()
                 1 -> CreateEventScreen()
-                2 -> StaffSettingScreen()
+                2 -> StaffCalendarScreen()
+                3 -> StaffSettingScreen()
             }
         }
     }

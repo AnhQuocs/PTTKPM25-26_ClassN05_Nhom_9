@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,7 +52,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
+import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.presentation.components.AppTitle
+import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
+import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.ui.dimens.AppShape
@@ -73,16 +78,24 @@ import com.example.heartbeat.ui.theme.UnityPeach
 import com.example.heartbeat.ui.theme.UnityPeachText
 import com.example.heartbeat.ui.theme.VitalPink
 import com.example.heartbeat.ui.theme.VitalPinkText
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
-    donorViewModel: DonorViewModel = hiltViewModel()
+    donorViewModel: DonorViewModel = hiltViewModel(),
+    eventViewModel: EventViewModel = hiltViewModel(),
 ) {
     val authState by authViewModel.authState.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
     val avatar by donorViewModel.donorAvatar.collectAsState()
     val isLoading by donorViewModel.isLoading.collectAsState()
+
+    val events by eventViewModel.events.collectAsState(initial = emptyList())
+
+    Log.d("HomeScreen", "Event size: ${events.size}")
 
     val scrollState = rememberLazyListState()
     val hasScrolled by remember {
@@ -152,7 +165,7 @@ fun HomeScreen(
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
                 item { WhyDonateList() }
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
-                item { UpcomingEventCard() }
+                item { UpcomingEventCard(events) }
             }
 
             formState.error?.let { errorMsg ->
@@ -352,7 +365,12 @@ fun BloodGroup() {
 }
 
 @Composable
-fun UpcomingEventCard() {
+fun UpcomingEventCard(
+    events: List<Event>,
+    hospitalViewModel: HospitalViewModel = hiltViewModel()
+) {
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -363,96 +381,111 @@ fun UpcomingEventCard() {
             text = stringResource(id = R.string.upcoming_event)
         )
 
-        Card(
-            modifier = Modifier
-                .height(Dimens.HeightXL3)
-                .aspectRatio(2f),
-            shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        LazyRow(
+
         ) {
-            Column(
-                modifier = Modifier.padding(horizontal = Dimens.PaddingM, vertical = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_blood),
-                        contentDescription = null,
-                        tint = BloodRed,
-                        modifier = Modifier.size(Dimens.SizeSM)
-                    )
-                    Spacer(Modifier.width(AppSpacing.Small))
-                    Text(
-                        text = "One Drop, One Life",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = BloodRed
-                        )
-                    )
+            items(events) { event ->
+                val (startStr, endStr) = event.time.split(" ")
+                val startTime = LocalTime.parse(startStr, timeFormatter)
+
+                LaunchedEffect(Unit) {
+                    hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.AccessTime,
-                        contentDescription = null,
-                        tint = UnityPeachText,
-                        modifier = Modifier.size(Dimens.SizeSM)
-                    )
-                    Spacer(Modifier.width(AppSpacing.Small + 2.dp))
-                    Text(
-                        text = "25/09/2025 - 08:00 AM",
-                        style = MaterialTheme.typography.bodyMedium.copy(color = UnityPeachText)
-                    )
-                }
+                val hospital = hospitalViewModel.hospitalDetails[event.locationId]
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_hospital),
-                        contentDescription = null,
-                        tint = CompassionBlueText,
-                        modifier = Modifier.size(Dimens.SizeSM)
-                    )
-                    Spacer(Modifier.width(AppSpacing.Small + 2.dp))
-                    Text(
-                        text = "Ha Dong General Hospital",
-                        style = MaterialTheme.typography.bodyMedium.copy(color = CompassionBlueText)
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Column {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(6.dp)
+                Card(
+                    modifier = Modifier
+                        .height(Dimens.HeightXL3)
+                        .aspectRatio(2f),
+                    shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = Dimens.PaddingM, vertical = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(AppShape.MediumShape))
-                                .background(Color(0xFFEEEEEE))
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_blood),
+                                contentDescription = null,
+                                tint = BloodRed,
+                                modifier = Modifier.size(Dimens.SizeSM)
+                            )
+                            Spacer(Modifier.width(AppSpacing.Small))
+                            Text(
+                                text = event.name,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = BloodRed
+                                )
+                            )
+                        }
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(0.71f)
-                                .fillMaxHeight()
-                                .clip(RoundedCornerShape(AppShape.MediumShape))
-                                .background(BloodRed)
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.AccessTime,
+                                contentDescription = null,
+                                tint = UnityPeachText,
+                                modifier = Modifier.size(Dimens.SizeSM)
+                            )
+                            Spacer(Modifier.width(AppSpacing.Small + 2.dp))
+                            Text(
+                                text = "${event.date} - $startTime",
+                                style = MaterialTheme.typography.bodyMedium.copy(color = UnityPeachText)
+                            )
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_hospital),
+                                contentDescription = null,
+                                tint = CompassionBlueText,
+                                modifier = Modifier.size(Dimens.SizeSM)
+                            )
+                            Spacer(Modifier.width(AppSpacing.Small + 2.dp))
+                            Text(
+                                text = hospital?.hospitalName ?: "Loading...",
+                                style = MaterialTheme.typography.bodyMedium.copy(color = CompassionBlueText)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Column {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(6.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(AppShape.MediumShape))
+                                        .background(Color(0xFFEEEEEE))
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.71f)
+                                        .fillMaxHeight()
+                                        .clip(RoundedCornerShape(AppShape.MediumShape))
+                                        .background(BloodRed)
+                                )
+                            }
+                            Spacer(Modifier.height(AppSpacing.Small))
+                            Text(
+                                text = "Progress: 71/100",
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = BloodRed
+                                )
+                            )
+                        }
                     }
-                    Spacer(Modifier.height(AppSpacing.Small))
-                    Text(
-                        text = "Progress: 71/100",
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = BloodRed
-                        )
-                    )
                 }
             }
         }

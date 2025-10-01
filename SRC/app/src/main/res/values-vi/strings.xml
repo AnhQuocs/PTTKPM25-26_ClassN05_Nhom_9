@@ -145,4 +145,7 @@
     <string name="ongoing">Đang diễn ra</string>
     <string name="ended">Đã kết thúc</string>
 
+    <!-- Setting -->
+    <string name="logout">Đăng xuất</string>
+
 </resources>

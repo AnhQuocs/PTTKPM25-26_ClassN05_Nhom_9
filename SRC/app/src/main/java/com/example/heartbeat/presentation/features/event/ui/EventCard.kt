@@ -28,7 +28,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -220,20 +223,23 @@ fun CircularProgressBar(
     value: Int,
     capacity: Int,
     strokeWidth: Dp = 6.dp,
-    animationDuration: Int = 1000,
-    animationDelay: Int = 0
+    animationDuration: Int = 1000
 ) {
     val targetPercentage = (value.toFloat() / capacity.toFloat()).coerceIn(0f, 1f)
+
+    val previousPercentage = remember { mutableFloatStateOf(targetPercentage) }
 
     val animatedPercentage by animateFloatAsState(
         targetValue = targetPercentage,
         animationSpec = tween(
             durationMillis = animationDuration,
-            delayMillis = animationDelay,
             easing = FastOutSlowInEasing
-        ),
-        label = "circularProgressAnim"
+        ), label = ""
     )
+
+    LaunchedEffect(targetPercentage) {
+        previousPercentage.floatValue = targetPercentage
+    }
 
     val color = when {
         animatedPercentage <= 0.5f -> OceanBlue

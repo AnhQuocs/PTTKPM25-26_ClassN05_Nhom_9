@@ -2,11 +2,12 @@ package com.example.heartbeat.domain.usecase.event
 
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.repository.event.EventRepository
+import kotlinx.coroutines.flow.Flow
 
-class GetAllEventsUseCase(
+class ObserveAllEventsUseCase(
     private val repository: EventRepository
 ) {
-    suspend operator fun invoke(): List<Event> {
-        return repository.getAllEvents()
+    operator fun invoke(): Flow<List<Event>> {
+        return repository.observeAllEvents()
     }
 }

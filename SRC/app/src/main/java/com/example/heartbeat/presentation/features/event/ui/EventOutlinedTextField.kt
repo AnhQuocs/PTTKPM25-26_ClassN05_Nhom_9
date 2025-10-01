@@ -77,7 +77,7 @@ fun EventOutlinedTextField(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val heightTextField by remember { mutableStateOf(Dimens.HeightLarge - 8.dp) }
+    val heightTextField by remember { mutableStateOf(Dimens.HeightDefault) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
 
     var expanded by remember { mutableStateOf(false) }
@@ -175,7 +175,7 @@ fun EventOutlinedTextField(
             AnimatedVisibility(visible = expanded) {
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = PinkLight.copy(alpha = 0.2f)
+                        containerColor = Color.White
                     ),
                     modifier = Modifier
                         .padding(horizontal = 2.dp)

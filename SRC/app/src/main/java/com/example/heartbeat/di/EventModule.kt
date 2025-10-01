@@ -5,9 +5,10 @@ import com.example.heartbeat.domain.repository.event.EventRepository
 import com.example.heartbeat.domain.usecase.event.AddEventUseCase
 import com.example.heartbeat.domain.usecase.event.DeleteEventUseCase
 import com.example.heartbeat.domain.usecase.event.EventUseCase
-import com.example.heartbeat.domain.usecase.event.GetAllEventsUseCase
+import com.example.heartbeat.domain.usecase.event.ObserveAllEventsUseCase
 import com.example.heartbeat.domain.usecase.event.GetEventByIdUseCase
 import com.example.heartbeat.domain.usecase.event.ObserveDonorCountUseCase
+import com.example.heartbeat.domain.usecase.event.ObserveDonorListUseCase
 import com.example.heartbeat.domain.usecase.event.UpdateEventUseCase
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -33,9 +34,10 @@ object EventModule {
     fun provideEventUseCase(repository: EventRepository) = EventUseCase(
         addEventUseCase = AddEventUseCase(repository),
         getEventByIdUseCase = GetEventByIdUseCase(repository),
-        getAllEventsUseCase = GetAllEventsUseCase(repository),
+        observeAllEventsUseCase = ObserveAllEventsUseCase(repository),
         updateEventUseCase = UpdateEventUseCase(repository),
         deleteEventUseCase = DeleteEventUseCase(repository),
-        observeDonorCountUseCase = ObserveDonorCountUseCase(repository)
+        observeDonorCountUseCase = ObserveDonorCountUseCase(repository),
+        observeDonorListUseCase = ObserveDonorListUseCase(repository)
     )
 }

@@ -1,6 +1,5 @@
 package com.example.heartbeat.presentation.features.event.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,8 +30,10 @@ import com.example.heartbeat.presentation.components.TimePickerField
 import com.example.heartbeat.presentation.features.event.util.EventValidator
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.ui.dimens.AppSpacing
+import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
@@ -48,6 +49,8 @@ fun EventForm(
     var hospitalId by remember { mutableStateOf("") }
     var deadline by remember { mutableStateOf("") }
     var capacity by remember { mutableStateOf("") }
+
+    val deadlineFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
 
     val currentDate = LocalDate.now().plusDays(10)
         .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
@@ -75,7 +78,7 @@ fun EventForm(
         )
     } else null
 
-    val desError = if(desTouched) {
+    val desError = if (desTouched) {
         EventValidator.isValidEventText(
             text = description,
             maxWords = 20,
@@ -84,7 +87,7 @@ fun EventForm(
         )
     } else null
 
-    val hosError = if(hosTouched) {
+    val hosError = if (hosTouched) {
         EventValidator.isValidEventText(
             text = hospitalName,
             maxWords = 50,
@@ -93,11 +96,20 @@ fun EventForm(
         )
     } else null
 
-    val capacityError = if(capacityTouched) {
+    val capacityError = if (capacityTouched) {
         EventValidator.validateCapacity(
             capacity = capacity
         )
     } else null
+
+    val isButtonEnabled =
+        nameError == null &&
+                desError == null &&
+                hosError == null &&
+                capacityError == null &&
+                selectedStartTime.isNotBlank() &&
+                selectedFinishTime.isNotBlank() &&
+                deadline.isNotBlank()
 
     Column(
         modifier = modifier
@@ -127,7 +139,7 @@ fun EventForm(
             value = description,
             onValueChange = {
                 description = it
-                if(!desTouched) desTouched = true
+                if (!desTouched) desTouched = true
             },
             placeholder = stringResource(id = R.string.enter_description),
             isTrailingIcon = false,
@@ -146,7 +158,7 @@ fun EventForm(
             onValueChange = { nameSelected ->
                 hospitalName = nameSelected
                 hospitalId = list.firstOrNull { it.hospitalName == nameSelected }?.hospitalId ?: ""
-                if(!hosTouched) hosTouched = true
+                if (!hosTouched) hosTouched = true
             },
             placeholder = stringResource(id = R.string.select_hospital),
             isTrailingIcon = true,
@@ -165,7 +177,7 @@ fun EventForm(
             value = capacity,
             onValueChange = {
                 capacity = it
-                if(!capacityTouched) capacityTouched = true
+                if (!capacityTouched) capacityTouched = true
             },
             placeholder = stringResource(id = R.string.enter_capacity),
             focusRequester = capacityFocusRequester,
@@ -197,14 +209,14 @@ fun EventForm(
             TimePickerField(
                 selectedTime = selectedStartTime,
                 onTimeChange = { selectedStartTime = it },
-                placeholder = stringResource(id= R.string.start_time),
+                placeholder = stringResource(id = R.string.start_time),
                 modifier = Modifier.weight(0.8f)
             )
 
             TimePickerField(
                 selectedTime = selectedFinishTime,
                 onTimeChange = { selectedFinishTime = it },
-                placeholder = stringResource(id= R.string.finish_time),
+                placeholder = stringResource(id = R.string.finish_time),
                 modifier = Modifier.weight(0.8f)
             )
         }
@@ -226,9 +238,10 @@ fun EventForm(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
+        Spacer(modifier = Modifier.height(AppSpacing.ExtraLarge))
 
         AppButton(
+            enabled = isButtonEnabled,
             onClick = {
                 val time = "$selectedStartTime $selectedFinishTime"
 
@@ -239,15 +252,15 @@ fun EventForm(
                     description = description,
                     date = selectedDate,
                     time = time,
-                    deadline = if (deadline.isNotBlank()) deadline.toLocalDateTime() else null,
+                    deadline = if(deadline.isNotBlank()) {
+                        LocalDateTime.parse(deadline, deadlineFormatter).toKotlinLocalDateTime()
+                    } else null,
                     donorList = emptyList(),
                     capacity = capacity.toIntOrNull() ?: 0,
                     donorCount = 0
                 )
 
-//                eventViewModel.addEvent(event)
-
-                Log.d("EventForm", "Time: $time")
+                eventViewModel.addEvent(event)
             },
             text = stringResource(id = R.string.submit)
         )

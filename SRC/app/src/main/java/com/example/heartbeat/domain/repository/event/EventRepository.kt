@@ -1,12 +1,17 @@
 package com.example.heartbeat.domain.repository.event
 
 import com.example.heartbeat.domain.entity.event.Event
+import kotlinx.coroutines.flow.Flow
 
 interface EventRepository {
-    suspend fun addEvent(event: Event)
+    fun observeAllEvents(): Flow<List<Event>>
+
     suspend fun getEventById(eventId: String): Event?
+
+    suspend fun addEvent(event: Event)
     suspend fun updateEvent(eventId: String, event: Event)
     suspend fun deleteEvent(eventId: String)
-    suspend fun getAllEvents(): List<Event>
+
     fun observeDonorCount(eventId: String, onUpdate: (Int) -> Unit)
+    fun observeDonorList(eventId: String, onUpdate: (List<String>) -> Unit)
 }

@@ -7,6 +7,7 @@ import com.example.heartbeat.domain.usecase.event.EventUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,18 +28,21 @@ class EventViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    fun getAllEvents() {
-        viewModelScope.launch {
-            try {
-                val events = eventUseCase.getAllEventsUseCase()
-                _events.value = events
+    init {
+        observeEvents()
+    }
 
-                events.forEach { event ->
-                    observeDonorCount(event.id)
+    private fun observeEvents() {
+        viewModelScope.launch {
+            eventUseCase.observeAllEventsUseCase()
+                .catch { e -> _error.value = e.message }
+                .collect { events ->
+                    _events.value = events
+
+                    events.forEach { event ->
+                        observeDonorCount(event.id)
+                    }
                 }
-            } catch (e: Exception) {
-                _error.value = e.message
-            }
         }
     }
 
@@ -57,7 +61,6 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 eventUseCase.addEventUseCase(event)
-                getAllEvents()
             } catch (e: Exception) {
                 _error.value = e.message
             }
@@ -68,7 +71,6 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 eventUseCase.updateEventUseCase(id, event)
-                getAllEvents()
             } catch (e: Exception) {
                 _error.value = e.message
             }
@@ -79,7 +81,6 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 eventUseCase.deleteEventUseCase(id)
-                getAllEvents()
             } catch (e: Exception) {
                 _error.value = e.message
             }
@@ -92,6 +93,17 @@ class EventViewModel @Inject constructor(
                 if (event.id == eventId) event.copy(donorCount = donorCount)
                 else event
             }
+        }
+    }
+
+    fun observeDonorList(eventId: String) {
+        eventUseCase.observeDonorListUseCase(eventId) { donorList ->
+            _events.value = _events.value.map { event ->
+                if (event.id == eventId) event.copy(donorList = donorList)
+                else event
+            }
+
+            _selectedEvent.value = _selectedEvent.value?.copy(donorList = donorList)
         }
     }
 }

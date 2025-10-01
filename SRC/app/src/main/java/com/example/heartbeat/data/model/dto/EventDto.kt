@@ -1,6 +1,5 @@
 package com.example.heartbeat.data.model.dto
 
-import com.example.heartbeat.domain.entity.users.Donor
 import com.google.firebase.Timestamp
 
 data class EventDto(
@@ -10,7 +9,7 @@ data class EventDto(
     val date: String? = null,
     val time: String? = null,
     val deadline: Timestamp? = null,
-    val donorList: List<Donor>? = null,
+    val donorList: List<String>? = null,
     val capacity: Int? = null,
     val donorCount: Int? = null
 )

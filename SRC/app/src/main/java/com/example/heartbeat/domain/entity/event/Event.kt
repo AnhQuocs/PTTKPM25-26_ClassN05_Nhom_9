@@ -1,6 +1,5 @@
 package com.example.heartbeat.domain.entity.event
 
-import com.example.heartbeat.domain.entity.users.Donor
 import kotlinx.datetime.LocalDateTime
 
 data class Event(
@@ -11,7 +10,7 @@ data class Event(
     val date: String,
     val time: String,
     val deadline: LocalDateTime?,
-    val donorList: List<Donor>,
+    val donorList: List<String>,
     val capacity: Int,
     val donorCount: Int
 )

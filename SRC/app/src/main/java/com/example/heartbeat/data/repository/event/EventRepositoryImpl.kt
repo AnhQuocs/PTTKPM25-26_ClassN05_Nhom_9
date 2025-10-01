@@ -6,6 +6,10 @@ import com.example.heartbeat.data.model.mapper.toDto
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.repository.event.EventRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class EventRepositoryImpl(
@@ -13,6 +17,22 @@ class EventRepositoryImpl(
 ): EventRepository {
 
     private val collection = firestore.collection("events")
+
+    override fun observeAllEvents(): Flow<List<Event>> = callbackFlow {
+        val listener = collection.addSnapshotListener { snapshot, e ->
+            if(e != null) {
+                close(e)
+                return@addSnapshotListener
+            }
+            if(snapshot != null) {
+                val events = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(EventDto::class.java)?.toDomain(doc.id)
+                }
+                trySend(events)
+            }
+        }
+        awaitClose { listener.remove() }
+    }
 
     override suspend fun addEvent(event: Event) {
         val docRef = collection.document()
@@ -29,13 +49,6 @@ class EventRepositoryImpl(
         }
     }
 
-    override suspend fun getAllEvents(): List<Event> {
-        val snapshot = collection.get().await()
-        return snapshot.documents.mapNotNull { doc ->
-            doc.toObject(EventDto::class.java)?.toDomain(doc.id)
-        }
-    }
-
     override suspend fun updateEvent(eventId: String, event: Event) {
         val dto = event.toDto()
         collection.document(eventId).set(dto).await()
@@ -46,11 +59,25 @@ class EventRepositoryImpl(
     }
 
     override fun observeDonorCount(eventId: String, onUpdate: (Int) -> Unit) {
+        collection.document(eventId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+
+                val donorList = snapshot.get("donorList") as? List<*>
+                onUpdate(donorList?.size ?: 0)
+            }
+    }
+
+    override fun observeDonorList(
+        eventId: String,
+        onUpdate: (List<String>) -> Unit
+    ) {
         firestore.collection("donations")
             .whereEqualTo("eventId", eventId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null || snapshot == null) return@addSnapshotListener
-                onUpdate(snapshot.size())
+                val donorIds = snapshot.documents.mapNotNull { it.getString("userId") }
+                onUpdate(donorIds)
             }
     }
 }

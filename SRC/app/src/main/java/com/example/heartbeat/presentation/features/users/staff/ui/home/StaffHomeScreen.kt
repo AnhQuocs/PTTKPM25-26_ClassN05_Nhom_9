@@ -1,19 +1,11 @@
 package com.example.heartbeat.presentation.features.users.staff.ui.home
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,12 +13,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
@@ -35,7 +24,6 @@ import com.example.heartbeat.presentation.features.event.ui.EventCard
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.staff.component.StaffTopBar
-import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.AquaMint
 import com.example.heartbeat.ui.theme.CoralRed
@@ -53,7 +41,6 @@ fun StaffHomeScreen(
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var previousTabIndex by remember { mutableIntStateOf(0) }
 
-    val hospitals = hospitalViewModel.hospitals
     val events by eventViewModel.events.collectAsState(initial = emptyList())
 
     val gradients = listOf(
@@ -102,12 +89,21 @@ fun StaffHomeScreen(
                 .padding(horizontal = Dimens.PaddingM)
         ) {
             itemsIndexed(events) { index, event ->
+                LaunchedEffect(Unit) {
+                    hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
+                }
+
+                val hospital = hospitalViewModel.hospitalDetails[event.locationId]
+                val location = "${hospital?.district}, ${hospital?.province}"
+
                 val gradient = gradients[index % gradients.size]
                 val accentColor = accentColors[index % accentColors.size]
+
                 EventCard(
                     gradient = gradient,
                     event = event,
-                    accentColor = accentColor
+                    accentColor = accentColor,
+                    location = location
                 )
             }
         }
@@ -127,7 +123,7 @@ fun StaffHomeScreen(
 //                    locationId = "location_phenikaa",
 //                    name = "Giọt Hồng Yêu Thương",
 //                    description = "Chương trình hiến máu nhân đạo cho sinh viên & giảng viên tại ĐH Phenikaa.",
-//                    date = "02/10/2025",
+//                    date = "03/10/2025",
 //                    time = "08:00 16:00",
 //                    deadline = LocalDateTime(2025, 10, 5, 23, 59, 0),
 //                    donorList = emptyList(),
@@ -139,7 +135,7 @@ fun StaffHomeScreen(
 //                    locationId = "location_phenikaa",
 //                    name = "Giọt Hồng Yêu Thương",
 //                    description = "Chương trình hiến máu nhân đạo cho sinh viên & giảng viên tại ĐH Phenikaa.",
-//                    date = "01/10/2025",
+//                    date = "02/10/2025",
 //                    time = "08:00 18:00",
 //                    deadline = LocalDateTime(2025, 10, 5, 23, 59, 0),
 //                    donorList = emptyList(),
@@ -160,13 +156,22 @@ fun StaffHomeScreen(
 //                )
 //            )
 //
+//            val locationList = listOf(
+//                "Hà Đông, Hà Nội",
+//                "TP. Thái Nguyên",
+//                "Hoàn Kiếm, Hà Nội"
+//            )
+//
 //            itemsIndexed(eventList) { index, event ->
 //                val gradient = gradients[index % gradients.size]
 //                val accentColor = accentColors[index % accentColors.size]
+//                val location = locationList[index]
+//
 //                EventCard(
 //                    gradient = gradient,
 //                    event = event,
-//                    accentColor = accentColor
+//                    accentColor = accentColor,
+//                    location = location
 //                )
 //            }
 //        }

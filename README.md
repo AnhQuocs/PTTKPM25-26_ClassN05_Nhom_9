@@ -1,4 +1,4 @@
-# Ứng dụng Đăng ký Hiến máu
+# Xây dựng phần mềm Heart Beat trên nền tảng Mobile
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)
@@ -24,7 +24,7 @@ Hệ thống hỗ trợ:
 ---
 
 ## Nhóm thực hành
-- Lớp học phần: Phân tích thiết kế phần mềm
+- Lớp học phần: Phân tích thiết kế phần mềm(N05)
 - Nhóm: 9  
 
 ### Giảng viên hướng dẫn
@@ -69,4 +69,5 @@ Tài liệu chi tiết: [Wiki Project](https://github.com/AnhQuocs/PTTKPM25-26_C
 - Xây dựng hệ thống đăng ký hiến máu trực tuyến đơn giản, an toàn và tiện lợi.  
 - Kết nối cộng đồng, khuyến khích tinh thần hiến máu nhân đạo.  
 - Hỗ trợ đơn vị tổ chức quản lý sự kiện nhanh chóng và hiệu quả.  
+
 

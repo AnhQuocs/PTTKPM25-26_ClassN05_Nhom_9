@@ -2,6 +2,8 @@ package com.example.heartbeat.presentation.features.main.home
 
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -382,7 +384,7 @@ fun UpcomingEventCard(
         )
 
         LazyRow(
-
+            horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
         ) {
             items(events) { event ->
                 val (startStr, endStr) = event.time.split(" ")
@@ -396,6 +398,7 @@ fun UpcomingEventCard(
 
                 Card(
                     modifier = Modifier
+                        .border(0.1.dp, Color.LightGray, RoundedCornerShape(AppShape.ExtraExtraLargeShape))
                         .height(Dimens.HeightXL3)
                         .aspectRatio(2f),
                     shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),
@@ -455,39 +458,61 @@ fun UpcomingEventCard(
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Column {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(6.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(AppShape.MediumShape))
-                                        .background(Color(0xFFEEEEEE))
-                                )
-
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.71f)
-                                        .fillMaxHeight()
-                                        .clip(RoundedCornerShape(AppShape.MediumShape))
-                                        .background(BloodRed)
-                                )
-                            }
-                            Spacer(Modifier.height(AppSpacing.Small))
-                            Text(
-                                text = "Progress: 71/100",
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    color = BloodRed
-                                )
-                            )
-                        }
+                        ProgressBar(
+                            value = event.donorCount,
+                            capacity = event.capacity
+                        )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ProgressBar(
+    value: Int,
+    capacity: Int,
+    modifier: Modifier = Modifier
+) {
+    val targetPercentage = (value.toFloat() / capacity.toFloat()).coerceIn(0f, 1f)
+
+    val animatedPercentage by animateFloatAsState(
+        targetValue = targetPercentage,
+        animationSpec = tween(durationMillis = 800),
+        label = "progressAnim"
+    )
+
+    Column(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(AppShape.MediumShape))
+                    .background(Color(0xFFEEEEEE))
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(animatedPercentage)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(AppShape.MediumShape))
+                    .background(BloodRed)
+            )
+        }
+
+        Spacer(Modifier.height(AppSpacing.Small))
+
+        Text(
+            text = "Progress: $value/$capacity",
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontWeight = FontWeight.Bold,
+                color = BloodRed
+            )
+        )
     }
 }

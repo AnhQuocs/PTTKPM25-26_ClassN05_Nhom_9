@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -71,9 +72,16 @@ fun DeadlinePickerField(
         modifier = modifier
             .defaultMinSize(minHeight = Dimens.HeightLarge - 8.dp)
             .clickable(enabled = enabled) { showDatePicker = true },
-        trailingIcon = {
+        leadingIcon = {
             Icon(
                 Icons.Default.AccessTime,
+                contentDescription = null,
+                tint = Color.Black.copy(alpha = 0.5f)
+            )
+        },
+        trailingIcon = {
+            Icon(
+                Icons.Default.AdsClick,
                 contentDescription = "",
                 modifier = Modifier.clickable(enabled = enabled) { showDatePicker = true }
             )

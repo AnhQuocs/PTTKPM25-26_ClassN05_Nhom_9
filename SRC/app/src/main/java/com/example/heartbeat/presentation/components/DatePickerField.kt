@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -81,9 +82,16 @@ fun DatePickerField(
             modifier = Modifier
                 .defaultMinSize(minHeight = Dimens.HeightLarge - 8.dp)
                 .clickable { showDatePicker = true },
-            trailingIcon = {
+            leadingIcon = {
                 Icon(
                     Icons.Default.DateRange,
+                    contentDescription = null,
+                    tint = Color.Black.copy(alpha = 0.5f)
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    Icons.Default.AdsClick,
                     contentDescription = "",
                     modifier = Modifier
                         .clickable { showDatePicker = true },

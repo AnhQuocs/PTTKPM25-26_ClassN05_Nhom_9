@@ -14,10 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.heartbeat.R
 import com.example.heartbeat.presentation.features.event.ui.EventForm
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
+import com.example.heartbeat.presentation.features.users.staff.component.StaffTopBar
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.Dimens
 
@@ -29,14 +32,18 @@ fun CreateEventScreen(
     val hospitals = hospitalViewModel.hospitals
 
     Scaffold(
+        topBar = {
+            StaffTopBar(
+                text = stringResource(id = R.string.create_event)
+            )
+        },
         modifier = Modifier
             .fillMaxSize()
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
-                .background(color = Color(0xFFE3F2FD))
+                .background(color = Color(0xFFE3F2FD).copy(alpha = 0.4f))
                 .padding(top = paddingValues.calculateTopPadding())
-                .padding(vertical = Dimens.PaddingM)
                 .fillMaxSize()
         ) {
             item {

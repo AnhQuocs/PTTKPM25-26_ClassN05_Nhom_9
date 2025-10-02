@@ -113,6 +113,7 @@
 
     <string name="why_donate">Vì Sao Nên Hiến Máu?</string>
     <string name="upcoming_event">Sự kiện sắp tới</string>
+    <string name="progress">Tiến độ</string>
 
     <!-- Event Form -->
     <string name="events">Sự kiện</string>
@@ -147,5 +148,8 @@
 
     <!-- Setting -->
     <string name="logout">Đăng xuất</string>
+
+    <!-- Staff -->
+    <string name="create_event">Tạo sự kiện mới</string>
 
 </resources>

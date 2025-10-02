@@ -115,7 +115,7 @@
     <string name="upcoming_event">Sự kiện sắp tới</string>
     <string name="progress">Tiến độ</string>
 
-    <!-- Event Form -->
+    <!-- Event -->
     <string name="events">Sự kiện</string>
     <string name="event_title">Tiêu đề sự kiện</string>
     <string name="enter_title">Nhập tiêu đề</string>
@@ -132,6 +132,7 @@
     <string name="select_deadline">Chọn hạn đăng ký</string>
     <string name="capacity">Số lượng</string>
     <string name="enter_capacity">Nhập số lượng</string>
+    <string name="location">Địa điểm</string>
 
     <string name="validate_title_empty">Vui lòng nhập tiêu đề sự kiện</string>
     <string name="validate_title_too_long">Tiêu đề sự kiện tối đa 10 từ</string>

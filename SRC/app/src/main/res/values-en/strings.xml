@@ -115,7 +115,7 @@
     <string name="upcoming_event">Upcoming Event</string>
     <string name="progress">Progress</string>
 
-    <!-- Event Form -->
+    <!-- Event -->
     <string name="events">Events</string>
     <string name="event_title">Event Title</string>
     <string name="enter_title">Enter title</string>
@@ -132,6 +132,7 @@
     <string name="select_deadline">Select deadline</string>
     <string name="capacity">Capacity</string>
     <string name="enter_capacity">Enter capacity</string>
+    <string name="location">Location</string>
 
     <string name="validate_title_empty">Event title cannot be empty</string>
     <string name="validate_title_too_long">Event title cannot exceed 10 words</string>

@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.PeopleAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -65,7 +67,8 @@ fun EventCard(
     modifier: Modifier = Modifier,
     gradient: Brush,
     accentColor: Color,
-    event: Event
+    event: Event,
+    location: String,
 ) {
     val formattedDate = formatDate(event.date)
     val status = calculateEventStatus(event)
@@ -152,19 +155,41 @@ fun EventCard(
                             color = Color.Black.copy(alpha = 0.6f)
                         )
 
-                        Spacer(modifier = Modifier.height(AppSpacing.Large))
+                        Spacer(modifier = Modifier.height(AppSpacing.Medium - 2.dp))
 
                         Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = Dimens.PaddingS)
+                            horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingM)
                         ) {
-                            Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.DateRange,
+                                    contentDescription = null,
+                                    tint = Color(0xFF445668).copy(alpha = 0.8f),
+                                    modifier = Modifier
+                                        .size(Dimens.SizeSM)
+                                        .offset(y = (1.5).dp)
+                                )
+
                                 Text(
-                                    text = stringResource(id = R.string.capacity),
-                                    style = MaterialTheme.typography.titleSmall
+                                    text = formattedDate,
+                                    color = Color(0xFF445668),
+                                    style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp),
+                                    modifier = Modifier.padding(start = Dimens.PaddingXXS)
+                                )
+                            }
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingXXS)
+                            ) {
+                                Icon(
+                                    Icons.Default.PeopleAlt,
+                                    contentDescription = null,
+                                    tint = Color(0xFF2051E5).copy(alpha = 0.8f),
+                                    modifier = Modifier
+                                        .size(Dimens.SizeSM)
                                 )
 
                                 Text(
@@ -174,32 +199,26 @@ fun EventCard(
                                     modifier = Modifier.padding(start = Dimens.PaddingXXS)
                                 )
                             }
+                        }
 
-                            Column {
-                                Text(
-                                    text = stringResource(id = R.string.date),
-                                    color = Color(0xFF445668),
-                                    style = MaterialTheme.typography.titleSmall
-                                )
+                        Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Default.DateRange,
-                                        contentDescription = null,
-                                        tint = Color(0xFF445668).copy(alpha = 0.8f),
-                                        modifier = Modifier
-                                            .size(Dimens.SizeSM)
-                                            .offset(y = (1.5).dp)
-                                    )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = Color(0xFF445668).copy(alpha = 0.8f),
+                                modifier = Modifier
+                                    .size(Dimens.SizeSM)
+                                    .offset(y = (1.5).dp)
+                            )
 
-                                    Text(
-                                        text = formattedDate,
-                                        color = Color(0xFF445668),
-                                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp),
-                                        modifier = Modifier.padding(start = Dimens.PaddingXXS)
-                                    )
-                                }
-                            }
+                            Text(
+                                text = location,
+                                color = Color(0xFF445668),
+                                style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp),
+                                modifier = Modifier.padding(start = Dimens.PaddingXXS)
+                            )
                         }
                     }
                 }

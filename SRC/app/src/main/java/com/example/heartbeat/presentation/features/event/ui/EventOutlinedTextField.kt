@@ -39,6 +39,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -65,6 +66,7 @@ fun EventOutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
+    leadingIcon: ImageVector,
     isTrailingIcon: Boolean = false,
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
@@ -124,6 +126,13 @@ fun EventOutlinedTextField(
                         expanded = true
                     },
                     placeholder = { Text(placeholder, fontSize = 15.sp) },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = leadingIcon,
+                            contentDescription = null,
+                            tint = Color.Black.copy(alpha = 0.5f)
+                        )
+                    },
                     trailingIcon = {
                         if (isTrailingIcon) {
                             IconButton(

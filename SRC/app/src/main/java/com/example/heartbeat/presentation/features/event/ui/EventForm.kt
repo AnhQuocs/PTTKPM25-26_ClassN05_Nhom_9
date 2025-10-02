@@ -6,6 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.LocalHospital
+import androidx.compose.material.icons.filled.PeopleAlt
+import androidx.compose.material.icons.filled.Title
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -123,6 +128,7 @@ fun EventForm(
                 if (!nameTouched) nameTouched = true
             },
             placeholder = stringResource(id = R.string.enter_title),
+            leadingIcon = Icons.Default.Title,
             isTrailingIcon = false,
             focusRequester = nameFocusRequester,
             isError = nameError != null,
@@ -142,6 +148,7 @@ fun EventForm(
                 if (!desTouched) desTouched = true
             },
             placeholder = stringResource(id = R.string.enter_description),
+            leadingIcon = Icons.Default.Description,
             isTrailingIcon = false,
             focusRequester = descriptionFocusRequester,
             isError = desError != null,
@@ -161,6 +168,7 @@ fun EventForm(
                 if (!hosTouched) hosTouched = true
             },
             placeholder = stringResource(id = R.string.select_hospital),
+            leadingIcon = Icons.Default.LocalHospital,
             isTrailingIcon = true,
             focusRequester = hospitalFocusRequester,
             isError = hosError != null,
@@ -180,6 +188,7 @@ fun EventForm(
                 if (!capacityTouched) capacityTouched = true
             },
             placeholder = stringResource(id = R.string.enter_capacity),
+            leadingIcon = Icons.Default.PeopleAlt,
             focusRequester = capacityFocusRequester,
             isError = capacityError != null,
             errorMessage = capacityError?.let { stringResource(id = it) } ?: "",

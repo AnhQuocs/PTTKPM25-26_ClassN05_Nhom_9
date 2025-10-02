@@ -34,6 +34,7 @@ import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.presentation.features.event.ui.EventCard
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
+import com.example.heartbeat.presentation.features.users.staff.component.StaffTopBar
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.AquaMint
@@ -87,40 +88,9 @@ fun StaffHomeScreen(
 
     Scaffold(
         topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.HeightXL2)
-                    .background(
-                        color = Color(0xFF2051E5),
-                        RoundedCornerShape(
-                            bottomStart = AppShape.SuperRoundedShape,
-                            bottomEnd = AppShape.SuperRoundedShape
-                        )
-                    )
-                    .clip(
-                        RoundedCornerShape(
-                            bottomStart = AppShape.SuperRoundedShape,
-                            bottomEnd = AppShape.SuperRoundedShape
-                        )
-                    )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_bgr_top_bar),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                )
-
-                Text(
-                    text = stringResource(id = R.string.events),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.White,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(vertical = Dimens.PaddingM),
-                )
-            }
+            StaffTopBar(
+                text = stringResource(id = R.string.events)
+            )
         }
     ) { paddingValues ->
         LazyColumn(
@@ -202,22 +172,3 @@ fun StaffHomeScreen(
 //        }
     }
 }
-
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(horizontal = Dimens.PaddingM),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Text("Staff Screen")
-//
-//            EventForm(
-//                list = hospitals
-//            )
-//        }
-//    }

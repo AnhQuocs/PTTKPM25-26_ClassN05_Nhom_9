@@ -113,6 +113,7 @@
 
     <string name="why_donate">Why Donate?</string>
     <string name="upcoming_event">Upcoming Event</string>
+    <string name="progress">Progress</string>
 
     <!-- Event Form -->
     <string name="events">Events</string>
@@ -147,5 +148,8 @@
 
     <!-- Setting -->
     <string name="logout">Logout</string>
+
+    <!-- Staff -->
+    <string name="create_event">Create New Event</string>
 
 </resources>

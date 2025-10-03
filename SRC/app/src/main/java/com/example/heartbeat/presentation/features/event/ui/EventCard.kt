@@ -155,7 +155,7 @@ fun EventCard(
                             color = Color.Black.copy(alpha = 0.6f)
                         )
 
-                        Spacer(modifier = Modifier.height(AppSpacing.Medium - 2.dp))
+                        Spacer(modifier = Modifier.weight(1f))
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),

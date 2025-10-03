@@ -50,7 +50,7 @@ class MainActivity : BaseComponentActivity() {
                 composable("admin_main") { AdminScreen() }
                 composable("staff_login") { StaffLoginScreen(navController) }
                 composable("staff_signUp") { StaffSignUpScreen(navController) }
-                composable("staff_main") { StaffMainScreen() }
+                composable("staff_main") { StaffMainScreen(navController) }
             }
 
             LaunchedEffect(isLoading, authState) {

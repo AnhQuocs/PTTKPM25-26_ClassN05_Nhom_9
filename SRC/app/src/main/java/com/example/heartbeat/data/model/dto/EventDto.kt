@@ -11,5 +11,7 @@ data class EventDto(
     val deadline: Timestamp? = null,
     val donorList: List<String>? = null,
     val capacity: Int? = null,
-    val donorCount: Int? = null
+    val donorCount: Int? = null,
+    val createdAt: Timestamp? = null,
+    val updatedAt: Timestamp? = null
 )

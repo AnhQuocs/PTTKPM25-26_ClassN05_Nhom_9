@@ -12,5 +12,7 @@ data class Event(
     val deadline: LocalDateTime?,
     val donorList: List<String>,
     val capacity: Int,
-    val donorCount: Int
+    val donorCount: Int,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime? = null
 )

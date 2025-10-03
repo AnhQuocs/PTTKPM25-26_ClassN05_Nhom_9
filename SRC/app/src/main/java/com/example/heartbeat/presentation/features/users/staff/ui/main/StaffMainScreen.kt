@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
 import com.example.heartbeat.presentation.components.BottomAppBar
 import com.example.heartbeat.presentation.features.users.staff.ui.calendar.StaffCalendarScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.create.CreateEventScreen
@@ -27,7 +28,9 @@ import com.example.heartbeat.presentation.features.users.staff.ui.home.StaffHome
 import com.example.heartbeat.presentation.features.users.staff.ui.setting.StaffSettingScreen
 
 @Composable
-fun StaffMainScreen() {
+fun StaffMainScreen(
+    navController: NavController
+) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var previousTabIndex by remember { mutableIntStateOf(0) }
 
@@ -93,7 +96,7 @@ fun StaffMainScreen() {
                 0 -> StaffHomeScreen()
                 1 -> CreateEventScreen()
                 2 -> StaffCalendarScreen()
-                3 -> StaffSettingScreen()
+                3 -> StaffSettingScreen(navController = navController)
             }
         }
     }

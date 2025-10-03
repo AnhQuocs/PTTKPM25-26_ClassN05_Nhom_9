@@ -3,6 +3,7 @@ package com.example.heartbeat.data.repository.event
 import com.example.heartbeat.data.model.dto.EventDto
 import com.example.heartbeat.data.model.mapper.toDomain
 import com.example.heartbeat.data.model.mapper.toDto
+import com.example.heartbeat.data.model.mapper.toLocalDateTime
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.repository.event.EventRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -36,7 +37,14 @@ class EventRepositoryImpl(
 
     override suspend fun addEvent(event: Event) {
         val docRef = collection.document()
-        val dto = event.copy(id = docRef.id).toDto()
+        val now = com.google.firebase.Timestamp.now()
+
+        val dto = event.copy(
+            id = docRef.id,
+            createdAt = event.createdAt ?: now.toLocalDateTime(),
+            updatedAt = event.updatedAt ?: now.toLocalDateTime()
+        ).toDto()
+
         docRef.set(dto).await()
     }
 
@@ -50,7 +58,11 @@ class EventRepositoryImpl(
     }
 
     override suspend fun updateEvent(eventId: String, event: Event) {
-        val dto = event.toDto()
+        val now = com.google.firebase.Timestamp.now()
+        val dto = event.copy(
+            updatedAt = now.toLocalDateTime()
+        ).toDto()
+
         collection.document(eventId).set(dto).await()
     }
 

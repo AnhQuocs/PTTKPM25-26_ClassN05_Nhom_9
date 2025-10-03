@@ -31,6 +31,8 @@ import com.example.heartbeat.ui.theme.GoldenGlow
 import com.example.heartbeat.ui.theme.RoyalPurple
 import com.example.heartbeat.ui.theme.SunsetOrange
 import kotlinx.datetime.LocalDateTime
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun StaffHomeScreen(
@@ -42,6 +44,11 @@ fun StaffHomeScreen(
     var previousTabIndex by remember { mutableIntStateOf(0) }
 
     val events by eventViewModel.events.collectAsState(initial = emptyList())
+
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val sortedEvents = events.sortedByDescending { event ->
+        LocalDate.parse(event.date, dateFormatter)
+    }
 
     val gradients = listOf(
         Brush.linearGradient(

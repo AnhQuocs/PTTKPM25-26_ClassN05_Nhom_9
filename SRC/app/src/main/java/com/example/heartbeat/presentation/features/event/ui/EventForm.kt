@@ -35,6 +35,8 @@ import com.example.heartbeat.presentation.components.TimePickerField
 import com.example.heartbeat.presentation.features.event.util.EventValidator
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.ui.dimens.AppSpacing
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import java.time.LocalDate
@@ -253,6 +255,7 @@ fun EventForm(
             enabled = isButtonEnabled,
             onClick = {
                 val time = "$selectedStartTime $selectedFinishTime"
+                val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
                 val event = Event(
                     id = UUID.randomUUID().toString(),
@@ -266,8 +269,23 @@ fun EventForm(
                     } else null,
                     donorList = emptyList(),
                     capacity = capacity.toIntOrNull() ?: 0,
-                    donorCount = 0
+                    donorCount = 0,
+                    createdAt = now,
+                    updatedAt = now
                 )
+
+                name = ""
+                description = ""
+                hospitalName = ""
+                deadline = ""
+                capacity = ""
+                selectedStartTime = ""
+                selectedFinishTime = ""
+
+                nameTouched = false
+                desTouched = false
+                hosTouched = false
+                capacityTouched = false
 
                 eventViewModel.addEvent(event)
             },

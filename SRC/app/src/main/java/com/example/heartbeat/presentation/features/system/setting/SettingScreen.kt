@@ -100,7 +100,8 @@ fun SettingScreen(
 
         Button(
             onClick = {
-                LangUtils.currentLang = selectedLang.code
+                val code = selectedLang.code
+                LangUtils.updateLocale(context, code)
                 languageViewModel.changeLanguage(selectedLang)
             }
         ) {

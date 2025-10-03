@@ -60,7 +60,9 @@ class EventViewModel @Inject constructor(
     fun addEvent(event: Event) {
         viewModelScope.launch {
             try {
+                _isLoading.value = true
                 eventUseCase.addEventUseCase(event)
+                _isLoading.value = false
             } catch (e: Exception) {
                 _error.value = e.message
             }

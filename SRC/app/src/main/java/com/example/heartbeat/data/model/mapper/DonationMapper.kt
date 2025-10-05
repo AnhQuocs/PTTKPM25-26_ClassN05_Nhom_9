@@ -16,7 +16,7 @@ fun DonationDto.toDomain(): Donation {
         status = status.orEmpty(),
         donationVolume = donationVolume.orEmpty(),
         createAt = createAt?.toDonationLocalDateTime() ?: LocalDateTime.now(),
-        donatedAt = donatedAt?.toDonationLocalDateTime()
+        donatedAt = donatedAt.orEmpty()
     )
 }
 
@@ -29,7 +29,7 @@ fun Donation.toDto(): DonationDto {
         status = status,
         donationVolume = donationVolume,
         createAt = createAt.toDonationTimestamp(),
-        donatedAt = donatedAt?.toDonationTimestamp()
+        donatedAt = donatedAt
     )
 }
 

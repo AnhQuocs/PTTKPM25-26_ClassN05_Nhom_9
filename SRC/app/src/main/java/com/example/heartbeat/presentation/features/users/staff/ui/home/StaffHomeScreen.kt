@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
-import com.example.heartbeat.presentation.features.event.ui.EventCard
+import com.example.heartbeat.presentation.features.event.ui.StaffEventCard
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
@@ -179,7 +177,7 @@ fun StaffHomeScreen(
                 val gradient = gradients[index % gradients.size]
                 val accentColor = accentColors[index % accentColors.size]
 
-                EventCard(
+                StaffEventCard(
                     gradient = gradient,
                     event = event,
                     accentColor = accentColor,

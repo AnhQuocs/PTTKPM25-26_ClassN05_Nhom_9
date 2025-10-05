@@ -94,7 +94,7 @@ fun MainApp(navController: NavController) {
                 .fillMaxSize()
         ) { tab ->
             when(tab) {
-                0 -> HomeScreen()
+                0 -> HomeScreen(navController = navController)
                 1 -> SearchScreen()
                 2 -> SettingScreen(navController)
             }

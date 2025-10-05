@@ -10,5 +10,5 @@ data class Donation(
     val status: String,
     val donationVolume: String,
     val createAt: LocalDateTime,
-    val donatedAt: LocalDateTime? = null
+    val donatedAt: String
 )

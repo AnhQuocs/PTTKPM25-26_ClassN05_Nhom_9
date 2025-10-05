@@ -66,7 +66,7 @@ fun DatePickerField(
 
         OutlinedTextField(
             value = selectedDate,
-            onValueChange = {},
+            onValueChange = { onDateChange(selectedDate) },
             readOnly = true,
             shape = RoundedCornerShape(AppShape.ExtraLargeShape),
             colors = OutlinedTextFieldDefaults.colors(

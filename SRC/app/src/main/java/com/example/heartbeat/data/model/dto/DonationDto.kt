@@ -10,5 +10,5 @@ data class DonationDto(
     val status: String? = null,
     val donationVolume: String? = null,
     val createAt: Timestamp? = null,
-    val donatedAt: Timestamp? = null
+    val donatedAt: String? = null
 )

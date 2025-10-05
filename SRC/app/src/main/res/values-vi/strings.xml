@@ -153,4 +153,10 @@
     <!-- Staff -->
     <string name="create_event">Tạo sự kiện mới</string>
 
+    <!-- Donation -->
+    <string name="citizen_id">CCCD</string>
+    <string name="hint_citizen_id">Nhập số CCCD</string>
+    <string name="label_last_donation">Lần hiến máu gần nhất</string>
+    <string name="error_citizen_id_invalid">Số CCCD không hợp lệ (phải gồm 12 chữ số, không có khoảng trắng)</string>
+    <string name="register_donation">Đăng ký hiến máu</string>
 </resources>

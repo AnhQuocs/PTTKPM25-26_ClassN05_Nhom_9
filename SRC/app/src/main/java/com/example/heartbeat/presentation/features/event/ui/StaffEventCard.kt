@@ -63,7 +63,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun EventCard(
+fun StaffEventCard(
     modifier: Modifier = Modifier,
     gradient: Brush,
     accentColor: Color,

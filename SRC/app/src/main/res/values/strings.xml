@@ -153,4 +153,11 @@
     <!-- Staff -->
     <string name="create_event">Create New Event</string>
 
+    <!-- Donation -->
+    <string name="citizen_id">Citizen ID</string>
+    <string name="hint_citizen_id">Enter your Citizen ID number</string>
+    <string name="label_last_donation">Last blood donation</string>
+    <string name="error_citizen_id_invalid">Invalid Citizen ID (12 digits, no spaces)</string>
+    <string name="register_donation">Blood Donation Registration</string>
+
 </resources>

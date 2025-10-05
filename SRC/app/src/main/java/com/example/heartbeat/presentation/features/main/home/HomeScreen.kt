@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.presentation.components.AppTitle
@@ -89,6 +91,7 @@ fun HomeScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
     donorViewModel: DonorViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val authState by authViewModel.authState.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
@@ -167,7 +170,7 @@ fun HomeScreen(
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
                 item { WhyDonateList() }
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
-                item { UpcomingEventCard(events) }
+                item { user?.let { UpcomingEventCard(donorId = it.uid, events = events, navController = navController) } }
             }
 
             formState.error?.let { errorMsg ->
@@ -368,8 +371,10 @@ fun BloodGroup() {
 
 @Composable
 fun UpcomingEventCard(
+    donorId: String,
     events: List<Event>,
-    hospitalViewModel: HospitalViewModel = hiltViewModel()
+    hospitalViewModel: HospitalViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -400,7 +405,10 @@ fun UpcomingEventCard(
                     modifier = Modifier
                         .border(0.1.dp, Color.LightGray, RoundedCornerShape(AppShape.ExtraExtraLargeShape))
                         .height(Dimens.HeightXL3)
-                        .aspectRatio(2f),
+                        .aspectRatio(2f)
+                        .clickable {
+                            navController.navigate("register_donation/${event.id}/${donorId}")
+                        },
                     shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),
                     colors = CardDefaults.cardColors(
                         containerColor = Color.White

@@ -1,5 +1,6 @@
 package com.example.heartbeat.data.repository.event
 
+import android.util.Log
 import com.example.heartbeat.data.model.dto.EventDto
 import com.example.heartbeat.data.model.mapper.toDomain
 import com.example.heartbeat.data.model.mapper.toDto
@@ -71,12 +72,21 @@ class EventRepositoryImpl(
     }
 
     override fun observeDonorCount(eventId: String, onUpdate: (Int) -> Unit) {
-        collection.document(eventId)
+        firestore.collection("donations")
+            .whereEqualTo("eventId", eventId)
             .addSnapshotListener { snapshot, e ->
-                if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+                if (e != null) {
+                    Log.e("FirestoreDebug", "❌ Error observing donor count", e)
+                    return@addSnapshotListener
+                }
+                if (snapshot == null) {
+                    Log.w("FirestoreDebug", "⚠️ Snapshot null for event $eventId")
+                    return@addSnapshotListener
+                }
 
-                val donorList = snapshot.get("donorList") as? List<*>
-                onUpdate(donorList?.size ?: 0)
+                val donorCount = snapshot.size()
+                Log.d("FirestoreDebug", "✅ Donor count for event $eventId: $donorCount")
+                onUpdate(donorCount)
             }
     }
 
@@ -88,7 +98,7 @@ class EventRepositoryImpl(
             .whereEqualTo("eventId", eventId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null || snapshot == null) return@addSnapshotListener
-                val donorIds = snapshot.documents.mapNotNull { it.getString("userId") }
+                val donorIds = snapshot.documents.mapNotNull { it.getString("donorId") }
                 onUpdate(donorIds)
             }
     }

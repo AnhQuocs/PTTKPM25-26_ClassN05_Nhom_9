@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Apartment
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -57,6 +58,7 @@ import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorVi
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
+import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.CompassionBlue
 import com.example.heartbeat.ui.theme.CompassionBlueText
 import com.example.heartbeat.ui.theme.Green500
@@ -76,7 +78,7 @@ fun RegisterDonationScreen(
 ) {
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
-    val isLoading by donorViewModel.isLoading.collectAsState()
+    val uiState by donationViewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
         eventViewModel.getEventById(eventId)
@@ -142,202 +144,216 @@ fun RegisterDonationScreen(
             val endTime = LocalTime.parse(endStr, timeFormatter)
             val time = "$startTime - $endTime"
 
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(paddingValues)
+            Box(
+                modifier = Modifier.fillMaxSize().padding(paddingValues)
             ) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(Dimens.PaddingM)
-                            .clip(RoundedCornerShape(AppShape.LargeShape))
-                            .background(
-                                color = CompassionBlue,
-                                RoundedCornerShape(AppShape.LargeShape)
-                            )
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize()
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(Dimens.PaddingM)
+                                .clip(RoundedCornerShape(AppShape.LargeShape))
+                                .background(
+                                    color = CompassionBlue,
+                                    RoundedCornerShape(AppShape.LargeShape)
+                                )
                         ) {
                             Column(
-                                modifier = Modifier
-                                    .padding(
-                                        vertical = Dimens.PaddingS,
-                                        horizontal = Dimens.PaddingM
-                                    )
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxSize()
                             ) {
-                                Text(
-                                    text = event.name,
-                                    color = Color.Black,
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.titleSmall.copy(
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    ),
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-
-                                Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-                                Box(
-                                    modifier = Modifier.fillMaxWidth()
+                                Column(
+                                    modifier = Modifier
+                                        .padding(
+                                            vertical = Dimens.PaddingS,
+                                            horizontal = Dimens.PaddingM
+                                        )
+                                        .fillMaxWidth(),
                                 ) {
-                                    Column(
-                                        modifier = Modifier.align(Alignment.CenterStart)
+                                    Text(
+                                        text = event.name,
+                                        color = Color.Black,
+                                        textAlign = TextAlign.Center,
+                                        style = MaterialTheme.typography.titleSmall.copy(
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.SemiBold
+                                        ),
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+
+                                    Spacer(modifier = Modifier.height(AppSpacing.Large))
+
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        EventInfoItem(
-                                            icon = Icons.Default.Apartment,
-                                            text = hospital?.hospitalName ?: "Loading...",
-                                            iconColor = CompassionBlueText,
-                                            textColor = CompassionBlueText,
-                                            modifier = Modifier.padding(end = 56.dp)
-                                        )
-
-                                        Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-                                        EventInfoItem(
-                                            icon = Icons.Default.AccessTime,
-                                            text = time,
-                                            iconColor = UnityPeachText,
-                                            textColor = UnityPeachText
-                                        )
-
-                                        Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
+                                        Column(
+                                            modifier = Modifier.align(Alignment.CenterStart)
                                         ) {
-                                            Icon(
-                                                Icons.Default.LocationOn,
-                                                contentDescription = null,
-                                                tint = Green500,
-                                                modifier = Modifier
-                                                    .align(Alignment.Top)
-                                                    .size(Dimens.SizeM)
+                                            EventInfoItem(
+                                                icon = Icons.Default.Apartment,
+                                                text = hospital?.hospitalName ?: "Loading...",
+                                                iconColor = CompassionBlueText,
+                                                textColor = CompassionBlueText,
+                                                modifier = Modifier.padding(end = 56.dp)
                                             )
 
-                                            Spacer(modifier = Modifier.width(AppSpacing.MediumPlus))
+                                            Spacer(modifier = Modifier.height(AppSpacing.Large))
 
-                                            Column {
-                                                Text(
-                                                    text = hospital?.address ?: "Loading...",
-                                                    color = Green500,
-                                                    style = MaterialTheme.typography.titleSmall.copy(
-                                                        fontSize = 15.sp,
-                                                        lineHeight = 1.sp
-                                                    )
+                                            EventInfoItem(
+                                                icon = Icons.Default.AccessTime,
+                                                text = time,
+                                                iconColor = UnityPeachText,
+                                                textColor = UnityPeachText
+                                            )
+
+                                            Spacer(modifier = Modifier.height(AppSpacing.Large))
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.LocationOn,
+                                                    contentDescription = null,
+                                                    tint = Green500,
+                                                    modifier = Modifier
+                                                        .align(Alignment.Top)
+                                                        .size(Dimens.SizeM)
                                                 )
 
-                                                Text(
-                                                    text = location,
-                                                    style = MaterialTheme.typography.labelSmall.copy(
-                                                        fontSize = 12.sp,
-                                                        lineHeight = 1.sp,
-                                                        fontWeight = FontWeight.SemiBold
+                                                Spacer(modifier = Modifier.width(AppSpacing.MediumPlus))
+
+                                                Column {
+                                                    Text(
+                                                        text = hospital?.address ?: "Loading...",
+                                                        color = Green500,
+                                                        style = MaterialTheme.typography.titleSmall.copy(
+                                                            fontSize = 15.sp,
+                                                            lineHeight = 1.sp
+                                                        )
                                                     )
-                                                )
+
+                                                    Text(
+                                                        text = location,
+                                                        style = MaterialTheme.typography.labelSmall.copy(
+                                                            fontSize = 12.sp,
+                                                            lineHeight = 1.sp,
+                                                            fontWeight = FontWeight.SemiBold
+                                                        )
+                                                    )
+                                                }
                                             }
+
+                                            Spacer(modifier = Modifier.height(AppSpacing.Large))
+
+                                            EventInfoItem(
+                                                icon = Icons.Default.Description,
+                                                text = event.description,
+                                                iconColor = Color.Black,
+                                                textColor = Color.Black,
+                                                fontSize = 14.sp
+                                            )
                                         }
 
-                                        Spacer(modifier = Modifier.height(AppSpacing.Large))
+                                        Spacer(modifier = Modifier.width(AppSpacing.Medium))
 
-                                        EventInfoItem(
-                                            icon = Icons.Default.Description,
-                                            text = event.description,
-                                            iconColor = Color.Black,
-                                            textColor = Color.Black,
-                                            fontSize = 14.sp
+                                        CircularProgressBar(
+                                            modifier = Modifier
+                                                .padding(bottom = Dimens.PaddingS)
+                                                .align(Alignment.TopEnd),
+                                            value = event.donorCount,
+                                            capacity = event.capacity
                                         )
                                     }
 
                                     Spacer(modifier = Modifier.width(AppSpacing.Medium))
-
-                                    CircularProgressBar(
-                                        modifier = Modifier
-                                            .padding(bottom = Dimens.PaddingS)
-                                            .align(Alignment.TopEnd),
-                                        value = event.donorCount,
-                                        capacity = event.capacity
-                                    )
                                 }
 
-                                Spacer(modifier = Modifier.width(AppSpacing.Medium))
-                            }
+                                Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-                            Spacer(modifier = Modifier.height(AppSpacing.Medium))
-
-                            DashedLine(
-                                color = Color.LightGray,
-                                strokeWidth = 2.dp,
-                                dashLength = 10.dp,
-                                gapLength = 6.dp
-                            )
-
-                            Spacer(modifier = Modifier.height(AppSpacing.Medium))
-
-                            Column(
-                                modifier = Modifier
-                                    .padding(horizontal = Dimens.PaddingM)
-                                    .padding(bottom = Dimens.PaddingM, top = Dimens.PaddingS)
-                                    .fillMaxWidth(),
-                            ) {
-                                val dateOfBirth = "${formState.dateOfBirth} (${formState.age})"
-
-                                Text(
-                                    text = stringResource(id = R.string.registration_information),
-                                    color = Color.Black.copy(alpha = 0.65f),
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.titleSmall.copy(
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    ),
-                                    modifier = Modifier.fillMaxWidth()
+                                DashedLine(
+                                    color = Color.LightGray,
+                                    strokeWidth = 2.dp,
+                                    dashLength = 10.dp,
+                                    gapLength = 6.dp
                                 )
 
-                                Spacer(modifier = Modifier.height(AppSpacing.Large))
+                                Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-                                FormItem(
-                                    title = stringResource(id = R.string.full_name),
-                                    value = formState.name
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .padding(horizontal = Dimens.PaddingM)
+                                        .padding(bottom = Dimens.PaddingM, top = Dimens.PaddingS)
+                                        .fillMaxWidth(),
+                                ) {
+                                    val dateOfBirth = "${formState.dateOfBirth} (${formState.age})"
 
-                                FormItem(
-                                    title = stringResource(id = R.string.date_of_birth),
-                                    value = dateOfBirth
-                                )
+                                    Text(
+                                        text = stringResource(id = R.string.registration_information),
+                                        color = Color.Black.copy(alpha = 0.65f),
+                                        textAlign = TextAlign.Center,
+                                        style = MaterialTheme.typography.titleSmall.copy(
+                                            fontSize = 18.sp,
+                                            fontWeight = FontWeight.SemiBold
+                                        ),
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
 
-                                FormItem(
-                                    title = stringResource(id = R.string.gender),
-                                    value = formState.gender
-                                )
+                                    Spacer(modifier = Modifier.height(AppSpacing.Large))
 
-                                FormItem(
-                                    title = stringResource(id = R.string.phone_number),
-                                    value = formState.phoneNumber
-                                )
+                                    FormItem(
+                                        title = stringResource(id = R.string.full_name),
+                                        value = formState.name
+                                    )
 
-                                FormItem(
-                                    title = stringResource(id = R.string.blood_group),
-                                    value = formState.bloodGroup
-                                )
+                                    FormItem(
+                                        title = stringResource(id = R.string.date_of_birth),
+                                        value = dateOfBirth
+                                    )
 
-                                FormItem(
-                                    title = stringResource(id = R.string.city),
-                                    value = formState.city
-                                )
+                                    FormItem(
+                                        title = stringResource(id = R.string.gender),
+                                        value = formState.gender
+                                    )
 
-                                Spacer(modifier = Modifier.height(AppSpacing.Small))
+                                    FormItem(
+                                        title = stringResource(id = R.string.phone_number),
+                                        value = formState.phoneNumber
+                                    )
 
-                                DonationForm(
-                                    eventId = eventId,
-                                    donorId = donorId
-                                )
+                                    FormItem(
+                                        title = stringResource(id = R.string.blood_group),
+                                        value = formState.bloodGroup
+                                    )
+
+                                    FormItem(
+                                        title = stringResource(id = R.string.city),
+                                        value = formState.city
+                                    )
+
+                                    Spacer(modifier = Modifier.height(AppSpacing.Small))
+
+                                    DonationForm(
+                                        eventId = eventId,
+                                        donorId = donorId
+                                    )
+                                }
                             }
                         }
+                    }
+                }
+
+                if(uiState.isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(color = Color.Black.copy(alpha = 0.25f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = BloodRed)
                     }
                 }
             }

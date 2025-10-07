@@ -374,9 +374,17 @@ fun UpcomingEventCard(
     donorId: String,
     events: List<Event>,
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
+    eventViewModel: EventViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    LaunchedEffect(events) {
+        events.forEach { event ->
+            hospitalViewModel.loadHospitalById(event.locationId)
+            eventViewModel.observeDonorCount(event.id)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -384,20 +392,12 @@ fun UpcomingEventCard(
             .padding(horizontal = Dimens.PaddingM, vertical = Dimens.PaddingS),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
     ) {
-        AppTitle(
-            text = stringResource(id = R.string.upcoming_event)
-        )
+        AppTitle(text = stringResource(id = R.string.upcoming_event))
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
-        ) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)) {
             items(events) { event ->
-                val (startStr, endStr) = event.time.split(" ")
+                val (startStr, _) = event.time.split(" ")
                 val startTime = LocalTime.parse(startStr, timeFormatter)
-
-                LaunchedEffect(Unit) {
-                    hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
-                }
 
                 val hospital = hospitalViewModel.hospitalDetails[event.locationId]
 
@@ -410,9 +410,7 @@ fun UpcomingEventCard(
                             navController.navigate("register_donation/${event.id}/${donorId}")
                         },
                     shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    ),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
                     Column(
@@ -466,10 +464,7 @@ fun UpcomingEventCard(
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        ProgressBar(
-                            value = event.donorCount,
-                            capacity = event.capacity
-                        )
+                        ProgressBar(value = event.donorCount, capacity = event.capacity)
                     }
                 }
             }

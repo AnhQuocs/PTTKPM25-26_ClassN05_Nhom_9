@@ -89,7 +89,7 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    private fun observeDonorCount(eventId: String) {
+    fun observeDonorCount(eventId: String) {
         eventUseCase.observeDonorCountUseCase(eventId) { donorCount ->
             _events.value = _events.value.map { event ->
                 if (event.id == eventId) event.copy(donorCount = donorCount)

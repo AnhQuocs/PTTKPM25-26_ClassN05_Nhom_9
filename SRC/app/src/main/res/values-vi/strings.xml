@@ -162,5 +162,8 @@
     <string name="error_citizen_id_invalid">Số CCCD không hợp lệ (phải gồm 12 chữ số, không có khoảng trắng)</string>
     <string name="register_donation">Đăng ký hiến máu</string>
     <string name="registration_information">Thông tin đăng ký</string>
+    <string name="pending_title">Đăng ký của bạn đang chờ xử lý</string>
+    <string name="pending_message">Chúng tôi đã nhận được yêu cầu của bạn.\nVui lòng chờ bệnh viện xác nhận.</string>
+    <string name="pending_check_status">Kiểm tra trạng thái</string>
 
 </resources>

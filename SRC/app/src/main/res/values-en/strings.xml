@@ -162,5 +162,8 @@
     <string name="error_citizen_id_invalid">Invalid Citizen ID (12 digits, no spaces)</string>
     <string name="register_donation">Blood Donation Registration</string>
     <string name="registration_information">Registration Information</string>
+    <string name="pending_title">Your registration is pending</string>
+    <string name="pending_message">We’ve received your request.\nPlease wait for hospital confirmation.</string>
+    <string name="pending_check_status">Check status</string>
 
 </resources>

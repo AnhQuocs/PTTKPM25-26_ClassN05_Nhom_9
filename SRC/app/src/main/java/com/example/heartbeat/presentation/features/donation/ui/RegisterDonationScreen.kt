@@ -1,6 +1,8 @@
 package com.example.heartbeat.presentation.features.donation.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,10 +27,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.heartbeat.R
@@ -54,7 +61,7 @@ fun RegisterDonationScreen(
     eventId: String,
     donorId: String
 ) {
-    val location = "${hospital?.district}, ${hospital?.province}"
+    val location = "${hospital.district}, ${hospital.province}"
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     val (startStr, endStr) = event.time.split(" ")
@@ -109,7 +116,7 @@ fun RegisterDonationScreen(
                             ) {
                                 EventInfoItem(
                                     icon = Icons.Default.Apartment,
-                                    text = hospital?.hospitalName ?: "Loading...",
+                                    text = hospital.hospitalName,
                                     iconColor = CompassionBlueText,
                                     textColor = CompassionBlueText,
                                     modifier = Modifier.padding(end = 56.dp)
@@ -143,7 +150,7 @@ fun RegisterDonationScreen(
 
                                     Column {
                                         Text(
-                                            text = hospital?.address ?: "Loading...",
+                                            text = hospital.address,
                                             color = Green500,
                                             style = MaterialTheme.typography.titleSmall.copy(
                                                 fontSize = 15.sp,
@@ -259,5 +266,90 @@ fun RegisterDonationScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EventInfoItem(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    text: String,
+    iconColor: Color,
+    textColor: Color,
+    fontSize: TextUnit = 16.sp
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = iconColor,
+            modifier = Modifier
+                .align(Alignment.Top)
+                .size(Dimens.SizeM)
+        )
+
+        Text(
+            text = text,
+            color = textColor,
+            style = MaterialTheme.typography.titleSmall.copy(fontSize = fontSize),
+            modifier = modifier
+        )
+    }
+}
+
+@Composable
+fun FormItem(
+    title: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = Dimens.PaddingSM),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
+    ) {
+        Text(
+            text = "$title:",
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        )
+
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal
+            )
+        )
+    }
+}
+
+@Composable
+fun DashedLine(
+    strokeWidth: Dp = 1.dp,
+    color: Color = Color.Gray,
+    dashLength: Dp = 8.dp,
+    gapLength: Dp = 4.dp,
+) {
+    Canvas(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(strokeWidth)
+    ) {
+        drawLine(
+            color = color,
+            start = Offset(0f, size.height / 2),
+            end = Offset(size.width, size.height / 2),
+            strokeWidth = strokeWidth.toPx(),
+            pathEffect = PathEffect.dashPathEffect(
+                floatArrayOf(dashLength.toPx(), gapLength.toPx()), 0f
+            )
+        )
     }
 }

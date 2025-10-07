@@ -394,7 +394,7 @@ fun UpcomingEventCard(
     ) {
         AppTitle(text = stringResource(id = R.string.upcoming_event))
 
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)) {
             items(events) { event ->
                 val (startStr, _) = event.time.split(" ")
                 val startTime = LocalTime.parse(startStr, timeFormatter)

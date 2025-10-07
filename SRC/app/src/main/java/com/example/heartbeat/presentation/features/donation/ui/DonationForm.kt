@@ -67,8 +67,8 @@ fun DonationForm(
             .fillMaxWidth()
     ) {
         Text(
-            text = stringResource(id = R.string.citizen_id),
-            style = MaterialTheme.typography.titleSmall
+            text = stringResource(id = R.string.citizen_id) + ": ",
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
         )
 
         Spacer(modifier = Modifier.height(AppSpacing.Small))
@@ -107,6 +107,7 @@ fun DonationForm(
                 keyboardType = KeyboardType.Number
             ),
             modifier = modifier
+                .fillMaxWidth()
                 .defaultMinSize(minHeight = heightTextField)
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
@@ -127,23 +128,24 @@ fun DonationForm(
             )
         }
 
-        Spacer(modifier = Modifier.height(AppSpacing.Large))
-
-        Text(
-            text = stringResource(id = R.string.label_last_donation),
-            style = MaterialTheme.typography.titleSmall
-        )
-
-        Spacer(modifier = Modifier.height(AppSpacing.Small))
+        Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
         DatePickerField(
+            title = stringResource(id = R.string.label_last_donation) + ": ",
+            placeholder = stringResource(id = R.string.placeholder_last_donation),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
             selectedDate = donatedAt,
-            onDateChange = { donatedAt = it }
+            onDateChange = { donatedAt = it },
+            blockPastDates = false
         )
 
         Spacer(modifier = Modifier.height(AppSpacing.Large))
 
+        val isButtonEnabled = citizenId.length == 12
+
         AppButton(
+            enabled = isButtonEnabled,
             onClick = {
                 val donation = Donation (
                     donationId = "${donorId}_${eventId}",

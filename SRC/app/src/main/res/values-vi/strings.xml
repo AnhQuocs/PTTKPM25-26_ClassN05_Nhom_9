@@ -51,6 +51,7 @@
     <string name="profile_setup_desc">Gần xong rồi. Để thiết lập hồ sơ, hãy điền thông tin dưới đây. Thật dễ dàng!</string>
     <string name="personal_info">Thông tin cá nhân</string>
     <string name="basic_info">Thông tin cơ bản</string>
+    <string name="full_name">Họ và tên</string>
     <string name="your_full_name">Họ và tên</string>
     <string name="phone_number">Số điện thoại</string>
     <string name="select_group">Chọn nhóm máu</string>
@@ -157,6 +158,9 @@
     <string name="citizen_id">CCCD</string>
     <string name="hint_citizen_id">Nhập số CCCD</string>
     <string name="label_last_donation">Lần hiến máu gần nhất</string>
+    <string name="placeholder_last_donation">Chọn ngày gần nhất</string>
     <string name="error_citizen_id_invalid">Số CCCD không hợp lệ (phải gồm 12 chữ số, không có khoảng trắng)</string>
     <string name="register_donation">Đăng ký hiến máu</string>
+    <string name="registration_information">Thông tin đăng ký</string>
+
 </resources>

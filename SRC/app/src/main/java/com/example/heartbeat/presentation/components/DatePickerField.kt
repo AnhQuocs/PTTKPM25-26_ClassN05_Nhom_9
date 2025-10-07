@@ -12,26 +12,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AdsClick
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.SelectableDates
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.heartbeat.R
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
@@ -44,22 +33,28 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DatePickerField(
+    modifier: Modifier = Modifier,
+    title: String,
+    placeholder: String = "",
     selectedDate: String,
     onDateChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    fontWeight: FontWeight = FontWeight.Normal,
+    fontSize: TextUnit = 14.sp,
+    blockPastDates: Boolean = true
 ) {
     val today = remember { LocalDate.now() }
     val minDate = today.plusDays(10)
-
     var showDatePicker by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
-            .padding(vertical = Dimens.PaddingXSPlus)
+        modifier = modifier.padding(vertical = Dimens.PaddingXSPlus)
     ) {
         Text(
-            text = stringResource(id = R.string.date),
-            style = MaterialTheme.typography.titleSmall
+            text = title,
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontWeight = fontWeight,
+                fontSize = fontSize
+            )
         )
 
         Spacer(modifier = Modifier.height(AppSpacing.Small))
@@ -67,6 +62,9 @@ fun DatePickerField(
         OutlinedTextField(
             value = selectedDate,
             onValueChange = { onDateChange(selectedDate) },
+            placeholder = {
+                Text(text = placeholder, fontSize = 15.sp)
+            },
             readOnly = true,
             shape = RoundedCornerShape(AppShape.ExtraLargeShape),
             colors = OutlinedTextFieldDefaults.colors(
@@ -93,8 +91,7 @@ fun DatePickerField(
                 Icon(
                     Icons.Default.AdsClick,
                     contentDescription = "",
-                    modifier = Modifier
-                        .clickable { showDatePicker = true },
+                    modifier = Modifier.clickable { showDatePicker = true },
                 )
             }
         )
@@ -105,7 +102,7 @@ fun DatePickerField(
         val parsedDate = try {
             LocalDate.parse(selectedDate, formatter)
         } catch (e: Exception) {
-            minDate
+            if (blockPastDates) minDate else today
         }
 
         val initialDateMillis = parsedDate.toEpochDay() * 24 * 60 * 60 * 1000
@@ -117,7 +114,12 @@ fun DatePickerField(
                     val date = Instant.ofEpochMilli(utcTimeMillis)
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate()
-                    return !date.isBefore(minDate)
+
+                    return if (blockPastDates) {
+                        !date.isBefore(minDate)
+                    } else {
+                        !date.isAfter(today)
+                    }
                 }
             }
         )

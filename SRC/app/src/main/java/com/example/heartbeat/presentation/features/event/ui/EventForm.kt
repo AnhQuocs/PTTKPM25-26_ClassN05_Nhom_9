@@ -201,6 +201,7 @@ fun EventForm(
         )
 
         DatePickerField(
+            title = stringResource(id = R.string.date),
             selectedDate = selectedDate,
             onDateChange = { newDate -> selectedDate = newDate },
         )

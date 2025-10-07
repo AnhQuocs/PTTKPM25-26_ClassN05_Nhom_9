@@ -51,6 +51,7 @@
     <string name="profile_setup_desc">Almost done. For set your profile, fill up below information. It\'s easy!</string>
     <string name="personal_info">Personal Information</string>
     <string name="basic_info">Basic Information</string>
+    <string name="full_name">Full Name</string>
     <string name="your_full_name">Your Full Name</string>
     <string name="phone_number">Phone Number</string>
     <string name="select_group">Select Group</string>
@@ -157,7 +158,9 @@
     <string name="citizen_id">Citizen ID</string>
     <string name="hint_citizen_id">Enter your Citizen ID number</string>
     <string name="label_last_donation">Last blood donation</string>
+    <string name="placeholder_last_donation">Select nearest date</string>
     <string name="error_citizen_id_invalid">Invalid Citizen ID (12 digits, no spaces)</string>
     <string name="register_donation">Blood Donation Registration</string>
+    <string name="registration_information">Registration Information</string>
 
 </resources>

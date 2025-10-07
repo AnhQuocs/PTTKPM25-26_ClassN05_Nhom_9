@@ -16,7 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.heartbeat.BaseComponentActivity
-import com.example.heartbeat.presentation.features.donation.ui.RegisterDonationScreen
+import com.example.heartbeat.presentation.features.donation.ui.DonationDetailScreen
 import com.example.heartbeat.presentation.features.users.admin.AdminScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.LoginScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.SignUpScreen
@@ -63,7 +63,7 @@ class MainActivity : BaseComponentActivity() {
                 ) { backStackEntry ->
                     val eventId = backStackEntry.arguments?.getString("eventId")
                     val donorId = backStackEntry.arguments?.getString("donorId")
-                    RegisterDonationScreen(
+                    DonationDetailScreen(
                         eventId = eventId ?: "",
                         donorId = donorId ?: ""
                     )

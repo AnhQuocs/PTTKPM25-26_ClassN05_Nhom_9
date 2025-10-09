@@ -96,7 +96,7 @@ fun SignUpScreen(
         authState?.onSuccess { user ->
             Toast.makeText(context, "$welcomeText ${user.username}", Toast.LENGTH_SHORT).show()
 
-            donorViewModel.getDonor { exists ->
+            donorViewModel.getCurrentDonor { exists ->
                 if (exists) {
                     navController.navigate("main") {
                         popUpTo("signUp") { inclusive = true }

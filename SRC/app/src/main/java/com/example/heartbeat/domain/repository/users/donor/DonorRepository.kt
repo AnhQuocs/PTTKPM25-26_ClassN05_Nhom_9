@@ -5,7 +5,8 @@ import com.example.heartbeat.domain.entity.users.DonorAvatar
 
 interface DonorRepository {
     suspend fun addDonor(donor: Donor)
-    suspend fun getDonor(donorId: String): Donor?
+    suspend fun getCurrentDonor(donorId: String): Donor?
+    suspend fun getDonorById(donorId: String): Donor?
     suspend fun updateDonor(donorId: String, donor: Donor)
     suspend fun isDonorProfileExist(userId: String): Boolean
 

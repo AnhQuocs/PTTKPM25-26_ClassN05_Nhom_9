@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.donation.ui
+package com.example.heartbeat.presentation.features.donation.ui.register_detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

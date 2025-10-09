@@ -128,7 +128,7 @@ class DonorViewModel @Inject constructor(
         _formState.update { it.copy(currentStep = step) }
     }
 
-    fun getDonor(onProfileExists: (Boolean) -> Unit = {}) {
+    fun getCurrentDonor(onProfileExists: (Boolean) -> Unit = {}) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         Log.d("DonorViewModel", "User id: $userId")
@@ -140,7 +140,7 @@ class DonorViewModel @Inject constructor(
                 val exists = donorUseCase.isDonorProfileExistUseCase(userId)
 
                 if (exists) {
-                    val donor = donorUseCase.getDonorUseCase(userId)!!
+                    val donor = donorUseCase.getCurrentDonorUseCase(userId)!!
 
                     _formState.update { current ->
                         current.copy(
@@ -162,6 +162,34 @@ class DonorViewModel @Inject constructor(
             } catch (e: Exception) {
                 _formState.update { it.copy(error = e.message) }
                 onProfileExists(false)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getDonorById(donorId: String) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+
+                val donor = donorUseCase.getCurrentDonorUseCase(donorId)!!
+
+                _formState.update { current ->
+                    current.copy(
+                        name = donor.name,
+                        phoneNumber = donor.phoneNumber,
+                        bloodGroup = donor.bloodGroup,
+                        city = donor.city,
+                        dateOfBirth = donor.dateOfBirth,
+                        age = donor.age,
+                        gender = donor.gender,
+                        willingToDonate = donor.willingToDonate,
+                        about = donor.about
+                    )
+                }
+            } catch (e: Exception) {
+                _formState.update { it.copy(error = e.message) }
             } finally {
                 _isLoading.value = false
             }

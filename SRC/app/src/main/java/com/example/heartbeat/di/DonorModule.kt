@@ -5,7 +5,8 @@ import com.example.heartbeat.domain.repository.users.donor.DonorRepository
 import com.example.heartbeat.domain.usecase.users.donor.AddDonorUseCase
 import com.example.heartbeat.domain.usecase.users.donor.DonorUseCase
 import com.example.heartbeat.domain.usecase.users.donor.GetAvatarUseCase
-import com.example.heartbeat.domain.usecase.users.donor.GetDonorUseCase
+import com.example.heartbeat.domain.usecase.users.donor.GetCurrentDonorUseCase
+import com.example.heartbeat.domain.usecase.users.donor.GetDonorByIdUseCase
 import com.example.heartbeat.domain.usecase.users.donor.IsDonorProfileExistUseCase
 import com.example.heartbeat.domain.usecase.users.donor.SaveAvatarUrlUseCase
 import com.example.heartbeat.domain.usecase.users.donor.UpdateAvatarUseCase
@@ -33,7 +34,8 @@ object DonorModule {
     @Singleton
     fun provideDonorUseCase(repository: DonorRepository) = DonorUseCase(
         addDonorUseCase = AddDonorUseCase(repository),
-        getDonorUseCase = GetDonorUseCase(repository),
+        getCurrentDonorUseCase = GetCurrentDonorUseCase(repository),
+        getDonorByIdUseCase = GetDonorByIdUseCase(repository),
         updateDonorUseCase = UpdateDonorUseCase(repository),
         isDonorProfileExistUseCase = IsDonorProfileExistUseCase(repository),
         uploadAvatarUseCase = UploadAvatarUseCase(repository),

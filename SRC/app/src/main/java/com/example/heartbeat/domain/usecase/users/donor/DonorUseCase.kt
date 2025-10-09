@@ -2,7 +2,8 @@ package com.example.heartbeat.domain.usecase.users.donor
 
 data class DonorUseCase(
     val addDonorUseCase: AddDonorUseCase,
-    val getDonorUseCase: GetDonorUseCase,
+    val getCurrentDonorUseCase: GetCurrentDonorUseCase,
+    val getDonorByIdUseCase: GetDonorByIdUseCase,
     val updateDonorUseCase: UpdateDonorUseCase,
     val isDonorProfileExistUseCase: IsDonorProfileExistUseCase,
 

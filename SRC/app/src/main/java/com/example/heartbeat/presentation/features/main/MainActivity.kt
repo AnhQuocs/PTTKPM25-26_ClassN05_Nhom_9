@@ -16,12 +16,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.heartbeat.BaseComponentActivity
-import com.example.heartbeat.presentation.features.donation.ui.DonationDetailScreen
+import com.example.heartbeat.presentation.features.donation.ui.register_detail.DonationDetailScreen
 import com.example.heartbeat.presentation.features.users.admin.AdminScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.LoginScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.SignUpScreen
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.onboarding.OnboardingScreen
+import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.ApproveScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.main.StaffLoginScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.main.StaffMainScreen
 import com.example.heartbeat.presentation.features.users.staff.ui.main.StaffSignUpScreen
@@ -65,8 +66,16 @@ class MainActivity : BaseComponentActivity() {
                     val donorId = backStackEntry.arguments?.getString("donorId")
                     DonationDetailScreen(
                         eventId = eventId ?: "",
-                        donorId = donorId ?: ""
+                        donorId = donorId ?: "",
+                        navController = navController
                     )
+                }
+                composable(
+                    route = "staff_approve/{eventId}",
+                    arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val eventId = backStackEntry.arguments?.getString("eventId")
+                    ApproveScreen(eventId = eventId ?: "", navController = navController)
                 }
             }
 

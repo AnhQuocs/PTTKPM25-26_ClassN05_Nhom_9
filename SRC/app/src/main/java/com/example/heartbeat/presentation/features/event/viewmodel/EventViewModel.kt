@@ -108,4 +108,8 @@ class EventViewModel @Inject constructor(
             _selectedEvent.value = _selectedEvent.value?.copy(donorList = donorList)
         }
     }
+
+    suspend fun getEventByIdDirect(id: String): Event {
+        return eventUseCase.getEventByIdUseCase(id)!!
+    }
 }

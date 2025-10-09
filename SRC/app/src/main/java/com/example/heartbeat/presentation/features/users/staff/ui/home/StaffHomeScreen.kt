@@ -32,11 +32,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.heartbeat.R
-import com.example.heartbeat.presentation.features.event.ui.StaffEventCard
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.StaffDonationList
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -52,7 +53,8 @@ import java.time.format.DateTimeFormatter
 fun StaffHomeScreen(
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
-    eventViewModel: EventViewModel = hiltViewModel()
+    eventViewModel: EventViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val authState by authViewModel.authState.collectAsState()
     val user = authState?.getOrNull()
@@ -177,12 +179,16 @@ fun StaffHomeScreen(
                 val gradient = gradients[index % gradients.size]
                 val accentColor = accentColors[index % accentColors.size]
 
-                StaffEventCard(
-                    gradient = gradient,
-                    event = event,
-                    accentColor = accentColor,
-                    location = location
-                )
+//                StaffEventCard(
+//                    gradient = gradient,
+//                    event = event,
+//                    accentColor = accentColor,
+//                    location = location
+//                )
+            }
+
+            item {
+                StaffDonationList(navController = navController)
             }
         }
 

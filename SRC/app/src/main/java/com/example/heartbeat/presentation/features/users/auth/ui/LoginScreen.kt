@@ -110,7 +110,7 @@ fun LoginScreen(
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
-            donorViewModel.getDonor { exists ->
+            donorViewModel.getCurrentDonor { exists ->
                 if (exists) {
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }

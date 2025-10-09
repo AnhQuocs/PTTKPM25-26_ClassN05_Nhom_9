@@ -82,7 +82,6 @@ import com.example.heartbeat.ui.theme.UnityPeach
 import com.example.heartbeat.ui.theme.UnityPeachText
 import com.example.heartbeat.ui.theme.VitalPink
 import com.example.heartbeat.ui.theme.VitalPinkText
-import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -118,7 +117,7 @@ fun HomeScreen(
     LaunchedEffect(authState) {
         authState?.getOrNull()?.let { user ->
             Log.d("HomeScreen", "Fetching donor data for ${user.uid}")
-            donorViewModel.getDonor()
+            donorViewModel.getCurrentDonor()
             donorViewModel.getAvatar(user.uid)
         }
     }

@@ -24,7 +24,13 @@ class DonorRepositoryImpl(
             .await()
     }
 
-    override suspend fun getDonor(donorId: String): Donor? {
+    override suspend fun getCurrentDonor(donorId: String): Donor? {
+        val snapshot = donorCollection.document(donorId).get().await()
+        val dto = snapshot.toObject(DonorDto::class.java) ?: return null
+        return dto.toDomain()
+    }
+
+    override suspend fun getDonorById(donorId: String): Donor? {
         val snapshot = donorCollection.document(donorId).get().await()
         val dto = snapshot.toObject(DonorDto::class.java) ?: return null
         return dto.toDomain()
@@ -37,7 +43,7 @@ class DonorRepositoryImpl(
     }
 
     override suspend fun isDonorProfileExist(userId: String): Boolean {
-        val donor = getDonor(userId)
+        val donor = getCurrentDonor(userId)
         return donor != null
     }
 

@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.donation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.heartbeat.domain.entity.donation.Donation
@@ -25,6 +26,11 @@ class DonationViewModel @Inject constructor(
 ) : ViewModel () {
     private val _uiState = MutableStateFlow(DonationUiState())
     val uiState: StateFlow<DonationUiState> = _uiState
+
+    init {
+        Log.d("DonationVM", "Instance hash: ${this.hashCode()}")
+        observePendingDonations()
+    }
 
     // CREATE
     fun addDonation(donation: Donation) {
@@ -145,7 +151,7 @@ class DonationViewModel @Inject constructor(
     }
 
     // OBSERVE
-    fun observePendingDonations() {
+    private fun observePendingDonations() {
         viewModelScope.launch {
             donationUseCases.observePendingDonations()
                 .collect { donations ->

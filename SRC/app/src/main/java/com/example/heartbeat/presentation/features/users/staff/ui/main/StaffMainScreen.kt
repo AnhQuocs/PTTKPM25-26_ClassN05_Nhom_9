@@ -93,7 +93,7 @@ fun StaffMainScreen(
                 .fillMaxSize()
         ) { tab ->
             when (tab) {
-                0 -> StaffHomeScreen()
+                0 -> StaffHomeScreen(navController = navController)
                 1 -> CreateEventScreen()
                 2 -> StaffCalendarScreen()
                 3 -> StaffSettingScreen(navController = navController)

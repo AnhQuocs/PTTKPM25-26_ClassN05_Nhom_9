@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.donation.ui
+package com.example.heartbeat.presentation.features.donation.ui.register_detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,13 +9,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun DonatedScreen(modifier: Modifier = Modifier) {
+fun ApprovedScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("DONATED")
+        Text("APPROVED")
     }
 }

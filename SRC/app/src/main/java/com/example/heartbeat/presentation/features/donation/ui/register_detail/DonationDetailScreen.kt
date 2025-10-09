@@ -1,8 +1,9 @@
-package com.example.heartbeat.presentation.features.donation.ui
+package com.example.heartbeat.presentation.features.donation.ui.register_detail
 
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,8 +31,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppLineGrey
+import com.example.heartbeat.presentation.features.donation.ui.RegisterDonationScreen
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
@@ -48,7 +51,8 @@ fun DonationDetailScreen(
     donationViewModel: DonationViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel(),
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
-    donorViewModel: DonorViewModel = hiltViewModel()
+    donorViewModel: DonorViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
@@ -65,7 +69,7 @@ fun DonationDetailScreen(
 
     LaunchedEffect(Unit) {
         eventViewModel.getEventById(eventId)
-        donorViewModel.getDonor()
+        donorViewModel.getCurrentDonor()
     }
 
     Box(
@@ -95,6 +99,7 @@ fun DonationDetailScreen(
                                     .align(Alignment.CenterStart)
                                     .padding(start = Dimens.PaddingM)
                                     .size(Dimens.SizeML)
+                                    .clickable { navController.popBackStack() }
                             )
 
                             Text(
@@ -145,7 +150,7 @@ fun DonationDetailScreen(
                             when (donationForThisEvent.status) {
                                 "PENDING" -> PendingScreen(donationViewModel, donorId)
                                 "APPROVED" -> ApprovedScreen()
-                                "REJECTED" -> RejectedScreen()
+                                "REJECTED" -> RejectedScreen(onRegisterAgain = {})
                                 "DONATED" -> DonatedScreen()
                             }
                         }

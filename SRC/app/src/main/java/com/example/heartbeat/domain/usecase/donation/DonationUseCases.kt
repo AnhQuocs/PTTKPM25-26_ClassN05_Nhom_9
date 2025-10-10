@@ -2,7 +2,7 @@ package com.example.heartbeat.domain.usecase.donation
 
 data class DonationUseCases(
     val addDonation: AddDonationUseCase,
-    val getDonationById: GetDonationByIdUseCase,
+    val observeDonationById: ObserveDonationByIdUseCase,
     val getDonationsByDonor: GetDonationsByDonorUseCase,
     val getDonationsByEvent: GetDonationsByEventUseCase,
     val updateDonation: UpdateDonationUseCase,

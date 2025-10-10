@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.firstOrNull
 
 class DonationRepositoryImpl(
     firestore: FirebaseFirestore,
@@ -25,9 +26,19 @@ class DonationRepositoryImpl(
         return snapshot.toObject(DonationDto::class.java)?.toDomain()
     }
 
-    override suspend fun getDonationById(donationId: String): Donation? {
-        val snapshot = collection.document(donationId).get().await()
-        return snapshot.toObject(DonationDto::class.java)?.toDomain()
+    override fun observeDonationById(donationId: String): Flow<Donation?> = callbackFlow {
+        val listener = collection.document(donationId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val donation = snapshot?.toObject(DonationDto::class.java)?.toDomain()
+                trySendBlocking(donation)
+            }
+
+        awaitClose { listener.remove() }
     }
 
     override suspend fun getDonationsByDonor(donorId: String): List<Donation> {
@@ -51,12 +62,12 @@ class DonationRepositoryImpl(
 
     override suspend fun updateStatus(donationId: String, status: String): Donation? {
         collection.document(donationId).update("status", status).await()
-        return getDonationById(donationId)
+        return observeDonationById(donationId).firstOrNull()
     }
 
     override suspend fun updateDonationVolume(donationId: String, volume: String): Donation? {
         collection.document(donationId).update("donationVolume", volume).await()
-        return getDonationById(donationId)
+        return observeDonationById(donationId).firstOrNull()
     }
 
     override suspend fun deleteDonation(donationId: String): Boolean {

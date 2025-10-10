@@ -58,13 +58,12 @@ fun DonationDetailScreen(
     val formState by donorViewModel.formState.collectAsState()
     val uiState by donationViewModel.uiState.collectAsState()
 
-    val allDonations = uiState.donations
-    val donationForThisEvent = allDonations.firstOrNull { it.eventId == eventId }
+    val selectedDonation = uiState.selectedDonation
 
-    Log.d("DonationDetailScreen", "Info: ${donationForThisEvent?.status}")
+    Log.d("DonationDetailScreen", "Info: ${selectedDonation?.status}")
 
     LaunchedEffect(donorId) {
-        donationViewModel.getDonationsByDonor(donorId)
+        donationViewModel.observeDonationsByEvent(eventId)
     }
 
     LaunchedEffect(Unit) {
@@ -135,7 +134,7 @@ fun DonationDetailScreen(
                         .padding(paddingValues)
                 ) {
                     when {
-                        donationForThisEvent == null && !uiState.isLoading -> {
+                        selectedDonation == null && !uiState.isLoading -> {
                             hospital?.let {
                                 RegisterDonationScreen(
                                     hospital = it,
@@ -146,8 +145,8 @@ fun DonationDetailScreen(
                                 )
                             }
                         }
-                        donationForThisEvent != null -> {
-                            when (donationForThisEvent.status) {
+                        selectedDonation != null -> {
+                            when (selectedDonation.status) {
                                 "PENDING" -> PendingScreen(donationViewModel, donorId)
                                 "APPROVED" -> ApprovedScreen()
                                 "REJECTED" -> RejectedScreen(onRegisterAgain = {})

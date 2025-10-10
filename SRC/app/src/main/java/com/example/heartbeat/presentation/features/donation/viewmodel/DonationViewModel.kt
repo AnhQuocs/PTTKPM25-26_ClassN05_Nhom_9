@@ -52,15 +52,12 @@ class DonationViewModel @Inject constructor(
     }
 
     // READ
-    fun getDonationById(donationId: String) = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        try {
-            val donation = donationUseCases.getDonationById(donationId)
-            _uiState.update {
-                it.copy(isLoading = false, selectedDonation = donation)
-            }
-        } catch (e: Exception) {
-            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+    fun observeDonation(donationId: String) {
+        viewModelScope.launch {
+            donationUseCases.observeDonationById(donationId)
+                .collect { donation ->
+                    _uiState.update { it.copy(selectedDonation = donation) }
+                }
         }
     }
 
@@ -164,7 +161,14 @@ class DonationViewModel @Inject constructor(
         viewModelScope.launch {
             donationUseCases.observeDonationsByEvent(eventId)
                 .collect { donations ->
-                    _uiState.update { it.copy(donations = donations) }
+                    val donationForEvent = donations.firstOrNull { it.eventId == eventId }
+
+                    _uiState.update { state ->
+                        state.copy(
+                            donations = donations,
+                            selectedDonation = donationForEvent ?: state.selectedDonation
+                        )
+                    }
                 }
         }
     }

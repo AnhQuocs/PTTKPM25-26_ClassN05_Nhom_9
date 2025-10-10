@@ -1,6 +1,7 @@
 package com.example.heartbeat.data.repository.event
 
 import android.util.Log
+import com.example.heartbeat.data.model.dto.DonationDto
 import com.example.heartbeat.data.model.dto.EventDto
 import com.example.heartbeat.data.model.mapper.toDomain
 import com.example.heartbeat.data.model.mapper.toDto
@@ -84,7 +85,10 @@ class EventRepositoryImpl(
                     return@addSnapshotListener
                 }
 
-                val donorCount = snapshot.size()
+                val donorCount = snapshot.toObjects(DonationDto::class.java)
+                    .mapNotNull { it.toDomain() }
+                    .count { it.status != "REJECTED" }
+
                 Log.d("FirestoreDebug", "✅ Donor count for event $eventId: $donorCount")
                 onUpdate(donorCount)
             }

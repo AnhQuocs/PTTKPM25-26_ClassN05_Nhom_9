@@ -98,7 +98,7 @@ fun ApproveScreen(
                         .fillMaxWidth()
                         .heightIn(max = Dimens.HeightShimmer)
                 ) {
-                    items(donations) { donation ->
+                    items(donations.filter { it.status == "PENDING" }) { donation ->
                         val formState by donorViewModel.formState.collectAsState()
                         LaunchedEffect(Unit) {
                             donorViewModel.getDonorById(donorId = donation.donorId)

@@ -8,7 +8,7 @@ interface DonationRepository {
     suspend fun addDonation(donation: Donation): Donation?
 
     // READ
-    suspend fun getDonationById(donationId: String): Donation?
+    fun observeDonationById(donationId: String): Flow<Donation?>
     suspend fun getDonationsByDonor(donorId: String): List<Donation>
     suspend fun getDonationsByEvent(eventId: String): List<Donation>
 

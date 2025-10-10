@@ -77,11 +77,9 @@ class EventRepositoryImpl(
             .whereEqualTo("eventId", eventId)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    Log.e("FirestoreDebug", "❌ Error observing donor count", e)
                     return@addSnapshotListener
                 }
                 if (snapshot == null) {
-                    Log.w("FirestoreDebug", "⚠️ Snapshot null for event $eventId")
                     return@addSnapshotListener
                 }
 
@@ -89,7 +87,6 @@ class EventRepositoryImpl(
                     .mapNotNull { it.toDomain() }
                     .count { it.status != "REJECTED" }
 
-                Log.d("FirestoreDebug", "✅ Donor count for event $eventId: $donorCount")
                 onUpdate(donorCount)
             }
     }

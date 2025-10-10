@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +44,7 @@ import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.PeachBackground
+import kotlinx.coroutines.launch
 
 @Composable
 fun DonationDetailScreen(
@@ -59,6 +61,8 @@ fun DonationDetailScreen(
     val uiState by donationViewModel.uiState.collectAsState()
 
     val selectedDonation = uiState.selectedDonation
+
+    val coroutineScope = rememberCoroutineScope()
 
     Log.d("DonationDetailScreen", "Info: ${selectedDonation?.status}")
 
@@ -149,7 +153,13 @@ fun DonationDetailScreen(
                             when (selectedDonation.status) {
                                 "PENDING" -> PendingScreen(donationViewModel, donorId)
                                 "APPROVED" -> ApprovedScreen()
-                                "REJECTED" -> RejectedScreen(onRegisterAgain = {})
+                                "REJECTED" -> RejectedScreen(onRegisterAgain = {
+                                    coroutineScope.launch {
+                                        donationViewModel.deleteDonation(donationId = selectedDonation.donationId)
+                                        navController.popBackStack()
+                                        navController.navigate("register_donation/${event.id}/${donorId}")
+                                    }
+                                })
                                 "DONATED" -> DonatedScreen()
                             }
                         }

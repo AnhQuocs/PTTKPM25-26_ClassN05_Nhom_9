@@ -23,4 +23,5 @@ interface DonationRepository {
     // OBSERVE (Realtime)
     fun observePendingDonations(): Flow<List<Donation>>
     fun observeDonationsByEvent(eventId: String): Flow<List<Donation>>
+    fun observeDonationByDonor(eventId: String, donorId: String): Flow<Donation?>
 }

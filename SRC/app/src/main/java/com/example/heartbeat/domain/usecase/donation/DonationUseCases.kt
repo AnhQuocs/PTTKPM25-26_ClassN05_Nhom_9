@@ -10,5 +10,6 @@ data class DonationUseCases(
     val updateDonationVolume: UpdateDonationVolumeUseCase,
     val deleteDonation: DeleteDonationUseCase,
     val observePendingDonations: ObservePendingDonationsUseCase,
-    val observeDonationsByEvent: ObserveDonationsByEventUseCase
+    val observeDonationsByEvent: ObserveDonationsByEventUseCase,
+    val observeDonationByDonorUseCase: ObserveDonationByDonorUseCase
 )

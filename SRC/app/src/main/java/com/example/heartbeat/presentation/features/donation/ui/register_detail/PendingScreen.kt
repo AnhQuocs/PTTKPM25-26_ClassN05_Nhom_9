@@ -83,25 +83,6 @@ fun PendingScreen(
                 )
 
                 Spacer(Modifier.height(AppSpacing.LargePlus))
-
-                OutlinedButton(
-                    onClick = {
-                        donationViewModel.getDonationsByDonor(donorId)
-                    },
-                    border = BorderStroke(1.dp, WaitingGold),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = WaitingGold)
-                ) {
-                    Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(Dimens.SizeSM)
-                    )
-
-                    Spacer(Modifier.width(AppSpacing.Small + 2.dp))
-
-                    Text(stringResource(R.string.pending_check_status))
-                }
             }
         }
     }

@@ -182,10 +182,10 @@ fun DonorInfo(
                     .fillMaxWidth()
                     .padding(start = 44.dp, end = 8.dp, bottom = 8.dp)
             ) {
-                Text("Email: ${formState.city}")
-                Text("SĐT: ${formState.age}")
-                Text("Sự kiện: ${formState.gender}")
-                Text("Ghi chú: ${formState.phoneNumber}")
+                Text("City: ${formState.city}")
+                Text("Tuổi: ${formState.age}")
+                Text("Giới tính: ${formState.gender}")
+                Text("SĐT: ${formState.phoneNumber}")
 
                 Spacer(modifier = Modifier.height(6.dp))
 

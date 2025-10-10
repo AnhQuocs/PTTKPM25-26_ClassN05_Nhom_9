@@ -8,6 +8,7 @@ import com.example.heartbeat.domain.usecase.donation.DonationUseCases
 import com.example.heartbeat.domain.usecase.donation.ObserveDonationByIdUseCase
 import com.example.heartbeat.domain.usecase.donation.GetDonationsByDonorUseCase
 import com.example.heartbeat.domain.usecase.donation.GetDonationsByEventUseCase
+import com.example.heartbeat.domain.usecase.donation.ObserveDonationByDonorUseCase
 import com.example.heartbeat.domain.usecase.donation.ObserveDonationsByEventUseCase
 import com.example.heartbeat.domain.usecase.donation.ObservePendingDonationsUseCase
 import com.example.heartbeat.domain.usecase.donation.UpdateDonationUseCase
@@ -43,7 +44,8 @@ object DonationModule {
             updateDonationVolume = UpdateDonationVolumeUseCase(repository),
             deleteDonation = DeleteDonationUseCase(repository),
             observePendingDonations = ObservePendingDonationsUseCase(repository),
-            observeDonationsByEvent = ObserveDonationsByEventUseCase(repository)
+            observeDonationsByEvent = ObserveDonationsByEventUseCase(repository),
+            observeDonationByDonorUseCase = ObserveDonationByDonorUseCase(repository)
         )
     }
 }

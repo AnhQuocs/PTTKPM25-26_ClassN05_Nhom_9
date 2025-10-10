@@ -101,4 +101,24 @@ class DonationRepositoryImpl(
 
         awaitClose { listener.remove() }
     }
+
+    override fun observeDonationByDonor(eventId: String, donorId: String): Flow<Donation?> = callbackFlow {
+        val listener = collection
+            .whereEqualTo("eventId", eventId)
+            .whereEqualTo("donorId", donorId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    close(e)
+                    return@addSnapshotListener
+                }
+
+                val donation = snapshot?.toObjects(DonationDto::class.java)
+                    ?.mapNotNull { it.toDomain() }
+                    ?.firstOrNull()
+
+                trySendBlocking(donation)
+            }
+
+        awaitClose { listener.remove() }
+    }
 }

@@ -56,23 +56,25 @@ fun DonationDetailScreen(
     donorViewModel: DonorViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val selectedEvent by eventViewModel.selectedEvent.collectAsState()
+    val events by eventViewModel.events.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
     val uiState by donationViewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     val selectedDonation = uiState.selectedDonation
-
-    val coroutineScope = rememberCoroutineScope()
 
     Log.d("DonationDetailScreen", "Info: ${selectedDonation?.status}")
 
     LaunchedEffect(donorId) {
-        donationViewModel.observeDonationsByEvent(eventId)
+        donationViewModel.observeDonationForDonor(eventId, donorId)
     }
 
     LaunchedEffect(Unit) {
         eventViewModel.getEventById(eventId)
         donorViewModel.getCurrentDonor()
+        events.forEach { event ->
+            eventViewModel.observeDonorCount(event.id)
+        }
     }
 
     Box(
@@ -125,12 +127,15 @@ fun DonationDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) { paddingValues ->
+            val selectedEvent = events.firstOrNull { it.id == eventId }
             selectedEvent?.let { event ->
                 LaunchedEffect(Unit) {
                     hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
                 }
 
                 val hospital = hospitalViewModel.hospitalDetails[event.locationId]
+
+                Log.d("DonationDetailScreen", "Size: ${event.donorCount}")
 
                 Box(
                     modifier = Modifier

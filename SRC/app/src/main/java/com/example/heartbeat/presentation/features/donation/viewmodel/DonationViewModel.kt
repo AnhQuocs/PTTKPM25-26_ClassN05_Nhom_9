@@ -161,13 +161,19 @@ class DonationViewModel @Inject constructor(
         viewModelScope.launch {
             donationUseCases.observeDonationsByEvent(eventId)
                 .collect { donations ->
-                    val donationForEvent = donations.firstOrNull { it.eventId == eventId }
-
                     _uiState.update { state ->
-                        state.copy(
-                            donations = donations,
-                            selectedDonation = donationForEvent ?: state.selectedDonation
-                        )
+                        state.copy(donations = donations)
+                    }
+                }
+        }
+    }
+
+    fun observeDonationForDonor(eventId: String, donorId: String) {
+        viewModelScope.launch {
+            donationUseCases.observeDonationByDonorUseCase(eventId, donorId)
+                .collect { donation ->
+                    _uiState.update { state ->
+                        state.copy(selectedDonation = donation)
                     }
                 }
         }

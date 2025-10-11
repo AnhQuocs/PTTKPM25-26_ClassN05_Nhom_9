@@ -31,6 +31,10 @@ val VitalPink = Color(0xFFFFEAF6)
 val UnityPeach = Color(0xFFFFF0E8)
 val SunshineYellow = Color(0xFFFFFBEA)
 
+val CompassionBlueLight = Color(0xFFF4FAFF)
+val HopeGreenLight = Color(0xFFF4FFFA)
+val SunshineYellowLight = Color(0xFFFFFDF5)
+
 val CompassionBlueText = Color(0xFF2A6F97)
 val HopeGreenText = Color(0xFF2E7D32)
 val HeroLavenderText = Color(0xFF5E35B1)

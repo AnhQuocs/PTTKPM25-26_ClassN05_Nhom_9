@@ -63,6 +63,7 @@ fun ApproveScreen(
     val donations = uiState.donations
 
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
+    val donorCache by donorViewModel.donorCache.collectAsState()
 
     LaunchedEffect(eventId) {
         donationViewModel.observeDonationsByEvent(eventId)
@@ -99,20 +100,41 @@ fun ApproveScreen(
                         .heightIn(max = Dimens.HeightShimmer)
                 ) {
                     items(donations.filter { it.status == "PENDING" }) { donation ->
-                        val formState by donorViewModel.formState.collectAsState()
-                        LaunchedEffect(Unit) {
-                            donorViewModel.getDonorById(donorId = donation.donorId)
+                        val donor = donorCache[donation.donorId]
+
+                        LaunchedEffect(donation.donorId) {
+                            if (donor == null) {
+                                donorViewModel.fetchDonorAndCache(donation.donorId)
+                            }
                         }
 
-                        DonorInfo(
-                            formState = formState,
-                            onApprove = {
-                                donationViewModel.updateStatus(donationId = donation.donationId, status = "APPROVED")
-                            },
-                            onReject = {
-                                donationViewModel.updateStatus(donationId = donation.donationId, status = "REJECTED")
-                            }
-                        )
+                        donor?.let {
+                            val formState = DonorFormState(
+                                name = it.name,
+                                phoneNumber = it.phoneNumber,
+                                bloodGroup = it.bloodGroup,
+                                city = it.city,
+                                dateOfBirth = it.dateOfBirth,
+                                age = it.age,
+                                gender = it.gender
+                            )
+
+                            DonorInfo(
+                                formState = formState,
+                                onApprove = {
+                                    donationViewModel.updateStatus(
+                                        donationId = donation.donationId,
+                                        status = "APPROVED"
+                                    )
+                                },
+                                onReject = {
+                                    donationViewModel.updateStatus(
+                                        donationId = donation.donationId,
+                                        status = "REJECTED"
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }

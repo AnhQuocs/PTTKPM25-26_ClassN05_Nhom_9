@@ -90,6 +90,7 @@
     <string name="cancel">Quay lại</string>
     <string name="ok">Đồng ý</string>
     <string name="create">Tạo mới</string>
+    <string name="see_all">Xem tất cả</string>
 
     <!-- Main App -->
     <string name="home">Trang chủ</string>
@@ -153,6 +154,7 @@
 
     <!-- Staff -->
     <string name="create_event">Tạo sự kiện mới</string>
+    <string name="pending_requests">Đang chờ duyệt</string>
 
     <!-- Donation -->
     <string name="citizen_id">CCCD</string>

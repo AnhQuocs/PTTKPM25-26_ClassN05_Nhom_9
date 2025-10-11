@@ -90,6 +90,7 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="create">Create</string>
+    <string name="see_all">See all</string>
 
     <!-- Main App -->
     <string name="home">Home</string>
@@ -153,6 +154,7 @@
 
     <!-- Staff -->
     <string name="create_event">Create New Event</string>
+    <string name="pending_requests">Pending Requests</string>
 
     <!-- Donation -->
     <string name="citizen_id">Citizen ID</string>

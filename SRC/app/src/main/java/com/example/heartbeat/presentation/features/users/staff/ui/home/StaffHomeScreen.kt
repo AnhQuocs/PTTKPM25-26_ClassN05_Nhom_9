@@ -37,7 +37,6 @@ import com.example.heartbeat.R
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
-import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.StaffDonationList
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -188,7 +187,7 @@ fun StaffHomeScreen(
             }
 
             item {
-                StaffDonationList(navController = navController)
+                PendingListSection(navController = navController)
             }
         }
 

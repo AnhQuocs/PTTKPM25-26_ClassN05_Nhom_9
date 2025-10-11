@@ -26,6 +26,9 @@ class DonorViewModel @Inject constructor(
     private val _formState = MutableStateFlow(DonorFormState())
     val formState: StateFlow<DonorFormState> = _formState
 
+    private val _donorCache = MutableStateFlow<Map<String, Donor>>(emptyMap())
+    val donorCache: StateFlow<Map<String, Donor>> = _donorCache
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -192,6 +195,21 @@ class DonorViewModel @Inject constructor(
                 _formState.update { it.copy(error = e.message) }
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun fetchDonorAndCache(donorId: String) {
+        viewModelScope.launch {
+            try {
+                val donor = donorUseCase.getCurrentDonorUseCase(donorId)
+                if (donor != null) {
+                    _donorCache.update { it + (donorId to donor) }
+                } else {
+                    Log.w("DonorViewModel", "No donor found for id: $donorId")
+                }
+            } catch (e: Exception) {
+                Log.e("DonorViewModel", "Error fetching donor: $donorId", e)
             }
         }
     }

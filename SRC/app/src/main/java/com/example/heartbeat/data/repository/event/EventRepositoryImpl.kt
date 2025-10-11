@@ -1,6 +1,5 @@
 package com.example.heartbeat.data.repository.event
 
-import android.util.Log
 import com.example.heartbeat.data.model.dto.DonationDto
 import com.example.heartbeat.data.model.dto.EventDto
 import com.example.heartbeat.data.model.mapper.toDomain
@@ -9,7 +8,6 @@ import com.example.heartbeat.data.model.mapper.toLocalDateTime
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.repository.event.EventRepository
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -43,7 +41,7 @@ class EventRepositoryImpl(
 
         val dto = event.copy(
             id = docRef.id,
-            createdAt = event.createdAt ?: now.toLocalDateTime(),
+            createdAt = event.createdAt,
             updatedAt = event.updatedAt ?: now.toLocalDateTime()
         ).toDto()
 

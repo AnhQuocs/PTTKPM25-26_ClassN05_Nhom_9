@@ -1,4 +1,4 @@
-package com.example.heartbeat.domain.usecase.donation
+package com.example.heartbeat.domain.usecase.donation.create
 
 import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.repository.donation.DonationRepository

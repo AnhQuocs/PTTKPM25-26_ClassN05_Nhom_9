@@ -1,13 +1,13 @@
-package com.example.heartbeat.domain.usecase.donation
+package com.example.heartbeat.domain.usecase.donation.read
 
 import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.repository.donation.DonationRepository
 import kotlinx.coroutines.flow.Flow
 
-class ObserveDonationsByEventUseCase(
+class ObservePendingDonationsUseCase (
     private val repository: DonationRepository
 ) {
-    operator fun invoke(eventId: String): Flow<List<Donation>> {
-        return repository.observeDonationsByEvent(eventId)
+    operator fun invoke(): Flow<List<Donation>> {
+        return repository.observePendingDonations()
     }
 }

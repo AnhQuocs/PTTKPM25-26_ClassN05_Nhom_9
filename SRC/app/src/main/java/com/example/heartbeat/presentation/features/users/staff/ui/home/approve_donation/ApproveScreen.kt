@@ -1,9 +1,17 @@
 package com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +24,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -37,6 +47,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,6 +61,7 @@ import com.example.heartbeat.presentation.features.event.viewmodel.EventViewMode
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.presentation.features.users.staff.component.SubScreenTopBar
+import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 
@@ -81,59 +95,87 @@ fun ApproveScreen(
         }
     ) { paddingValues ->
         selectedEvent?.let { event ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(Dimens.PaddingM)
-            ) {
-                Text(
-                    text = event.name
-                )
+            Crossfade(targetState = uiState.isLoading, label = "donor_shimmer_fade") { isLoading ->
+                if (isLoading) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(Dimens.PaddingM)
+                    ) {
+                        Text(
+                            text = event.name
+                        )
 
-                Spacer(modifier = Modifier.height(AppSpacing.Large))
+                        Spacer(modifier = Modifier.height(AppSpacing.Large))
 
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(horizontal = Dimens.PaddingXS)
-                        .fillMaxWidth()
-                        .heightIn(max = Dimens.HeightShimmer)
-                ) {
-                    items(donations.filter { it.status == "PENDING" }) { donation ->
-                        val donor = donorCache[donation.donorId]
-
-                        LaunchedEffect(donation.donorId) {
-                            if (donor == null) {
-                                donorViewModel.fetchDonorAndCache(donation.donorId)
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(horizontal = Dimens.PaddingXS)
+                                .fillMaxWidth()
+                                .heightIn(max = Dimens.HeightShimmer)
+                        ) {
+                            items(2) {
+                                DonorInfoShimmer()
                             }
                         }
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .padding(Dimens.PaddingM)
+                    ) {
+                        Text(
+                            text = event.name
+                        )
 
-                        donor?.let {
-                            val formState = DonorFormState(
-                                name = it.name,
-                                phoneNumber = it.phoneNumber,
-                                bloodGroup = it.bloodGroup,
-                                city = it.city,
-                                dateOfBirth = it.dateOfBirth,
-                                age = it.age,
-                                gender = it.gender
-                            )
+                        Spacer(modifier = Modifier.height(AppSpacing.Large))
 
-                            DonorInfo(
-                                formState = formState,
-                                onApprove = {
-                                    donationViewModel.updateStatus(
-                                        donationId = donation.donationId,
-                                        status = "APPROVED"
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(horizontal = Dimens.PaddingXS)
+                                .fillMaxWidth()
+                                .heightIn(max = Dimens.HeightShimmer)
+                        ) {
+                            items(donations.filter { it.status == "PENDING" }) { donation ->
+                                val donor = donorCache[donation.donorId]
+
+                                LaunchedEffect(donation.donorId) {
+                                    if (donor == null) {
+                                        donorViewModel.fetchDonorAndCache(donation.donorId)
+                                    }
+                                }
+
+                                donor?.let {
+                                    val formState = DonorFormState(
+                                        name = it.name,
+                                        phoneNumber = it.phoneNumber,
+                                        bloodGroup = it.bloodGroup,
+                                        city = it.city,
+                                        dateOfBirth = it.dateOfBirth,
+                                        age = it.age,
+                                        gender = it.gender
                                     )
-                                },
-                                onReject = {
-                                    donationViewModel.updateStatus(
-                                        donationId = donation.donationId,
-                                        status = "REJECTED"
+
+                                    DonorInfo(
+                                        formState = formState,
+                                        onApprove = {
+                                            donationViewModel.updateStatus(
+                                                donationId = donation.donationId,
+                                                status = "APPROVED"
+                                            )
+                                        },
+                                        onReject = {
+                                            donationViewModel.updateStatus(
+                                                donationId = donation.donationId,
+                                                status = "REJECTED"
+                                            )
+                                        }
                                     )
                                 }
-                            )
+                            }
                         }
                     }
                 }
@@ -152,6 +194,7 @@ fun DonorInfo(
 
     Column(
         modifier = Modifier
+            .clip(RoundedCornerShape(AppShape.SmallShape))
             .fillMaxWidth()
             .background(Color.White)
             .padding(horizontal = 12.dp, vertical = 4.dp)
@@ -232,6 +275,94 @@ fun DonorInfo(
                 }
             }
         }
+
+        Divider(color = Color(0xFFE0E0E0))
+    }
+}
+
+@Composable
+fun DonorInfoShimmer() {
+    val transition = rememberInfiniteTransition(label = "donor_shimmer")
+    val shimmerTranslate by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "donor_shimmer_translate"
+    )
+
+    val shimmerBrush = Brush.linearGradient(
+        colors = listOf(
+            Color.LightGray.copy(alpha = 0.4f),
+            Color.White.copy(alpha = 0.7f),
+            Color.LightGray.copy(alpha = 0.4f)
+        ),
+        start = Offset(x = shimmerTranslate - 1000f, y = 0f),
+        end = Offset(x = shimmerTranslate, y = 0f)
+    )
+
+    Column(
+        modifier = Modifier
+            .clip(RoundedCornerShape(AppShape.SmallShape))
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(horizontal = 12.dp, vertical = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(32.dp)
+                    .background(shimmerBrush, CircleShape)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Box(
+                    modifier = Modifier
+                        .height(12.dp)
+                        .fillMaxWidth(0.5f)
+                        .background(shimmerBrush, RoundedCornerShape(4.dp))
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Box(
+                    modifier = Modifier
+                        .height(10.dp)
+                        .fillMaxWidth(0.1f)
+                        .background(shimmerBrush, RoundedCornerShape(4.dp))
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(10.dp)
+                    .width(80.dp)
+                    .background(shimmerBrush, RoundedCornerShape(4.dp))
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .background(shimmerBrush, CircleShape)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+
+//        Spacer(modifier = Modifier.height(2.dp))
 
         Divider(color = Color(0xFFE0E0E0))
     }

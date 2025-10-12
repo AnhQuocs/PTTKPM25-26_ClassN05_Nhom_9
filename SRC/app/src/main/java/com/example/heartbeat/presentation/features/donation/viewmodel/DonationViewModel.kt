@@ -159,10 +159,20 @@ class DonationViewModel @Inject constructor(
 
     fun observeDonationsByEvent(eventId: String) {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val startTime = System.currentTimeMillis()
+
             donationUseCases.observeDonationsByEvent(eventId)
                 .collect { donations ->
-                    _uiState.update { state ->
-                        state.copy(donations = donations)
+                    val elapsed = System.currentTimeMillis() - startTime
+                    if (elapsed < 500) kotlinx.coroutines.delay(500 - elapsed)
+
+                    _uiState.update {
+                        it.copy(
+                            donations = donations,
+                            isLoading = false
+                        )
                     }
                 }
         }

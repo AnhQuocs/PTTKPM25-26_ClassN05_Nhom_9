@@ -63,6 +63,7 @@
     <string name="date_not_allowed">Ngày đã chọn không được phép</string>
     <string name="gender">Giới tính</string>
     <string name="select_gender">Chọn giới tính</string>
+    <string name="age">Tuổi</string>
     <string name="your_age">Tuổi của bạn</string>
     <string name="want_donate_blood">Tôi muốn hiến máu</string>
     <string name="want_donate_blood_placeholder">Đồng ý hoặc Không</string>
@@ -156,6 +157,7 @@
     <string name="create_event">Tạo sự kiện mới</string>
     <string name="pending_requests">Đang chờ duyệt</string>
     <string name="approve">Duyệt</string>
+    <string name="reject">Từ chối</string>
     <string name="donors_pending">đang chờ</string>
     <string name="donors_pending_approval">đang chờ duyệt</string>
 
@@ -163,6 +165,7 @@
     <string name="citizen_id">CCCD</string>
     <string name="hint_citizen_id">Nhập số CCCD</string>
     <string name="label_last_donation">Lần hiến máu gần nhất</string>
+    <string name="no_record">Chưa có</string>
     <string name="placeholder_last_donation">Chọn ngày gần nhất</string>
     <string name="error_citizen_id_invalid">Số CCCD không hợp lệ (phải gồm 12 chữ số, không có khoảng trắng)</string>
     <string name="register_donation">Đăng ký hiến máu</string>

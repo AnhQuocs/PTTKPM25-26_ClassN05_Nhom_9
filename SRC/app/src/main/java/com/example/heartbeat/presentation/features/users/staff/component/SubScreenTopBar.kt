@@ -18,9 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,13 +33,15 @@ import com.example.heartbeat.ui.theme.PeachBackground
 @Composable
 fun SubScreenTopBar(
     text: String,
+    bgrColor: Color = PeachBackground,
+    textColor: Color = Black,
     onBackClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(Dimens.SizeMega + 10.dp)
-            .background(PeachBackground)
+            .background(bgrColor)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -51,7 +53,7 @@ fun SubScreenTopBar(
                 Image(
                     painter = painterResource(id = R.drawable.ic_back),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.Black),
+                    colorFilter = ColorFilter.tint(textColor),
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(start = Dimens.PaddingM)
@@ -65,7 +67,7 @@ fun SubScreenTopBar(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium
                     ),
-                    color = Color.Black,
+                    color = textColor,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }

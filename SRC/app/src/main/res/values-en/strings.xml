@@ -63,6 +63,7 @@
     <string name="date_not_allowed">Selected date is not allowed</string>
     <string name="gender">Gender</string>
     <string name="select_gender">Select Gender</string>
+    <string name="age">Age</string>
     <string name="your_age">Your age</string>
     <string name="want_donate_blood_placeholder">Yes or No</string>
     <string name="want_donate_blood">I want to donate blood</string>
@@ -156,6 +157,7 @@
     <string name="create_event">Create New Event</string>
     <string name="pending_requests">Pending Requests</string>
     <string name="approve">Approve</string>
+    <string name="reject">Reject</string>
     <string name="donors_pending">donors pending</string>
     <string name="donors_pending_approval">donors pending approval</string>
 
@@ -163,6 +165,7 @@
     <string name="citizen_id">Citizen ID</string>
     <string name="hint_citizen_id">Enter your Citizen ID number</string>
     <string name="label_last_donation">Last blood donation</string>
+    <string name="no_record">No record</string>
     <string name="placeholder_last_donation">Select nearest date</string>
     <string name="error_citizen_id_invalid">Invalid Citizen ID (12 digits, no spaces)</string>
     <string name="register_donation">Blood Donation Registration</string>

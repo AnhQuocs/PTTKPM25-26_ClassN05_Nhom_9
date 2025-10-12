@@ -27,14 +27,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apartment
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,19 +57,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.heartbeat.R
+import com.example.heartbeat.domain.entity.donation.Donation
+import com.example.heartbeat.domain.entity.event.Event
+import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
+import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.presentation.features.users.staff.component.SubScreenTopBar
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
+import com.example.heartbeat.ui.theme.CompassionBlue
+import com.example.heartbeat.ui.theme.Green500
+import com.example.heartbeat.ui.theme.HopeGreen
 
 @Composable
 fun ApproveScreen(
@@ -71,6 +88,7 @@ fun ApproveScreen(
     donationViewModel: DonationViewModel = hiltViewModel(),
     donorViewModel: DonorViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel(),
+    hospitalViewModel: HospitalViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val uiState by donationViewModel.uiState.collectAsState()
@@ -87,7 +105,9 @@ fun ApproveScreen(
     Scaffold(
         topBar = {
             SubScreenTopBar(
-                text = "Approve",
+                bgrColor = Color(0xFF2051E5),
+                textColor = Color.White,
+                text = stringResource(id = R.string.approve),
                 onBackClick = {
                     navController.popBackStack()
                 }
@@ -95,6 +115,12 @@ fun ApproveScreen(
         }
     ) { paddingValues ->
         selectedEvent?.let { event ->
+            LaunchedEffect(Unit) {
+                hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
+            }
+
+            val hospital = hospitalViewModel.hospitalDetails[event.locationId]
+
             Crossfade(targetState = uiState.isLoading, label = "donor_shimmer_fade") { isLoading ->
                 if (isLoading) {
                     Column(
@@ -103,19 +129,16 @@ fun ApproveScreen(
                             .padding(paddingValues)
                             .padding(Dimens.PaddingM)
                     ) {
-                        Text(
-                            text = event.name
-                        )
+                        EventInfoCardShimmer()
 
                         Spacer(modifier = Modifier.height(AppSpacing.Large))
 
                         LazyColumn(
                             modifier = Modifier
-                                .padding(horizontal = Dimens.PaddingXS)
                                 .fillMaxWidth()
                                 .heightIn(max = Dimens.HeightShimmer)
                         ) {
-                            items(2) {
+                            items(5) {
                                 DonorInfoShimmer()
                             }
                         }
@@ -127,17 +150,14 @@ fun ApproveScreen(
                             .padding(paddingValues)
                             .padding(Dimens.PaddingM)
                     ) {
-                        Text(
-                            text = event.name
-                        )
+                        hospital?.let {
+                            EventInfoCard(event = event, hospital = it)
+                        }
 
                         Spacer(modifier = Modifier.height(AppSpacing.Large))
 
                         LazyColumn(
-                            modifier = Modifier
-                                .padding(horizontal = Dimens.PaddingXS)
-                                .fillMaxWidth()
-                                .heightIn(max = Dimens.HeightShimmer)
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             items(donations.filter { it.status == "PENDING" }) { donation ->
                                 val donor = donorCache[donation.donorId]
@@ -160,6 +180,7 @@ fun ApproveScreen(
                                     )
 
                                     DonorInfo(
+                                        donation = donation,
                                         formState = formState,
                                         onApprove = {
                                             donationViewModel.updateStatus(
@@ -185,35 +206,145 @@ fun ApproveScreen(
 }
 
 @Composable
+fun EventInfoCard(event: Event, hospital: Hospital) {
+    val location = "${hospital.district}, ${hospital.province}"
+
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(AppShape.MediumShape),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(Dimens.HeightXL3)
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            CompassionBlue,
+                            HopeGreen
+                        )
+                    )
+
+                )
+                .padding(Dimens.PaddingS)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
+            ) {
+                Text(
+                    text = event.name,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold, fontSize = 18.sp),
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFF01579B),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                EventInfoCardItem(icon = Icons.Default.DateRange, text = event.date)
+
+                EventInfoCardItem(icon = Icons.Default.Apartment, text = hospital.hospitalName)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = Green500,
+                        modifier = Modifier
+                            .align(Alignment.Top)
+                            .size(Dimens.SizeSM)
+                    )
+
+                    Spacer(modifier = Modifier.width(AppSpacing.MediumPlus))
+
+                    Column {
+                        Text(
+                            text = hospital.address,
+                            color = Green500,
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontSize = 15.sp,
+                                lineHeight = 1.sp
+                            )
+                        )
+
+                        Text(
+                            text = location,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = 12.sp,
+                                lineHeight = 1.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EventInfoCardItem(icon: ImageVector, text: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color(0xFF01579B),
+            modifier = Modifier.size(Dimens.SizeSM)
+        )
+
+        Text(
+            text = text,
+            color = Color(0xFF01579B),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium)
+        )
+    }
+}
+
+@Composable
 fun DonorInfo(
+    donation: Donation,
     formState: DonorFormState,
     onApprove: () -> Unit,
     onReject: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val rowHeight = Dimens.HeightLarge - 4.dp
+
+    val lastDonation = donation.donatedAt.ifBlank { stringResource(id = R.string.no_record) }
+    val detailStyle =
+        MaterialTheme.typography.labelSmall.copy(fontSize = 14.sp, fontWeight = FontWeight.Medium)
 
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(AppShape.SmallShape))
+            .clip(RoundedCornerShape(AppShape.SmallShape + 2.dp))
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 12.dp, vertical = 4.dp)
+            .padding(horizontal = Dimens.PaddingSM, vertical = Dimens.PaddingXS)
             .animateContentSize()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(rowHeight)
                 .clickable { expanded = !expanded },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
+                tint = Color.DarkGray.copy(alpha = 0.8f),
                 contentDescription = null,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(Dimens.SizeL)
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(AppSpacing.MediumLarge))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -222,14 +353,14 @@ fun DonorInfo(
                 )
                 Text(
                     text = formState.bloodGroup,
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
                     color = Color.Gray
                 )
             }
 
             Text(
                 text = formState.dateOfBirth,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
                 color = Color.Gray
             )
 
@@ -245,124 +376,66 @@ fun DonorInfo(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 44.dp, end = 8.dp, bottom = 8.dp)
+                    .padding(
+                        start = Dimens.PaddingXXL - 4.dp,
+                        end = Dimens.PaddingS,
+                        bottom = Dimens.PaddingS
+                    )
             ) {
-                Text("City: ${formState.city}")
-                Text("Tuổi: ${formState.age}")
-                Text("Giới tính: ${formState.gender}")
-                Text("SĐT: ${formState.phoneNumber}")
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(Dimens.PaddingXS)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.city) + ": ${formState.city}",
+                        style = detailStyle
+                    )
+                    Text(
+                        text = stringResource(id = R.string.age) + ": ${formState.age}",
+                        style = detailStyle
+                    )
+                    Text(
+                        text = stringResource(id = R.string.gender) + ": ${formState.gender}",
+                        style = detailStyle
+                    )
+                    Text(
+                        text = stringResource(id = R.string.phone_number) + ": ${formState.phoneNumber}",
+                        style = detailStyle
+                    )
+                    Text(
+                        text = stringResource(id = R.string.label_last_donation) + ": $lastDonation",
+                        style = detailStyle
+                    )
+                    Text(
+                        text = stringResource(id = R.string.citizen_id) + ": ${donation.citizenId}",
+                        style = detailStyle
+                    )
+                }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
                 ) {
-                    Button(
-                        onClick = onApprove,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Duyệt")
-                    }
-
                     OutlinedButton(
                         onClick = onReject,
                         modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(AppShape.ExtraLargeShape),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
                     ) {
-                        Text("Từ chối")
+                        Text(stringResource(id = R.string.reject))
+                    }
+
+                    Button(
+                        onClick = onApprove,
+                        shape = RoundedCornerShape(AppShape.ExtraLargeShape),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(stringResource(id = R.string.approve))
                     }
                 }
             }
         }
-
-        Divider(color = Color(0xFFE0E0E0))
-    }
-}
-
-@Composable
-fun DonorInfoShimmer() {
-    val transition = rememberInfiniteTransition(label = "donor_shimmer")
-    val shimmerTranslate by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "donor_shimmer_translate"
-    )
-
-    val shimmerBrush = Brush.linearGradient(
-        colors = listOf(
-            Color.LightGray.copy(alpha = 0.4f),
-            Color.White.copy(alpha = 0.7f),
-            Color.LightGray.copy(alpha = 0.4f)
-        ),
-        start = Offset(x = shimmerTranslate - 1000f, y = 0f),
-        end = Offset(x = shimmerTranslate, y = 0f)
-    )
-
-    Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(AppShape.SmallShape))
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(horizontal = 12.dp, vertical = 4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .background(shimmerBrush, CircleShape)
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Box(
-                    modifier = Modifier
-                        .height(12.dp)
-                        .fillMaxWidth(0.5f)
-                        .background(shimmerBrush, RoundedCornerShape(4.dp))
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Box(
-                    modifier = Modifier
-                        .height(10.dp)
-                        .fillMaxWidth(0.1f)
-                        .background(shimmerBrush, RoundedCornerShape(4.dp))
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Box(
-                modifier = Modifier
-                    .height(10.dp)
-                    .width(80.dp)
-                    .background(shimmerBrush, RoundedCornerShape(4.dp))
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Box(
-                modifier = Modifier
-                    .size(16.dp)
-                    .background(shimmerBrush, CircleShape)
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-        }
-
-//        Spacer(modifier = Modifier.height(2.dp))
 
         Divider(color = Color(0xFFE0E0E0))
     }

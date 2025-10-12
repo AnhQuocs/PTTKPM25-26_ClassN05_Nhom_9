@@ -17,6 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.heartbeat.BaseComponentActivity
 import com.example.heartbeat.presentation.features.donation.ui.register_detail.DonationDetailScreen
+import com.example.heartbeat.presentation.features.event.ui.EventDetailScreen
 import com.example.heartbeat.presentation.features.users.admin.AdminScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.LoginScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.SignUpScreen
@@ -44,7 +45,6 @@ class MainActivity : BaseComponentActivity() {
             val authState by authViewModel.authState.collectAsState()
             val isLoading by authViewModel.isUserLoading.collectAsState()
 
-            // 1 AnimatedNavHost duy nhất với tất cả route
             AnimatedNavHost(navController = navController, startDestination = "splash") {
                 composable("splash") { SplashScreen() }
                 composable("onboarding") { OnboardingScreen(navController) }
@@ -76,6 +76,13 @@ class MainActivity : BaseComponentActivity() {
                 ) { backStackEntry ->
                     val eventId = backStackEntry.arguments?.getString("eventId")
                     ApproveScreen(eventId = eventId ?: "", navController = navController)
+                }
+                composable(
+                    route = "event_detail/{eventId}",
+                    arguments = listOf(navArgument("eventId") {type = NavType.StringType})
+                ) { backStackEntry ->
+                    val eventId = backStackEntry.arguments?.getString("eventId")
+                    EventDetailScreen(eventId = eventId ?: "", navController = navController)
                 }
             }
 

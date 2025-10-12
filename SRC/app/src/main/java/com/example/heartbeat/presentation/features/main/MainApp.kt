@@ -9,12 +9,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -26,9 +24,8 @@ import androidx.navigation.NavController
 import com.example.heartbeat.presentation.components.BottomAppBar
 import com.example.heartbeat.presentation.components.TabItem
 import com.example.heartbeat.presentation.features.main.home.HomeScreen
-import com.example.heartbeat.presentation.features.search.SearchScreen
+import com.example.heartbeat.presentation.features.search.ui.SearchScreen
 import com.example.heartbeat.presentation.features.system.setting.SettingScreen
-import com.example.heartbeat.ui.dimens.Dimens
 
 @Composable
 fun MainApp(navController: NavController) {
@@ -95,7 +92,7 @@ fun MainApp(navController: NavController) {
         ) { tab ->
             when(tab) {
                 0 -> HomeScreen(navController = navController)
-                1 -> SearchScreen()
+                1 -> SearchScreen(navController = navController)
                 2 -> SettingScreen(navController)
             }
         }

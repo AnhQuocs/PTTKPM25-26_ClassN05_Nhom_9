@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface EventRepository {
     fun observeAllEvents(): Flow<List<Event>>
 
+    suspend fun getAllEvents(): List<Event>
     suspend fun getEventById(eventId: String): Event?
 
     suspend fun addEvent(event: Event)

@@ -155,6 +155,9 @@
     <!-- Staff -->
     <string name="create_event">Create New Event</string>
     <string name="pending_requests">Pending Requests</string>
+    <string name="approve">Approve</string>
+    <string name="donors_pending">donors pending</string>
+    <string name="donors_pending_approval">donors pending approval</string>
 
     <!-- Donation -->
     <string name="citizen_id">Citizen ID</string>

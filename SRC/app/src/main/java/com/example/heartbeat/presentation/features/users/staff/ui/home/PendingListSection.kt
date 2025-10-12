@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -260,9 +263,9 @@ fun EventPendingApprovalCard(
     val time = "$startTime - $endTime"
 
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = cardColor),
         shape = RoundedCornerShape(AppShape.MediumShape),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         modifier = modifier
             .clip(RoundedCornerShape(AppShape.MediumShape))
             .clickable { navController.navigate("staff_approve/${event.id}") }
@@ -282,36 +285,36 @@ fun EventPendingApprovalCard(
             )
 
             if (isCompact) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         Icons.Default.DateRange,
                         tint = textColor.copy(alpha = 0.7f),
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(Dimens.SizeS)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(AppSpacing.Small))
                     Text(event.date, style = MaterialTheme.typography.bodySmall, color = textColor.copy(alpha = 0.7f))
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "$pendingCount donors pending",
-                    color = textColor.copy(alpha = 0.7f),
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
-                )
+                Spacer(modifier = Modifier.height(AppSpacing.Small))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingM)
                 ) {
-                    Text("Approve", fontSize = 12.sp)
+                    Text(
+                        text = "$pendingCount " + stringResource(id = R.string.donors_pending),
+                        color = textColor.copy(alpha = 0.7f),
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+                    )
+
                     Icon(
                         Icons.Default.ArrowRightAlt,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = textColor.copy(alpha = 0.7f)
                     )
                 }
             } else {
@@ -320,9 +323,9 @@ fun EventPendingApprovalCard(
                         Icons.Default.AccessTime,
                         contentDescription = null,
                         tint = textColor.copy(alpha = 0.8f),
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(Dimens.SizeS)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(AppSpacing.Small))
                     Text(time, style = MaterialTheme.typography.bodySmall, color = textColor)
                 }
 
@@ -331,9 +334,9 @@ fun EventPendingApprovalCard(
                         Icons.Default.DateRange,
                         contentDescription = null,
                         tint = textColor.copy(alpha = 0.8f),
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(Dimens.SizeS)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(AppSpacing.Small))
                     Text(
                         event.date,
                         style = MaterialTheme.typography.bodySmall,
@@ -350,15 +353,33 @@ fun EventPendingApprovalCard(
                             .align(Alignment.Top)
                             .size(16.dp)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(AppSpacing.Small))
                     Text(
-                        "$pendingCount donors pending approval",
+                        "$pendingCount " + stringResource(id = R.string.donors_pending_approval),
                         color = textColor.copy(alpha = 0.8f),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
                     )
                 }
 
-                Column {  }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingM)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.approve),
+                        color = textColor,
+                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 13.sp)
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_arrow_right),
+                        colorFilter = ColorFilter.tint(textColor),
+                        contentDescription = null
+                    )
+                }
             }
         }
     }

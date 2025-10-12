@@ -155,6 +155,9 @@
     <!-- Staff -->
     <string name="create_event">Tạo sự kiện mới</string>
     <string name="pending_requests">Đang chờ duyệt</string>
+    <string name="approve">Duyệt</string>
+    <string name="donors_pending">đang chờ</string>
+    <string name="donors_pending_approval">đang chờ duyệt</string>
 
     <!-- Donation -->
     <string name="citizen_id">CCCD</string>

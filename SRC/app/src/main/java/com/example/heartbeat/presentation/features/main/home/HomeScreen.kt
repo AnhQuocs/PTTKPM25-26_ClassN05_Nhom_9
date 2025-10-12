@@ -58,6 +58,7 @@ import androidx.navigation.NavController
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.presentation.components.AppTitle
+import com.example.heartbeat.presentation.components.TitleSection
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
@@ -391,10 +392,16 @@ fun UpcomingEventCard(
             .padding(horizontal = Dimens.PaddingM, vertical = Dimens.PaddingS),
         verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
     ) {
-        AppTitle(text = stringResource(id = R.string.upcoming_event))
+        TitleSection(
+            text1 = stringResource(id = R.string.upcoming_event),
+            text2 = stringResource(id = R.string.see_all),
+            onClick = {
+                // navigate to all events screen
+            }
+        )
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)) {
-            items(events) { event ->
+            items(events.take(3)) { event ->
                 val (startStr, _) = event.time.split(" ")
                 val startTime = LocalTime.parse(startStr, timeFormatter)
 

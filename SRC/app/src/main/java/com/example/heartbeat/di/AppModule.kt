@@ -3,11 +3,17 @@ package com.example.heartbeat.di
 import android.content.Context
 import com.example.heartbeat.data.preferences.language.LanguagePreferenceManager
 import com.example.heartbeat.data.repository.hospital.HospitalRepositoryImpl
+import com.example.heartbeat.data.repository.recent_search.RecentSearchRepositoryImpl
 import com.example.heartbeat.data.source.remote.FirebaseHospitalDataSource
 import com.example.heartbeat.domain.repository.hospital.HospitalRepository
+import com.example.heartbeat.domain.repository.recent_search.RecentSearchRepository
 import com.example.heartbeat.domain.usecase.hospital.GetAllHospitalsUseCase
 import com.example.heartbeat.domain.usecase.hospital.GetHospitalByIdUseCase
 import com.example.heartbeat.domain.usecase.hospital.HospitalUseCase
+import com.example.heartbeat.domain.usecase.recent_search.AddRecentSearchUseCase
+import com.example.heartbeat.domain.usecase.recent_search.ClearAllRecentSearchUseCase
+import com.example.heartbeat.domain.usecase.recent_search.GetRecentSearchUseCase
+import com.example.heartbeat.domain.usecase.recent_search.RecentSearchUseCase
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -50,5 +56,22 @@ object AppModule {
     fun provideHospitalUseCase(repository: HospitalRepository) = HospitalUseCase(
         getAllHospitalsUseCase = GetAllHospitalsUseCase(repository),
         getHospitalByIdUseCase = GetHospitalByIdUseCase(repository)
+    )
+
+    // RECENT SEARCH
+    @Provides
+    @Singleton
+    fun provideRecentSearchRepository(
+        firestore: FirebaseFirestore
+    ): RecentSearchRepository {
+        return RecentSearchRepositoryImpl(firestore)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideRecentSearchUseCase(repository: RecentSearchRepository) = RecentSearchUseCase(
+        addRecentSearchUseCase = AddRecentSearchUseCase(repository),
+        getRecentSearchUseCase = GetRecentSearchUseCase(repository),
+        clearAllRecentSearchUseCase = ClearAllRecentSearchUseCase(repository)
     )
 }

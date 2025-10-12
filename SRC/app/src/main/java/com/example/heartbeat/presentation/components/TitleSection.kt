@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.heartbeat.ui.theme.OceanBlue
 
@@ -30,7 +32,7 @@ fun TitleSection(text1: String, text2: String, onClick: () -> Unit = {}, color: 
 
         Text(
             text = text2,
-            style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp, lineHeight = 0.sp),
+            style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp, lineHeight = 1.sp),
             color = color,
             modifier = Modifier.clickable { onClick() }
         )

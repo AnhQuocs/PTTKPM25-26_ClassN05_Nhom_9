@@ -154,10 +154,14 @@ fun DonationDetailScreen(
                                 )
                             }
                         }
+
                         selectedDonation != null -> {
                             when (selectedDonation.status) {
                                 "PENDING" -> PendingScreen(donationViewModel, donorId)
-                                "APPROVED" -> ApprovedScreen()
+                                "APPROVED" -> ApprovedScreen(eventId = event.id, onViewDetail = {
+                                    // Navigation
+                                })
+
                                 "REJECTED" -> RejectedScreen(onRegisterAgain = {
                                     coroutineScope.launch {
                                         donationViewModel.deleteDonation(donationId = selectedDonation.donationId)
@@ -165,6 +169,7 @@ fun DonationDetailScreen(
                                         navController.navigate("register_donation/${event.id}/${donorId}")
                                     }
                                 })
+
                                 "DONATED" -> DonatedScreen()
                             }
                         }

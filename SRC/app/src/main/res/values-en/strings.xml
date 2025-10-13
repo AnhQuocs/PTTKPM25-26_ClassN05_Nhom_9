@@ -173,5 +173,11 @@
     <string name="pending_title">Your registration is pending</string>
     <string name="pending_message">We’ve received your request.\nPlease wait for hospital confirmation.</string>
     <string name="pending_check_status">Check status</string>
+    <string name="approved_title">Your registration was approved</string>
+    <string name="approved_message">Congratulations! Your blood donation request has been approved. You may contact the hospital for more details.</string>
+    <string name="view_details">View Details</string>
+    <string name="rejected_title">Your registration was rejected</string>
+    <string name="rejected_message">Unfortunately, your donation request was not approved.\nYou may contact the hospital for more details.</string>
+    <string name="register_again">Register again</string>
 
 </resources>

@@ -22,8 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.heartbeat.R
+import com.example.heartbeat.ui.dimens.Dimens
 
 @Composable
 fun RejectedScreen(
@@ -32,7 +35,7 @@ fun RejectedScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .padding(Dimens.PaddingL)
             .background(Color(0xFFFDF4F4)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -41,13 +44,13 @@ fun RejectedScreen(
             imageVector = Icons.Default.HighlightOff,
             contentDescription = null,
             modifier = Modifier.size(80.dp),
-            tint = Color(0xFFE57373) // đỏ nhẹ
+            tint = Color(0xFFE57373)
         )
 
         Spacer(Modifier.height(16.dp))
 
         Text(
-            text = "Your registration was rejected",
+            text = stringResource(id = R.string.rejected_title),
             style = MaterialTheme.typography.titleMedium,
             color = Color(0xFF2B2B2B)
         )
@@ -55,7 +58,7 @@ fun RejectedScreen(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "Unfortunately, your donation request was not approved.\nYou may contact the hospital for more details.",
+            text = stringResource(id = R.string.rejected_message),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = Color(0xFF707070)
@@ -70,7 +73,7 @@ fun RejectedScreen(
         ) {
             Icon(Icons.Default.FavoriteBorder, contentDescription = null)
             Spacer(Modifier.width(6.dp))
-            Text("Register again")
+            Text(stringResource(id = R.string.register_again))
         }
     }
 }

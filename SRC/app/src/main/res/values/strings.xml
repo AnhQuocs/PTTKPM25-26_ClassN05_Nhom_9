@@ -177,7 +177,7 @@
     <string name="approved_message">Congratulations! Your blood donation request has been approved. You may contact the hospital for more details.</string>
     <string name="view_details">View Details</string>
     <string name="rejected_title">Your registration was rejected</string>
-    <string name="rejected_message">Unfortunately, your donation request was not approved.\nYou may contact the hospital for more details.</string>
+    <string name="rejected_message">Unfortunately, your donation request was not approved. You may contact the hospital for more details.</string>
     <string name="register_again">Register again</string>
 
 </resources>

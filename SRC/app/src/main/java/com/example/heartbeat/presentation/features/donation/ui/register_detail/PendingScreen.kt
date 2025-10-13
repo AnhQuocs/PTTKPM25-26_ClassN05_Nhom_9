@@ -2,6 +2,7 @@ package com.example.heartbeat.presentation.features.donation.ui.register_detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircleOutline
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.HourglassEmpty
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -39,51 +43,51 @@ import com.example.heartbeat.ui.theme.WaitingGold
 
 @Composable
 fun PendingScreen(
-    donationViewModel: DonationViewModel,
-    donorId: String,
+    onBackHome: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(SoftCream)
-            .padding(Dimens.PaddingM),
+            .padding(Dimens.PaddingL)
+            .clip(RoundedCornerShape(AppShape.ExtraLargeShape))
+            .background(CompassionBlue),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
-            shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),
-            colors = CardDefaults.cardColors(containerColor = CompassionBlue),
-            modifier = Modifier.fillMaxWidth()
+        Icon(
+            imageVector = Icons.Default.HourglassEmpty,
+            contentDescription = null,
+            modifier = Modifier.size(Dimens.SizeXXL),
+            tint = WaitingGold
+        )
+
+        Spacer(modifier = Modifier.height(AppSpacing.Large))
+
+        Text(
+            text = stringResource(id = R.string.pending_title),
+            style = MaterialTheme.typography.titleMedium,
+            color = Color(0xFF2B2B2B)
+        )
+
+        Spacer(modifier = Modifier.height(AppSpacing.Large))
+
+        Text(
+            text = stringResource(id = R.string.pending_message),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            color = Color(0xFF707070)
+        )
+
+        Spacer(Modifier.height(AppSpacing.ExtraLarge))
+
+        OutlinedButton(
+            onClick = { onBackHome() },
+            border = BorderStroke(1.dp, color = WaitingGold),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = WaitingGold)
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(Dimens.PaddingL),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    Icons.Default.HourglassEmpty,
-                    contentDescription = null,
-                    tint = WaitingGold,
-                    modifier = Modifier.size(Dimens.SizeL)
-                )
-
-                Spacer(Modifier.height(AppSpacing.MediumLarge))
-
-                Text(
-                    text = stringResource(id = R.string.pending_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF2B2B2B)
-                )
-
-                Spacer(Modifier.height(AppSpacing.Medium))
-
-                Text(
-                    text = stringResource(id = R.string.pending_message),
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    color = Color(0xFF707070)
-                )
-
-                Spacer(Modifier.height(AppSpacing.LargePlus))
-            }
+            Icon(Icons.Default.Home, contentDescription = null)
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(id = R.string.home))
         }
     }
 }

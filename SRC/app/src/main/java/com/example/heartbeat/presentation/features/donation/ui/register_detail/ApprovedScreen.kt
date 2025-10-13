@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -24,24 +25,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.heartbeat.R
+import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 
 @Composable
 fun ApprovedScreen(
-    onViewDetail: () -> Unit,
-    eventId: String
+    onViewDetail: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(Dimens.PaddingL)
+            .clip(RoundedCornerShape(AppShape.ExtraLargeShape))
             .background(Color(0xFFF4F9FD)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -49,7 +52,7 @@ fun ApprovedScreen(
         Icon(
             imageVector = Icons.Default.CheckCircleOutline,
             contentDescription = null,
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier.size(Dimens.SizeMega),
             tint = Color(0xFF81C784)
         )
 
@@ -70,7 +73,7 @@ fun ApprovedScreen(
             color = Color(0xFF707070)
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(AppSpacing.ExtraLarge))
 
         OutlinedButton(
             onClick = { onViewDetail() },

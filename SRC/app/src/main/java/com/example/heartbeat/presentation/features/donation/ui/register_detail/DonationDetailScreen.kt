@@ -157,8 +157,10 @@ fun DonationDetailScreen(
 
                         selectedDonation != null -> {
                             when (selectedDonation.status) {
-                                "PENDING" -> PendingScreen(donationViewModel, donorId)
-                                "APPROVED" -> ApprovedScreen(eventId = event.id, onViewDetail = {
+                                "PENDING" -> PendingScreen(onBackHome = {
+                                    navController.popBackStack()
+                                })
+                                "APPROVED" -> ApprovedScreen(onViewDetail = {
                                     // Navigation
                                 })
 

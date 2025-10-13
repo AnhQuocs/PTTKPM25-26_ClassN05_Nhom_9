@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.example.heartbeat.presentation.components.BottomAppBar
 import com.example.heartbeat.presentation.components.TabItem
@@ -53,6 +55,15 @@ fun MainApp(navController: NavController) {
     ) { paddingValues ->
 
         val isForward = selectedTabIndex > previousTabIndex
+
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+
+        DisposableEffect(Unit) {
+            val liveData = savedStateHandle?.getLiveData<Int>("selectedTab")
+            val observer = Observer<Int> { tabIndex -> selectedTabIndex = tabIndex }
+            liveData?.observeForever(observer)
+            onDispose { liveData?.removeObserver(observer) }
+        }
 
         AnimatedContent(
             targetState = selectedTabIndex,

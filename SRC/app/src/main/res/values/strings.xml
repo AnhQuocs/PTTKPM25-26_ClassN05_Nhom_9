@@ -179,5 +179,10 @@
     <string name="rejected_title">Your registration was rejected</string>
     <string name="rejected_message">Unfortunately, your donation request was not approved. You may contact the hospital for more details.</string>
     <string name="register_again">Register again</string>
+    <string name="search_events">Search Events</string>
+    <string name="search_placeholder">Search event, hospital</string>
+    <string name="recent_search_title">Recent searches</string>
+    <string name="clear_all">Clear all</string>
+    <string name="no_recent">No recent searchers</string>
 
 </resources>

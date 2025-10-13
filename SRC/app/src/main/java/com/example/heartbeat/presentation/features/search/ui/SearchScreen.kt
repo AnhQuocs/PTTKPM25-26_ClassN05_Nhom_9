@@ -1,78 +1,371 @@
 package com.example.heartbeat.presentation.features.search.ui
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.heartbeat.R
+import com.example.heartbeat.domain.entity.event.Event
+import com.example.heartbeat.domain.entity.recent_search.RecentSearch
 import com.example.heartbeat.domain.entity.search.SearchSuggestionItem
+import com.example.heartbeat.presentation.components.TitleSection
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
+import com.example.heartbeat.presentation.features.recent_search.viewmodel.RecentSearchViewModel
 import com.example.heartbeat.presentation.features.search.viewmodel.UnifiedSearchViewModel
+import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
+import com.example.heartbeat.ui.theme.BloodRed
+import com.example.heartbeat.ui.theme.PeachBackground
+import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun SearchScreen(
-    modifier: Modifier = Modifier,
     unifiedSearchViewModel: UnifiedSearchViewModel = hiltViewModel(),
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
+    recentSearchViewModel: RecentSearchViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val query = unifiedSearchViewModel.query
+    val recentList = recentSearchViewModel.recentList
+    val isLoading = recentSearchViewModel.isLoading
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(Dimens.PaddingM)
-    ) {
-        OutlinedTextField(
-            value = query,
-            onValueChange = { unifiedSearchViewModel.onQueryChanged(it) },
+    LaunchedEffect(Unit) {
+        recentSearchViewModel.loadRecentSearch()
+    }
+
+    Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.HeightXL2)
+                    .background(PeachBackground),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    stringResource(id = R.string.search_events),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = Dimens.PaddingXL)
+                        .fillMaxWidth()
+                )
+            }
+        },
+        modifier = Modifier
+            .fillMaxSize()
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = Dimens.PaddingSM),
-            label = { Text("Search event, hospital or province") },
-            singleLine = true
+                .fillMaxSize()
+                .background(color = Color(0xFFF2F4F4))
+                .padding(paddingValues)
+                .padding(Dimens.PaddingM)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { unifiedSearchViewModel.onQueryChanged(it) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(AppShape.LargeShape),
+                    singleLine = true,
+                    leadingIcon = {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_search),
+                            contentDescription = null,
+                            modifier = Modifier.size(Dimens.SizeSM)
+                        )
+                    },
+                    trailingIcon = {
+                        if (query.isNotEmpty()) {
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(Dimens.SizeSM)
+                                    .clickable { unifiedSearchViewModel.clearQuery() }
+                            )
+                        }
+                    },
+                    placeholder = {
+                        Text(
+                            stringResource(id = R.string.search_placeholder),
+                            fontSize = 13.sp,
+                            lineHeight = 1.sp
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(0.83f)
+                        .height(Dimens.HeightLarge)
+                        .padding(bottom = Dimens.PaddingSM)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(AppShape.LargeShape))
+                        .background(Color.White)
+                        .size(Dimens.HeightDefault)
+                        .padding(bottom = Dimens.PaddingSM),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_filter),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(Dimens.SizeL)
+                            .padding(top = Dimens.PaddingSM)
+                    )
+                }
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .heightIn(max = Dimens.HeightXXL)
+                    .clip(RoundedCornerShape(AppShape.LargeShape))
+                    .background(Color.White)
+            ) {
+                items(unifiedSearchViewModel.suggestions) { suggestion ->
+                    when (suggestion) {
+                        is SearchSuggestionItem.EventSuggestion -> {
+                            LaunchedEffect(Unit) {
+                                hospitalViewModel.loadHospitalById(hospitalId = suggestion.event.locationId)
+                            }
+
+                            val hospital =
+                                hospitalViewModel.hospitalDetails[suggestion.event.locationId]
+
+                            SearchSuggestionRow(
+                                date = suggestion.event.date,
+                                title = suggestion.event.name,
+                                province = "${hospital?.province}",
+                                subtitle = "${hospital?.hospitalName}"
+                            ) {
+                                unifiedSearchViewModel.onSuggestionClicked(suggestion)
+                                navController.currentBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.set("selectedTab", 1)
+                                navController.navigate("event_detail/${suggestion.event.id}")
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (unifiedSearchViewModel.suggestions.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(Dimens.PaddingM))
+            }
+
+            RecentSearchCard(
+                list = recentList,
+                onClear = { recentSearchViewModel.clearRecentSearch() },
+                isLoading = isLoading,
+                hospitalViewModel = hospitalViewModel,
+                unifiedSearchViewModel = unifiedSearchViewModel,
+                navController = navController
+            )
+        }
+    }
+}
+
+@Composable
+fun SearchSuggestionRow(
+    date: String,
+    title: String,
+    subtitle: String,
+    province: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(onClick = onClick)
+            .padding(start = Dimens.PaddingM, top = Dimens.PaddingSM, bottom = Dimens.PaddingS),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_event),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(BloodRed),
+            modifier = Modifier.size(Dimens.SizeM)
         )
 
-        LazyColumn {
-            items(unifiedSearchViewModel.suggestions) { suggestion ->
-                when (suggestion) {
-                    is SearchSuggestionItem.EventSuggestion -> {
+        Spacer(modifier = Modifier.width(AppSpacing.Medium))
+
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "$title - ",
+                    color = BloodRed,
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                Text(
+                    text = date,
+                    color = Color(0xFF707070),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp)
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "$subtitle - ",
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
+                    color = Color.Gray,
+                    lineHeight = 2.sp
+                )
+
+                Text(
+                    text = province,
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
+                    color = Color.Black,
+                    lineHeight = 2.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RecentSearchCard(
+    list: List<RecentSearch>,
+    onClear: () -> Unit,
+    isLoading: Boolean,
+    hospitalViewModel: HospitalViewModel,
+    unifiedSearchViewModel: UnifiedSearchViewModel,
+    navController: NavController
+) {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(AppShape.LargeShape),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.PaddingM)
+        ) {
+            TitleSection(
+                text1 = stringResource(id = R.string.recent_search_title),
+                text2 = stringResource(id = R.string.clear_all),
+                color = BloodRed,
+                onClick = { onClear() }
+            )
+
+            if(isLoading) {
+                Box(
+                    modifier = Modifier
+                        .height(Dimens.HeightXL2)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = BloodRed)
+                }
+            } else {
+                if(list.isEmpty()) {
+                    Text(
+                        stringResource(id = R.string.no_recent),
+                        style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Dimens.PaddingL, bottom = Dimens.PaddingXL)
+                    )
+                } else {
+                    list.take(3).forEach { recent ->
                         LaunchedEffect(Unit) {
-                            hospitalViewModel.loadHospitalById(hospitalId = suggestion.event.locationId)
+                            hospitalViewModel.loadHospitalById(hospitalId = recent.subTitle)
                         }
 
                         val hospital =
-                            hospitalViewModel.hospitalDetails[suggestion.event.locationId]
+                            hospitalViewModel.hospitalDetails[recent.subTitle]
 
-                        SearchSuggestionRow(
-                            title = suggestion.event.name,
-                            province = "${hospital?.province}",
-                            subtitle = "${hospital?.hospitalName}"
-                        ) {
-                            unifiedSearchViewModel.onSuggestionClicked(suggestion)
-                            navController.navigate("event_detail/${suggestion.event.id}")
-                        }
+                        RecentSearchItem(
+                            recent = recent,
+                            hospitalName = hospital?.hospitalName ?: "Loading...",
+                            onClick = {
+                                val fakeEvent = Event(
+                                    id = recent.id,
+                                    locationId = recent.subTitle,
+                                    name = recent.title,
+                                    description = "",
+                                    date = "",
+                                    time = "",
+                                    deadline = null,
+                                    donorList = emptyList(),
+                                    capacity = 0,
+                                    donorCount = 0,
+                                    createdAt = LocalDateTime(1970, 1, 1, 0, 0),
+                                    updatedAt = null
+                                )
+                                val suggestion = SearchSuggestionItem.EventSuggestion(fakeEvent)
+
+                                unifiedSearchViewModel.onSuggestionClicked(suggestion)
+
+                                navController.currentBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.set("selectedTab", 1)
+                                navController.navigate("event_detail/${suggestion.event.id}")
+                            }
+                        )
                     }
                 }
             }
@@ -81,50 +374,37 @@ fun SearchScreen(
 }
 
 @Composable
-fun SearchSuggestionRow(
-    title: String,
-    subtitle: String,
-    province: String,
-    onClick: () -> Unit
-) {
-    Column(
+fun RecentSearchItem(recent: RecentSearch, hospitalName: String, onClick: () -> Unit) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = Dimens.PaddingM, vertical = Dimens.PaddingSM)
+            .clickable { onClick() }
+            .padding(top = Dimens.PaddingSM),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium
+        Icon(
+            Icons.Default.History,
+            contentDescription = null,
+            tint = Color.Black.copy(0.8f),
+            modifier = Modifier.size(Dimens.SizeM)
         )
-        Spacer(modifier = Modifier.height(AppSpacing.Small))
-        Row(
+
+        Spacer(modifier = Modifier.width(Dimens.PaddingS))
+
+        Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                Icons.Default.LocationOn,
-                contentDescription = null,
-                tint = Color(0xFF00D09E),
-                modifier = Modifier.size(Dimens.SizeSM)
+            Text(
+                text = recent.title,
+                color = Color.Black.copy(alpha = 0.8f),
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp)
             )
 
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-
-                Text(
-                    text = province,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-            }
+            Text(
+                text = hospitalName,
+                color = Color(0xFF707070),
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp)
+            )
         }
-
-        Divider(color = Color(0xFFE0E0E0))
     }
 }

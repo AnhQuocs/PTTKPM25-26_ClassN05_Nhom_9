@@ -20,17 +20,15 @@ class RecentSearchViewModel @Inject constructor(
     var recentList by mutableStateOf<List<RecentSearch>>(emptyList())
         private set
 
-    var isClearing by mutableStateOf(false)
+    var isLoading by mutableStateOf(false)
         private set
 
     init {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        if (userId != null) {
-            loadRecentSearch(userId)
-        }
+        loadRecentSearch()
     }
 
-    private fun loadRecentSearch(userId: String) {
+    fun loadRecentSearch() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         viewModelScope.launch {
             recentList = recentSearchUseCase.getRecentSearchUseCase(userId)
         }
@@ -40,6 +38,7 @@ class RecentSearchViewModel @Inject constructor(
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         viewModelScope.launch {
+            isLoading = true
             val recent = RecentSearch(
                 id = id,
                 title = title,
@@ -48,7 +47,8 @@ class RecentSearchViewModel @Inject constructor(
             )
 
             recentSearchUseCase.addRecentSearchUseCase(userId, recent)
-            loadRecentSearch(userId)
+            loadRecentSearch()
+            isLoading = false
         }
     }
 
@@ -56,11 +56,11 @@ class RecentSearchViewModel @Inject constructor(
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         viewModelScope.launch {
-            isClearing = true
+            isLoading = true
             recentList = emptyList()
             recentSearchUseCase.clearAllRecentSearchUseCase(userId)
-            loadRecentSearch(userId)
-            isClearing = false
+            loadRecentSearch()
+            isLoading = false
         }
     }
 }

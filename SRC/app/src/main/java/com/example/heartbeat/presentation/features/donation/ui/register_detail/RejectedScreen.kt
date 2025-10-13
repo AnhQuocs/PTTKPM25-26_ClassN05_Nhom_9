@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.example.heartbeat.R
-import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.StatusScreenComponent
 
 @Composable
 fun RejectedScreen(

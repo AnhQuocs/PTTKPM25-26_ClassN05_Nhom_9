@@ -9,7 +9,7 @@ class UnifiedSuggestionUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(query: String): List<SearchSuggestionItem> {
         val results = unifiedSearchUseCase(query)
-        return results.take(5).map {
+        return results.map {
             when (it) {
                 is SearchResultItem.EventItem -> SearchSuggestionItem.EventSuggestion(it.event)
             }

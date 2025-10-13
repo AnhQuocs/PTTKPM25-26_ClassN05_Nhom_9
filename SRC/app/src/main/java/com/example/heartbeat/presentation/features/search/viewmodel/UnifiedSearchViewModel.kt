@@ -78,6 +78,11 @@ class UnifiedSearchViewModel @Inject constructor(
         }
     }
 
+    fun clearQuery() {
+        query = ""
+        suggestions = emptyList()
+    }
+
     private fun normalize(text: String): String =
         text.lowercase().replace("\\s+".toRegex(), " ").trim()
 }

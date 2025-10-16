@@ -1,4 +1,6 @@
 package com.example.heartbeat.domain.entity.recent_viewed
 
-class RecentViewed {
-}
+data class RecentViewed(
+    val id: String,
+    val viewedAt: Long
+)

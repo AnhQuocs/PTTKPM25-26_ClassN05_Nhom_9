@@ -4,9 +4,11 @@ import android.content.Context
 import com.example.heartbeat.data.preferences.language.LanguagePreferenceManager
 import com.example.heartbeat.data.repository.hospital.HospitalRepositoryImpl
 import com.example.heartbeat.data.repository.recent_search.RecentSearchRepositoryImpl
+import com.example.heartbeat.data.repository.recent_viewed.RecentViewedRepositoryImpl
 import com.example.heartbeat.data.source.remote.FirebaseHospitalDataSource
 import com.example.heartbeat.domain.repository.hospital.HospitalRepository
 import com.example.heartbeat.domain.repository.recent_search.RecentSearchRepository
+import com.example.heartbeat.domain.repository.recent_viewed.RecentViewedRepository
 import com.example.heartbeat.domain.usecase.hospital.GetAllHospitalsUseCase
 import com.example.heartbeat.domain.usecase.hospital.GetHospitalByIdUseCase
 import com.example.heartbeat.domain.usecase.hospital.HospitalUseCase
@@ -14,6 +16,10 @@ import com.example.heartbeat.domain.usecase.recent_search.AddRecentSearchUseCase
 import com.example.heartbeat.domain.usecase.recent_search.ClearAllRecentSearchUseCase
 import com.example.heartbeat.domain.usecase.recent_search.GetRecentSearchUseCase
 import com.example.heartbeat.domain.usecase.recent_search.RecentSearchUseCase
+import com.example.heartbeat.domain.usecase.recent_viewed.AddRecentViewedUseCase
+import com.example.heartbeat.domain.usecase.recent_viewed.ClearRecentViewedUseCase
+import com.example.heartbeat.domain.usecase.recent_viewed.GetRecentViewedUseCase
+import com.example.heartbeat.domain.usecase.recent_viewed.RecentViewedUseCase
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -73,5 +79,22 @@ object AppModule {
         addRecentSearchUseCase = AddRecentSearchUseCase(repository),
         getRecentSearchUseCase = GetRecentSearchUseCase(repository),
         clearAllRecentSearchUseCase = ClearAllRecentSearchUseCase(repository)
+    )
+
+    // RECENT VIEWED
+    @Provides
+    @Singleton
+    fun provideRecentViewedRepository(
+        firestore: FirebaseFirestore
+    ): RecentViewedRepository {
+        return RecentViewedRepositoryImpl(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecentViewedUseCase(repository: RecentViewedRepository) = RecentViewedUseCase(
+        addRecentViewedUseCase = AddRecentViewedUseCase(repository),
+        getRecentViewedUseCase = GetRecentViewedUseCase(repository),
+        clearRecentViewedUseCase = ClearRecentViewedUseCase(repository)
     )
 }

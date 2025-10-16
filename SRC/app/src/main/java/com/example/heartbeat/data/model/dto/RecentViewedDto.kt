@@ -1,4 +1,6 @@
 package com.example.heartbeat.data.model.dto
 
-class RecentViewedDto {
-}
+data class RecentViewedDto(
+    val id: String = "",
+    val viewedAt: Long = 0
+)

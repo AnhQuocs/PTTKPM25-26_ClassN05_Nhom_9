@@ -79,7 +79,7 @@ fun RecentSearchCard(
             } else {
                 if(list.isEmpty()) {
                     Text(
-                        stringResource(id = R.string.no_recent),
+                        stringResource(id = R.string.no_recent_search),
                         style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp),
                         textAlign = TextAlign.Center,
                         modifier = Modifier

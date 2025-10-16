@@ -183,6 +183,8 @@
     <string name="search_placeholder">Tìm sự kiện, bệnh viện</string>
     <string name="recent_search_title">Tìm kiếm gần đây</string>
     <string name="clear_all">Xóa tất cả</string>
-    <string name="no_recent">Không có tìm kiếm nào gần đây</string>
+    <string name="no_recent_search">Không có tìm kiếm nào gần đây</string>
+    <string name="recent_viewed_title">Đã xem gần đây</string>
+    <string name="no_recent_viewed">Chưa có lịch sử xem</string>
 
 </resources>

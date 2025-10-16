@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.search.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,10 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -41,40 +38,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
-import com.example.heartbeat.domain.entity.event.Event
-import com.example.heartbeat.domain.entity.recent_search.RecentSearch
 import com.example.heartbeat.domain.entity.search.SearchSuggestionItem
-import com.example.heartbeat.presentation.components.TitleSection
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.recent_search.ui.RecentSearchCard
 import com.example.heartbeat.presentation.features.recent_search.viewmodel.RecentSearchViewModel
+import com.example.heartbeat.presentation.features.recent_viewed.ui.RecentViewedCard
+import com.example.heartbeat.presentation.features.recent_viewed.viewmodel.RecentViewedViewModel
 import com.example.heartbeat.presentation.features.search.viewmodel.UnifiedSearchViewModel
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.PeachBackground
-import kotlinx.datetime.LocalDateTime
 
 @Composable
 fun SearchScreen(
     unifiedSearchViewModel: UnifiedSearchViewModel = hiltViewModel(),
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     recentSearchViewModel: RecentSearchViewModel = hiltViewModel(),
+    recentViewedViewModel: RecentViewedViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val query = unifiedSearchViewModel.query
-    val recentList = recentSearchViewModel.recentList
-    val isLoading = recentSearchViewModel.isLoading
+    val recentSearchList = recentSearchViewModel.recentList
+    val isRecentSearchLoading = recentSearchViewModel.isLoading
+
+    val recentViewedList = recentViewedViewModel.recentList
+    val isRecentViewedLoading = recentViewedViewModel.isLoading
 
     LaunchedEffect(Unit) {
         recentSearchViewModel.loadRecentSearch()
+        recentViewedViewModel.loadRecentViewed()
     }
+
+    Log.d("SearchScreen", "Recent Viewed size: ${recentViewedList.size}")
 
     Scaffold(
         topBar = {
@@ -211,11 +212,21 @@ fun SearchScreen(
             }
 
             RecentSearchCard(
-                list = recentList,
+                list = recentSearchList,
                 onClear = { recentSearchViewModel.clearRecentSearch() },
-                isLoading = isLoading,
+                isLoading = isRecentSearchLoading,
                 hospitalViewModel = hospitalViewModel,
                 unifiedSearchViewModel = unifiedSearchViewModel,
+                navController = navController
+            )
+
+            Spacer(modifier = Modifier.height(Dimens.PaddingSM))
+
+            RecentViewedCard(
+                list = recentViewedList,
+                isLoading = isRecentViewedLoading,
+                onClear = { recentViewedViewModel.clearRecentViewed() },
+                hospitalViewModel = hospitalViewModel,
                 navController = navController
             )
         }

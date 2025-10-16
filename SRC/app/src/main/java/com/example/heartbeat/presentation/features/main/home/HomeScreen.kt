@@ -61,6 +61,7 @@ import com.example.heartbeat.presentation.components.AppTitle
 import com.example.heartbeat.presentation.components.TitleSection
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
+import com.example.heartbeat.presentation.features.recent_viewed.viewmodel.RecentViewedViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.ui.dimens.AppShape
@@ -375,6 +376,7 @@ fun UpcomingEventCard(
     events: List<Event>,
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel(),
+    recentViewedViewModel: RecentViewedViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -413,6 +415,7 @@ fun UpcomingEventCard(
                         .height(Dimens.HeightXL3)
                         .aspectRatio(2f)
                         .clickable {
+                            recentViewedViewModel.addRecentViewed(id = event.id)
                             navController.navigate("register_donation/${event.id}/${donorId}")
                         },
                     shape = RoundedCornerShape(AppShape.ExtraExtraLargeShape),

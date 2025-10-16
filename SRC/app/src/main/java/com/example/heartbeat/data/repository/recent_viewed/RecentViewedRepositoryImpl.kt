@@ -1,5 +1,6 @@
 package com.example.heartbeat.data.repository.recent_viewed
 
+import android.util.Log
 import com.example.heartbeat.data.model.dto.RecentViewedDto
 import com.example.heartbeat.data.model.mapper.toDomain
 import com.example.heartbeat.data.model.mapper.toDto
@@ -26,11 +27,15 @@ class RecentViewedRepositoryImpl(
         val snapshot = firestore.collection("users")
             .document(userId)
             .collection("recentViewed")
-            .orderBy("viewAt", Query.Direction.DESCENDING)
+            .orderBy("viewedAt", Query.Direction.DESCENDING)
             .get()
             .await()
 
-        return snapshot.documents.mapNotNull { it.toObject(RecentViewedDto::class.java)?.toDomain() }
+        val list = snapshot.documents.mapNotNull { it.toObject(RecentViewedDto::class.java)?.toDomain() }
+
+        Log.d("FirestoreDebug", "Loaded ${list.size} recent viewed items: $list")
+
+        return list
     }
 
     override suspend fun clearRecentViewed(userId: String) {

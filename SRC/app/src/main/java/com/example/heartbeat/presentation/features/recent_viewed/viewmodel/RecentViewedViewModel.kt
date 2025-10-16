@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.heartbeat.domain.entity.recent_viewed.RecentViewed
 import com.example.heartbeat.domain.usecase.recent_viewed.RecentViewedUseCase
 import com.google.firebase.auth.FirebaseAuth
@@ -24,10 +23,10 @@ class RecentViewedViewModel @Inject constructor(
         private set
 
     init {
-        loadRecent()
+        loadRecentViewed()
     }
 
-    private fun loadRecent() {
+    fun loadRecentViewed() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         viewModelScope.launch {
             isLoading = true
@@ -48,7 +47,7 @@ class RecentViewedViewModel @Inject constructor(
             )
 
             recentViewedUseCase.addRecentViewedUseCase(userId, recent)
-            loadRecent()
+            loadRecentViewed()
 
             isLoading = false
         }
@@ -61,6 +60,7 @@ class RecentViewedViewModel @Inject constructor(
             isLoading = true
             recentList = emptyList()
             recentViewedUseCase.clearRecentViewedUseCase(userId)
+            loadRecentViewed()
             isLoading = false
         }
     }

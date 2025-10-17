@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.recent_viewed.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,7 +75,8 @@ fun RecentViewedCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens.PaddingM)
+                .padding(top = Dimens.PaddingM)
+                .padding(horizontal = Dimens.PaddingM)
         ) {
             TitleSection(
                 text1 = stringResource(id = R.string.recent_viewed_title),
@@ -80,17 +85,19 @@ fun RecentViewedCard(
                 onClick = { onClear() }
             )
 
-            if(isLoading) {
+            Spacer(modifier = Modifier.height(AppSpacing.MediumLarge))
+
+            if (isLoading) {
                 Box(
                     modifier = Modifier
-                        .height(Dimens.HeightXL2)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .height(Dimens.HeightXL2),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = BloodRed)
                 }
             } else {
-                if(list.isEmpty()) {
+                if (list.isEmpty()) {
                     Text(
                         stringResource(id = R.string.no_recent_viewed),
                         style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp),
@@ -101,29 +108,30 @@ fun RecentViewedCard(
                     )
                 } else {
                     list.take(3).forEach { recent ->
-                        LaunchedEffect(Unit) {
-                            eventViewModel.getEventById(recent.id)
+                        var event by remember { mutableStateOf<Event?>(null) }
+                        var hospital by remember { mutableStateOf<Hospital?>(null) }
+
+                        LaunchedEffect(recent.id) {
+                            event = eventViewModel.getEventByIdDirect(recent.id)
+                            event?.let {
+                                hospitalViewModel.loadHospitalById(it.locationId)
+                                hospital = hospitalViewModel.hospitalDetails[it.locationId]
+                            }
                         }
 
-                        selectedEvent?.let { event ->
-                            LaunchedEffect(Unit) {
-                                hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
-                            }
+                        if (event != null && hospital != null) {
+                            RecentViewedItem(
+                                event = event!!,
+                                hospital = hospital!!,
+                                onClick = {
+                                    navController.currentBackStackEntry
+                                        ?.savedStateHandle
+                                        ?.set("selectedTab", 1)
+                                    navController.navigate("event_detail/${event!!.id}")
+                                }
+                            )
 
-                            val hospital = hospitalViewModel.hospitalDetails[event.locationId]
-
-                            hospital?.let {
-                                RecentViewedItem(
-                                    event = event,
-                                    hospital = it,
-                                    onClick = {
-                                        navController.currentBackStackEntry
-                                            ?.savedStateHandle
-                                            ?.set("selectedTab", 1)
-                                        navController.navigate("event_detail/${event.id}")
-                                    }
-                                )
-                            }
+                            Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
                         }
                     }
                 }
@@ -157,19 +165,24 @@ fun RecentViewedItem(
                 model = hospital.imgUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(Dimens.SizeXXL)
+                    .size(Dimens.SizeXXL + 10.dp)
                     .clip(RoundedCornerShape(AppShape.LargeShape))
             )
         }
 
-        Spacer(modifier = Modifier.width(AppSpacing.Large))
+        Spacer(modifier = Modifier.width(AppSpacing.Medium))
 
         Column {
             Text(
                 text = event.name,
-                style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                ),
                 color = Color.Black,
             )
+
+            Spacer(modifier = Modifier.height(AppSpacing.Small))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -179,13 +192,17 @@ fun RecentViewedItem(
                     Icons.Default.LocationOn,
                     contentDescription = null,
                     tint = Green500,
-                    modifier = Modifier.size(Dimens.SizeS)
+                    modifier = Modifier.size(Dimens.SizeS).align(Alignment.Top)
                 )
 
                 Text(
-                    text = hospital.hospitalName,
+                    text = hospital.address,
                     color = Color(0xFF707070),
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 12.sp
+                    )
                 )
             }
         }

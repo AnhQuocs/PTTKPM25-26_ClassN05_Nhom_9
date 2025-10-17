@@ -14,13 +14,32 @@ class RecentViewedRepositoryImpl(
     private val firestore: FirebaseFirestore
 ): RecentViewedRepository{
     override suspend fun addRecentViewed(userId: String, recentViewed: RecentViewed) {
-        val docRef = firestore.collection("users")
+        val userCollection = firestore.collection("users")
             .document(userId)
             .collection("recentViewed")
-            .document(recentViewed.id)
 
-        val dto = recentViewed.toDto()
-        docRef.set(dto)
+        val snapshot = userCollection
+            .orderBy("viewedAt", Query.Direction.DESCENDING)
+            .get()
+            .await()
+
+        val currentList = snapshot.documents.mapNotNull {
+            it.toObject(RecentViewedDto::class.java)?.toDomain()
+        }
+
+        val existingDoc = snapshot.documents.find { it.id == recentViewed.id }
+        if (existingDoc != null) {
+            existingDoc.reference.update("viewedAt", recentViewed.viewedAt).await()
+            return
+        }
+
+        if (currentList.size >= 3) {
+            val oldest = snapshot.documents.last()
+            oldest.reference.delete().await()
+        }
+
+        val docRef = userCollection.document(recentViewed.id)
+        docRef.set(recentViewed.toDto()).await()
     }
 
     override suspend fun getRecentViewed(userId: String): List<RecentViewed> {

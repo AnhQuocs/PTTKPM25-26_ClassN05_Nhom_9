@@ -2,7 +2,6 @@ package com.example.heartbeat.ui.dimens
 
 import androidx.compose.ui.unit.dp
 
-
 object Dimens {
     // Padding
     val PaddingXXS = 2.dp

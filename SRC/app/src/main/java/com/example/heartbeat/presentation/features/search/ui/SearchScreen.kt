@@ -104,134 +104,136 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
-                .background(color = Color(0xFFF2F4F4))
-                .padding(paddingValues.calculateTopPadding())
-                .padding(Dimens.PaddingM)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.SpaceBetween
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(color = Color(0xFFF2F4F4))
+                    .padding(paddingValues)
+                    .padding(Dimens.PaddingM)
             ) {
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = { unifiedSearchViewModel.onQueryChanged(it) },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(AppShape.LargeShape),
-                    singleLine = true,
-                    leadingIcon = {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_search),
-                            contentDescription = null,
-                            modifier = Modifier.size(Dimens.SizeSM)
-                        )
-                    },
-                    trailingIcon = {
-                        if (query.isNotEmpty()) {
-                            Icon(
-                                Icons.Default.Close,
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { unifiedSearchViewModel.onQueryChanged(it) },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedContainerColor = Color.White,
+                            focusedContainerColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(AppShape.LargeShape),
+                        singleLine = true,
+                        leadingIcon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_search),
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .size(Dimens.SizeSM)
-                                    .clickable { unifiedSearchViewModel.clearQuery() }
+                                modifier = Modifier.size(Dimens.SizeSM)
                             )
-                        }
-                    },
-                    placeholder = {
-                        Text(
-                            stringResource(id = R.string.search_placeholder),
-                            fontSize = 13.sp,
-                            lineHeight = 1.sp
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(0.83f)
-                        .height(Dimens.HeightLarge)
-                        .padding(bottom = Dimens.PaddingSM)
-                )
+                        },
+                        trailingIcon = {
+                            if (query.isNotEmpty()) {
+                                Icon(
+                                    Icons.Default.Close,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(Dimens.SizeSM)
+                                        .clickable { unifiedSearchViewModel.clearQuery() }
+                                )
+                            }
+                        },
+                        placeholder = {
+                            Text(
+                                stringResource(id = R.string.search_placeholder),
+                                fontSize = 13.sp,
+                                lineHeight = 1.sp
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(0.83f)
+                            .height(Dimens.HeightLarge)
+                            .padding(bottom = Dimens.PaddingSM)
+                    )
 
-                Box(
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(AppShape.LargeShape))
+                            .background(Color.White)
+                            .size(Dimens.HeightDefault)
+                            .padding(bottom = Dimens.PaddingSM),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_filter),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(Dimens.SizeL)
+                                .padding(top = Dimens.PaddingSM)
+                        )
+                    }
+                }
+
+                LazyColumn(
                     modifier = Modifier
+                        .heightIn(max = Dimens.HeightXXL)
                         .clip(RoundedCornerShape(AppShape.LargeShape))
                         .background(Color.White)
-                        .size(Dimens.HeightDefault)
-                        .padding(bottom = Dimens.PaddingSM),
-                    contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_filter),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(Dimens.SizeL)
-                            .padding(top = Dimens.PaddingSM)
-                    )
-                }
-            }
+                    items(unifiedSearchViewModel.suggestions) { suggestion ->
+                        when (suggestion) {
+                            is SearchSuggestionItem.EventSuggestion -> {
+                                LaunchedEffect(Unit) {
+                                    hospitalViewModel.loadHospitalById(hospitalId = suggestion.event.locationId)
+                                }
 
-            LazyColumn(
-                modifier = Modifier
-                    .heightIn(max = Dimens.HeightXXL)
-                    .clip(RoundedCornerShape(AppShape.LargeShape))
-                    .background(Color.White)
-            ) {
-                items(unifiedSearchViewModel.suggestions) { suggestion ->
-                    when (suggestion) {
-                        is SearchSuggestionItem.EventSuggestion -> {
-                            LaunchedEffect(Unit) {
-                                hospitalViewModel.loadHospitalById(hospitalId = suggestion.event.locationId)
-                            }
+                                val hospital =
+                                    hospitalViewModel.hospitalDetails[suggestion.event.locationId]
 
-                            val hospital =
-                                hospitalViewModel.hospitalDetails[suggestion.event.locationId]
-
-                            SearchSuggestionRow(
-                                date = suggestion.event.date,
-                                title = suggestion.event.name,
-                                province = "${hospital?.province}",
-                                subtitle = "${hospital?.hospitalName}"
-                            ) {
-                                unifiedSearchViewModel.onSuggestionClicked(suggestion)
-                                navController.currentBackStackEntry
-                                    ?.savedStateHandle
-                                    ?.set("selectedTab", 1)
-                                navController.navigate("event_detail/${suggestion.event.id}")
+                                SearchSuggestionRow(
+                                    date = suggestion.event.date,
+                                    title = suggestion.event.name,
+                                    province = "${hospital?.province}",
+                                    subtitle = "${hospital?.hospitalName}"
+                                ) {
+                                    unifiedSearchViewModel.onSuggestionClicked(suggestion)
+                                    navController.currentBackStackEntry
+                                        ?.savedStateHandle
+                                        ?.set("selectedTab", 1)
+                                    navController.navigate("event_detail/${suggestion.event.id}")
+                                }
                             }
                         }
                     }
                 }
+
+                if (unifiedSearchViewModel.suggestions.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(Dimens.PaddingM))
+                }
+
+                RecentSearchCard(
+                    list = recentSearchList,
+                    onClear = { recentSearchViewModel.clearRecentSearch() },
+                    isLoading = isRecentSearchLoading,
+                    hospitalViewModel = hospitalViewModel,
+                    unifiedSearchViewModel = unifiedSearchViewModel,
+                    navController = navController
+                )
+
+                Spacer(modifier = Modifier.height(Dimens.PaddingSM))
+
+                RecentViewedCard(
+                    list = recentViewedList,
+                    isLoading = isRecentViewedLoading,
+                    onClear = { recentViewedViewModel.clearRecentViewed() },
+                    hospitalViewModel = hospitalViewModel,
+                    navController = navController
+                )
             }
-
-            if (unifiedSearchViewModel.suggestions.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(Dimens.PaddingM))
-            }
-
-            RecentSearchCard(
-                list = recentSearchList,
-                onClear = { recentSearchViewModel.clearRecentSearch() },
-                isLoading = isRecentSearchLoading,
-                hospitalViewModel = hospitalViewModel,
-                unifiedSearchViewModel = unifiedSearchViewModel,
-                navController = navController
-            )
-
-            Spacer(modifier = Modifier.height(Dimens.PaddingSM))
-
-            RecentViewedCard(
-                list = recentViewedList,
-                isLoading = isRecentViewedLoading,
-                onClear = { recentViewedViewModel.clearRecentViewed() },
-                hospitalViewModel = hospitalViewModel,
-                navController = navController
-            )
         }
     }
 }

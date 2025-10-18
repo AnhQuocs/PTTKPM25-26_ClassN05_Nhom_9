@@ -186,5 +186,11 @@
     <string name="no_recent_search">Không có tìm kiếm nào gần đây</string>
     <string name="recent_viewed_title">Đã xem gần đây</string>
     <string name="no_recent_viewed">Chưa có lịch sử xem</string>
+    <string name="event_detail">Chi tiết sự kiện</string>
+    <string name="event_info">Thông tin sự kiện</string>
+    <string name="register_now">Đăng ký ngay</string>
+    <string name="contact">Liên hệ</string>
+    <string name="welcome_banner_title">Chào mừng bạn đến với sự kiện!</string>
+    <string name="welcome_banner_subtitle">Hãy cùng sẻ chia sự sống – mỗi giọt máu của bạn có thể cứu một mạng người!</string>
 
 </resources>

@@ -186,5 +186,11 @@
     <string name="no_recent_search">No recent searchers</string>
     <string name="recent_viewed_title">Recent viewed</string>
     <string name="no_recent_viewed">No recent viewed</string>
+    <string name="event_detail">Event Detail</string>
+    <string name="event_info">Event Information</string>
+    <string name="register_now">Register now</string>
+    <string name="contact">Contact</string>
+    <string name="welcome_banner_title">Welcome to the event!</string>
+    <string name="welcome_banner_subtitle">Let’s share the gift of life – every drop of your blood can save a life!</string>
 
 </resources>

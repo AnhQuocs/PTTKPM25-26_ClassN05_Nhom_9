@@ -16,6 +16,18 @@
         android:theme="@style/Theme.HeartBeat"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.features.system.setting.DonationHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.features.system.setting.account.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.features.system.setting.account.ChangeUserNameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.features.system.setting.account.AccountActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.features.system.setting.HelpCenterActivity"
             android:exported="false" />
         <activity

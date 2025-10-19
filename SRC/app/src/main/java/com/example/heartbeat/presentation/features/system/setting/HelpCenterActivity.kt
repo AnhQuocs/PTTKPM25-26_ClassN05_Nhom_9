@@ -121,32 +121,10 @@ fun HelpCenterScreen(
                 .padding(Dimens.PaddingM + 2.dp)
                 .padding(top = Dimens.PaddingM),
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = null,
-                    tint = TextPrimaryDark.copy(alpha = 0.8f),
-                    modifier = Modifier
-                        .size(Dimens.SizeSM)
-                        .clickable { onBackClick() }
-                )
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.help_center_title),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
+            SettingTitle(
+                text = stringResource(id = R.string.help_center_title),
+                onClick = onBackClick
+            )
 
             Spacer(modifier = Modifier.height(AppSpacing.Large))
 
@@ -202,11 +180,11 @@ fun HelpCenterScreen(
                     OptionList(
                         R.drawable.platforms,
                         stringResource(id = R.string.help_center_option_platforms),
-                        onClick = { showSnackBarOnce(scope, snackBarHostState, message = message) })
+                        onClick = { growingFeaturesSnackBar(scope, snackBarHostState, message = message) })
                     OptionList(
                         R.drawable.question,
                         stringResource(id = R.string.help_center_option_question),
-                        onClick = { showSnackBarOnce(scope, snackBarHostState, message = message) })
+                        onClick = { growingFeaturesSnackBar(scope, snackBarHostState, message = message) })
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingM)
@@ -214,11 +192,11 @@ fun HelpCenterScreen(
                     OptionList(
                         R.drawable.application,
                         stringResource(id = R.string.help_center_option_app_usage),
-                        onClick = { showSnackBarOnce(scope, snackBarHostState, message = message) })
+                        onClick = { growingFeaturesSnackBar(scope, snackBarHostState, message = message) })
                     OptionList(
                         R.drawable.update_time,
                         stringResource(id = R.string.help_center_option_update_time),
-                        onClick = { showSnackBarOnce(scope, snackBarHostState, message = message) })
+                        onClick = { growingFeaturesSnackBar(scope, snackBarHostState, message = message) })
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingM)
@@ -226,11 +204,11 @@ fun HelpCenterScreen(
                     OptionList(
                         R.drawable.cross,
                         stringResource(id = R.string.help_center_option_cross_platform),
-                        onClick = { showSnackBarOnce(scope, snackBarHostState, message = message) })
+                        onClick = { growingFeaturesSnackBar(scope, snackBarHostState, message = message) })
                     OptionList(
                         R.drawable.reminder,
                         stringResource(id = R.string.help_center_option_update_reminder),
-                        onClick = { showSnackBarOnce(scope, snackBarHostState, message = message) })
+                        onClick = { growingFeaturesSnackBar(scope, snackBarHostState, message = message) })
                 }
             }
         }
@@ -272,22 +250,5 @@ fun OptionList(
                 color = GrayOptionText
             )
         }
-    }
-}
-
-fun showSnackBarOnce(
-    scope: CoroutineScope,
-    snackBarHostState: SnackbarHostState,
-    message: String,
-    actionLabel: String = "OK"
-) {
-    if (snackBarHostState.currentSnackbarData != null) return
-
-    scope.launch {
-        snackBarHostState.showSnackbar(
-            message = message,
-            actionLabel = actionLabel,
-            duration = SnackbarDuration.Short
-        )
     }
 }

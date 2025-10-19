@@ -25,14 +25,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,16 +54,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.users.AuthUser
 import com.example.heartbeat.domain.entity.users.DonorAvatar
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.main.home.base64ToImageBitmap
+import com.example.heartbeat.presentation.features.system.setting.account.AccountActivity
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
+import com.example.heartbeat.ui.theme.TealPrimary
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingScreen(
@@ -73,11 +87,26 @@ fun SettingScreen(
 
     var showLogoutDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        authState?.getOrNull()?.let { user ->
-            authViewModel.loadCurrentUser()
-            donorViewModel.getCurrentDonor()
-            donorViewModel.getAvatar(user.uid)
+    val snackBarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val message = stringResource(id = R.string.help_center_snackbar_message)
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                authState?.getOrNull()?.let { user ->
+                    authViewModel.loadCurrentUser()
+                    donorViewModel.getCurrentDonor()
+                    donorViewModel.getAvatar(user.uid)
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
@@ -102,6 +131,34 @@ fun SettingScreen(
                 )
             }
         },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier.padding(Dimens.PaddingS)
+            ) { data ->
+                Snackbar(
+                    modifier = Modifier.padding(horizontal = Dimens.PaddingM),
+                    shape = RoundedCornerShape(AppShape.MediumShape),
+                    containerColor = TealPrimary,
+                    contentColor = Color.White,
+                    action = {
+                        TextButton(
+                            onClick = { data.dismiss() }
+                        ) {
+                            Text(
+                                text = data.visuals.actionLabel ?: "OK",
+                                color = Color.Yellow
+                            )
+                        }
+                    }
+                ) {
+                    Text(
+                        text = data.visuals.message,
+                        modifier = Modifier.padding(vertical = Dimens.PaddingS)
+                    )
+                }
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -116,22 +173,61 @@ fun SettingScreen(
 
             Spacer(modifier = Modifier.height(AppSpacing.ExtraLarge))
 
-            OptionItem(iconRes = R.drawable.ic_account, text = stringResource(id = R.string.account), onClick = {})
-            OptionItem(iconRes = R.drawable.ic_info, text = stringResource(id = R.string.personal_info), onClick = {})
-            OptionItem(iconRes = R.drawable.ic_language, text = stringResource(id = R.string.language), onClick = {
-                context.startActivity(Intent(context, ChangeLanguageActivity::class.java))
-            })
-            OptionItem(iconRes = R.drawable.ic_history, text = stringResource(id = R.string.history), onClick = {})
+            OptionItem(
+                iconRes = R.drawable.ic_account,
+                text = stringResource(id = R.string.account),
+                onClick = {
+                    context.startActivity(Intent(context, AccountActivity::class.java))
+                }
+            )
+
+            OptionItem(
+                iconRes = R.drawable.ic_info,
+                text = stringResource(id = R.string.personal_info),
+                onClick = {}
+            )
+
+            OptionItem(
+                iconRes = R.drawable.ic_language,
+                text = stringResource(id = R.string.language),
+                onClick = {
+                    context.startActivity(Intent(context, ChangeLanguageActivity::class.java))
+                }
+            )
+
+            OptionItem(
+                iconRes = R.drawable.ic_history,
+                text = stringResource(id = R.string.history),
+                onClick = {
+                    context.startActivity(Intent(context, DonationHistoryActivity::class.java))
+                }
+            )
 
             AppLineGrey(modifier = Modifier.padding(Dimens.PaddingXS))
 
-            OptionItem(iconRes = R.drawable.ic_key, text = stringResource(id = R.string.privacy_policy), onClick = {})
-            OptionItem(iconRes = R.drawable.ic_help_center, text = stringResource(id = R.string.help_center), onClick = {
-                context.startActivity(Intent(context, HelpCenterActivity::class.java))
-            })
-            OptionItem(iconRes = R.drawable.ic_logout, text = stringResource(id = R.string.logout), onClick = { showLogoutDialog = true })
+            OptionItem(
+                iconRes = R.drawable.ic_key,
+                text = stringResource(id = R.string.privacy_policy),
+                onClick = {
+                    growingFeaturesSnackBar(scope, snackBarHostState, message = message)
+                }
+            )
 
-            if(showLogoutDialog) {
+            OptionItem(
+                iconRes = R.drawable.ic_help_center,
+                text = stringResource(id = R.string.help_center),
+                onClick = {
+                    context.startActivity(Intent(context, HelpCenterActivity::class.java))
+                }
+            )
+
+            OptionItem(
+                iconRes = R.drawable.ic_logout,
+                text = stringResource(id = R.string.logout),
+                onClick = { showLogoutDialog = true }
+            )
+
+            if (showLogoutDialog) {
                 LogoutDialog(
                     onDismiss = { showLogoutDialog = false },
                     onConfirm = {
@@ -186,7 +282,10 @@ fun UserInfo(user: AuthUser, avatar: DonorAvatar?) {
             Text(
                 text = it,
                 color = Color.Black,
-                style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
             )
         }
 
@@ -196,7 +295,10 @@ fun UserInfo(user: AuthUser, avatar: DonorAvatar?) {
             Text(
                 text = it,
                 color = Color(0xFF767E8C),
-                style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp, fontWeight = FontWeight.Normal)
+                style = MaterialTheme.typography.titleSmall.copy(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal
+                )
             )
         }
     }
@@ -228,7 +330,10 @@ fun OptionItem(
         Text(
             text = text,
             color = color,
-            style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp, fontWeight = FontWeight.Normal)
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal
+            )
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -300,4 +405,21 @@ fun LogoutDialog(
         },
         shape = RoundedCornerShape(20.dp)
     )
+}
+
+fun growingFeaturesSnackBar(
+    scope: CoroutineScope,
+    snackBarHostState: SnackbarHostState,
+    message: String,
+    actionLabel: String = "OK"
+) {
+    if (snackBarHostState.currentSnackbarData != null) return
+
+    scope.launch {
+        snackBarHostState.showSnackbar(
+            message = message,
+            actionLabel = actionLabel,
+            duration = SnackbarDuration.Short
+        )
+    }
 }

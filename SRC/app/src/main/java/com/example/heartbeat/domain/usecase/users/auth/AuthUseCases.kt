@@ -12,7 +12,9 @@ data class AuthUseCases(
     val logout: LogOutUseCase,
     val resetPassword: ResetPasswordUseCase,
     val getCurrentUser: GetCurrentUserUseCase,
-    val checkUserLoggedInUseCase: CheckUserLoggedInUseCase
+    val checkUserLoggedInUseCase: CheckUserLoggedInUseCase,
+    val updatePasswordUseCase: UpdatePasswordUseCase,
+    val updateUserNameUseCase: UpdateUserNameUseCase
 )
 
 class SignUpUseCase(private val repository: AuthRepository) {
@@ -55,5 +57,17 @@ class GetCurrentUserUseCase @Inject constructor(
 class CheckUserLoggedInUseCase(private val repository: AuthRepository) {
     operator fun invoke(): Boolean {
         return repository.isUserLoggedIn()
+    }
+}
+
+class UpdateUserNameUseCase(private val repository: AuthRepository) {
+    suspend operator fun invoke(newUserName: String): Result<Unit> {
+        return repository.updateUsername(newUserName)
+    }
+}
+
+class UpdatePasswordUseCase(private val repository: AuthRepository) {
+    suspend operator fun invoke(newPassword: String): Result<Unit> {
+        return repository.updatePassword(newPassword)
     }
 }

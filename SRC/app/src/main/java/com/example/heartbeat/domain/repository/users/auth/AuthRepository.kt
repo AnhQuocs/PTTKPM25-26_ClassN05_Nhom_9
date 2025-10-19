@@ -22,4 +22,7 @@ interface AuthRepository {
     suspend fun getCurrentUser(): AuthUser?
     suspend fun resetPassword(email: String): Result<Unit>
     fun isUserLoggedIn(): Boolean
+
+    suspend fun updateUsername(newUsername: String): Result<Unit>
+    suspend fun updatePassword(newPassword: String): Result<Unit>
 }

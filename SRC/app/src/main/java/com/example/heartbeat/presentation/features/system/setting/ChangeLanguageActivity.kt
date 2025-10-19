@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -97,6 +98,7 @@ fun ChangeLanguageScreen(
             Image(
                 painter = painterResource(id = R.drawable.ic_back),
                 contentDescription = null,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(top = Dimens.PaddingL, start = Dimens.PaddingSM)

@@ -217,4 +217,16 @@
     <string name="help_center_option_update_reminder">Nhắc nhở cập nhật</string>
     <string name="help_center_snackbar_message">Tính năng đang được phát triển</string>
 
+    <!-- Setting/Account -->
+    <string name="change_username">Thay đổi tên người dùng</string>
+    <string name="change_password">Thay đổi mật khẩu</string>
+    <string name="new_username">Tên người dùng mới</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="update_success">Cập nhật thành công</string>
+    <string name="cannot_empty">không được để trống</string>
+    <string name="change_pass_placeholder">Mật khẩu phải tối thiểu 8 kí tự</string>
+
+    <!-- Setting/History -->
+    <string name="no_donation_yet">You haven’t donated to any events yet</string>
+
 </resources>

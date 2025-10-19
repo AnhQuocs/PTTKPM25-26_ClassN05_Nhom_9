@@ -4,7 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.heartbeat.domain.entity.donation.Donation
+import com.example.heartbeat.domain.entity.event.Event
+import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.domain.usecase.donation.DonationUseCases
+import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
+import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -192,5 +196,31 @@ class DonationViewModel @Inject constructor(
     // reset state
     fun clearMessages() {
         _uiState.update { it.copy(errorMessage = null, successMessage = null) }
+    }
+
+    fun getDonatedDonationsWithEventAndHospital(
+        donorId: String,
+        eventViewModel: EventViewModel,
+        hospitalViewModel: HospitalViewModel,
+        onResult: (List<Triple<Donation, Event?, Hospital?>>) -> Unit
+    ) {
+        viewModelScope.launch {
+            val allDonations = donationUseCases.getDonationsByDonor(donorId)
+            val donatedList = allDonations.filter { it.status == "DONATED" }
+
+            val result = donatedList.mapNotNull { donation ->
+                val event = eventViewModel.getEventByIdDirect(donation.eventId)
+                val hospital = event.locationId.let { locationId ->
+                    hospitalViewModel.loadHospitalById(locationId)
+                    hospitalViewModel.hospitalDetails[locationId]
+                }
+
+                if (hospital != null) {
+                    Triple(donation, event, hospital)
+                } else null
+            }
+
+            onResult(result)
+        }
     }
 }

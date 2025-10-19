@@ -65,10 +65,8 @@ import com.example.heartbeat.ui.theme.CompassionBlueLight
 import com.example.heartbeat.ui.theme.CompassionBlueText
 import com.example.heartbeat.ui.theme.HopeGreenLight
 import com.example.heartbeat.ui.theme.HopeGreenText
-import com.example.heartbeat.ui.theme.PinkLight
 import com.example.heartbeat.ui.theme.SunshineYellowLight
 import com.example.heartbeat.ui.theme.SunshineYellowText
-import com.example.heartbeat.ui.theme.UnityPeachText
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 

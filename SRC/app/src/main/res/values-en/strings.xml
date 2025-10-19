@@ -217,4 +217,16 @@
     <string name="help_center_option_update_reminder">Update reminder</string>
     <string name="help_center_snackbar_message">Growing features</string>
 
+    <!-- Setting/Account -->
+    <string name="change_username">Change Username</string>
+    <string name="change_password">Change Password</string>
+    <string name="new_username">New Username</string>
+    <string name="new_password">New Password</string>
+    <string name="update_success">Update successful</string>
+    <string name="cannot_empty">cannot be empty</string>
+    <string name="change_pass_placeholder">Password must be at least 8 characters</string>
+
+    <!-- Setting/History -->
+    <string name="no_donation_yet">You haven’t donated to any events yet</string>
+
 </resources>

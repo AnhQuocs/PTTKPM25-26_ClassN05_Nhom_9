@@ -11,6 +11,8 @@ import com.example.heartbeat.domain.usecase.users.auth.LoginWithCodeUseCase
 import com.example.heartbeat.domain.usecase.users.auth.ResetPasswordUseCase
 import com.example.heartbeat.domain.usecase.users.auth.SignUpUseCase
 import com.example.heartbeat.domain.usecase.users.auth.SignUpWithCodeUseCase
+import com.example.heartbeat.domain.usecase.users.auth.UpdatePasswordUseCase
+import com.example.heartbeat.domain.usecase.users.auth.UpdateUserNameUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -42,6 +44,8 @@ object AuthModule{
         logout = LogOutUseCase(repository),
         getCurrentUser = GetCurrentUserUseCase(repository),
         resetPassword = ResetPasswordUseCase(repository),
-        checkUserLoggedInUseCase = CheckUserLoggedInUseCase(repository)
+        checkUserLoggedInUseCase = CheckUserLoggedInUseCase(repository),
+        updatePasswordUseCase = UpdatePasswordUseCase(repository),
+        updateUserNameUseCase = UpdateUserNameUseCase(repository)
     )
 }

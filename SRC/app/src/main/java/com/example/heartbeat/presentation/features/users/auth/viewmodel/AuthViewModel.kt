@@ -282,4 +282,47 @@ class AuthViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
         )
+
+    fun updateUsername(newUsername: String) {
+        if (!AuthValidator.isValidUsername(newUsername)) {
+            _usernameError.value = "Username cannot be empty"
+            return
+        }
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val result = authUseCases.updateUserNameUseCase(newUsername)
+                result.onSuccess {
+                    _errorMessage.value = "Username updated successfully"
+                    loadCurrentUser()
+                }.onFailure {
+                    _errorMessage.value = it.message ?: "Failed to update username"
+                }
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun updatePassword(newPassword: String) {
+        if (!AuthValidator.isValidPassword(newPassword)) {
+            _passwordError.value = "Password must be at least 8 characters long"
+            return
+        }
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val result = authUseCases.updatePasswordUseCase(newPassword)
+                result.onSuccess {
+                    _errorMessage.value = "Password updated successfully"
+                }.onFailure {
+                    _errorMessage.value = it.message ?: "Failed to update password"
+                }
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 }

@@ -136,8 +136,7 @@ class AuthRepositoryImpl(
         return auth.currentUser != null
     }
 
-    // ===================== PRIVATE HELPERS =====================
-
+    //PRIVATE HELPERS
     private suspend fun createFirebaseUser(email: String, password: String): String {
         val result = auth.createUserWithEmailAndPassword(email, password).await()
         return result.user?.uid ?: throw Exception("User is null")
@@ -165,5 +164,25 @@ class AuthRepositoryImpl(
 
     private suspend fun deleteCurrentUserIfExists() {
         auth.currentUser?.delete()?.await()
+    }
+
+    override suspend fun updateUsername(newUsername: String): Result<Unit> = runCatching {
+        val user = auth.currentUser ?: throw Exception("No logged-in user")
+        val uid = user.uid
+
+        firestore.collection("users")
+            .document(uid)
+            .update("username", newUsername)
+            .await()
+
+        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+            .setDisplayName(newUsername)
+            .build()
+        user.updateProfile(profileUpdates).await()
+    }
+
+    override suspend fun updatePassword(newPassword: String): Result<Unit> = runCatching {
+        val user = auth.currentUser ?: throw Exception("No logged-in user")
+        user.updatePassword(newPassword).await()
     }
 }

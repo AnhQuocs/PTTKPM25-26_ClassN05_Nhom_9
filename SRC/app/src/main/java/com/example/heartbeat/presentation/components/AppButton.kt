@@ -21,7 +21,8 @@ fun AppButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     onClick: () -> Unit,
-    text: String
+    text: String,
+    color: Color = BloodRed
 ) {
     Button(
         onClick = {
@@ -32,9 +33,9 @@ fun AppButton(
             .height(Dimens.HeightDefault)
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = BloodRed,
+            containerColor = color,
             disabledContentColor = Color.White,
-            disabledContainerColor = BloodRed.copy(alpha = 0.2f)
+            disabledContainerColor = color.copy(alpha = 0.2f)
         ),
         shape = RoundedCornerShape(AppShape.MediumShape)
     ) {

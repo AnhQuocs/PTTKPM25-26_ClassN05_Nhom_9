@@ -195,6 +195,10 @@
     <string name="app_icon">Biểu tượng ứng dụng</string>
     <string name="history">Lịch sử hiến máu</string>
     <string name="language">Ngôn ngữ</string>
+    <string name="select_language">Chọn ngôn ngữ</string>
+    <string name="english">Tiếng Anh</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="apply">Áp dụng</string>
     <string name="privacy_policy">Chính sách bảo mật</string>
     <string name="help_center">Trung tâm trợ giúp</string>
     <string name="logout">Đăng xuất</string>

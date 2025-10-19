@@ -1,7 +1,6 @@
 package com.example.heartbeat.presentation.features.system.setting
 
 import android.content.Intent
-import androidx.activity.ComponentActivity
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,9 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,12 +46,10 @@ import com.example.heartbeat.domain.entity.users.AuthUser
 import com.example.heartbeat.domain.entity.users.DonorAvatar
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.main.home.base64ToImageBitmap
-import com.example.heartbeat.presentation.features.system.language.LanguageViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
-import com.example.heartbeat.ui.theme.PeachBackground
 
 @Composable
 fun SettingScreen(

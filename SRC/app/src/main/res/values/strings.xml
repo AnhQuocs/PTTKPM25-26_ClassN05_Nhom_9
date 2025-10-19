@@ -195,6 +195,10 @@
     <string name="app_icon">App Icon</string>
     <string name="history">Donation History</string>
     <string name="language">Language</string>
+    <string name="select_language">Select Language</string>
+    <string name="english">English</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="apply">Apply</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="help_center">Help Center</string>
     <string name="logout">Logout</string>

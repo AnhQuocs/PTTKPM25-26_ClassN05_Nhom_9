@@ -202,5 +202,19 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="help_center">Help Center</string>
     <string name="logout">Logout</string>
+    <string name="logout_message">Are you sure you want to log out?</string>
+    <string name="logout_cancel">Cancel</string>
+    <string name="logout_success">Logged out successfully</string>
+
+    <!-- Setting/Help Center -->
+    <string name="help_center_title">Help Center</string>
+    <string name="help_center_search_placeholder">Search Topic</string>
+    <string name="help_center_option_platforms">Platforms are used</string>
+    <string name="help_center_option_question">Usage question</string>
+    <string name="help_center_option_app_usage">Application usage</string>
+    <string name="help_center_option_update_time">Update Time App</string>
+    <string name="help_center_option_cross_platform">Cross Platform App</string>
+    <string name="help_center_option_update_reminder">Update reminder</string>
+    <string name="help_center_snackbar_message">Growing features</string>
 
 </resources>

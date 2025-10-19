@@ -51,3 +51,11 @@ val GoldenGlow = Color(0xFFFFB300)
 val CoralRed = Color(0xFFFF5252)
 val WaitingGold = Color(0xFFFFB74D)
 val SoftCream = Color(0xFFFDF8F4)
+
+// Setting
+val TealPrimary = Color(0xFF1E9584)
+val TextPrimaryDark = Color(0xFF1B1C1F)
+val GrayPlaceholder = Color(0xFFA9B0C5)
+val GrayContainer = Color(0xFFF6F7F9)
+val GrayBorder = Color(0xFFE0E5ED)
+val GrayOptionText = Color(0xFF767E8C)

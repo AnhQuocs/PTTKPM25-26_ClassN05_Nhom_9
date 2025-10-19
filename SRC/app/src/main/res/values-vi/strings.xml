@@ -202,5 +202,19 @@
     <string name="privacy_policy">Chính sách bảo mật</string>
     <string name="help_center">Trung tâm trợ giúp</string>
     <string name="logout">Đăng xuất</string>
+    <string name="logout_message">Bạn có chắc chắn muốn đăng xuất không?</string>
+    <string name="logout_cancel">Hủy</string>
+    <string name="logout_success">Đã đăng xuất</string>
+
+    <!-- Setting/Help Center -->
+    <string name="help_center_title">Trung tâm trợ giúp</string>
+    <string name="help_center_search_placeholder">Tìm chủ đề</string>
+    <string name="help_center_option_platforms">Nền tảng</string>
+    <string name="help_center_option_question">Câu hỏi</string>
+    <string name="help_center_option_app_usage">Cách dùng ứng dụng</string>
+    <string name="help_center_option_update_time">Cập nhật</string>
+    <string name="help_center_option_cross_platform">Đa nền tảng</string>
+    <string name="help_center_option_update_reminder">Nhắc nhở cập nhật</string>
+    <string name="help_center_snackbar_message">Tính năng đang được phát triển</string>
 
 </resources>

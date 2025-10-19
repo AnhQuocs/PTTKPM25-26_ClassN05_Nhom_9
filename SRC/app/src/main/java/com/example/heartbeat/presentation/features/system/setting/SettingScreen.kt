@@ -1,6 +1,7 @@
 package com.example.heartbeat.presentation.features.system.setting
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,18 +16,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.users.AuthUser
 import com.example.heartbeat.domain.entity.users.DonorAvatar
@@ -55,12 +63,15 @@ import com.example.heartbeat.ui.dimens.Dimens
 fun SettingScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
     donorViewModel: DonorViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val context = LocalContext.current
 
     val authState by authViewModel.authState.collectAsState()
     val avatar by donorViewModel.donorAvatar.collectAsState()
     val user = authState?.getOrNull()
+
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         authState?.getOrNull()?.let { user ->
@@ -115,8 +126,23 @@ fun SettingScreen(
             AppLineGrey(modifier = Modifier.padding(Dimens.PaddingXS))
 
             OptionItem(iconRes = R.drawable.ic_key, text = stringResource(id = R.string.privacy_policy), onClick = {})
-            OptionItem(iconRes = R.drawable.ic_help_center, text = stringResource(id = R.string.help_center), onClick = {})
-            OptionItem(iconRes = R.drawable.ic_logout, text = stringResource(id = R.string.logout), onClick = {})
+            OptionItem(iconRes = R.drawable.ic_help_center, text = stringResource(id = R.string.help_center), onClick = {
+                context.startActivity(Intent(context, HelpCenterActivity::class.java))
+            })
+            OptionItem(iconRes = R.drawable.ic_logout, text = stringResource(id = R.string.logout), onClick = { showLogoutDialog = true })
+
+            if(showLogoutDialog) {
+                LogoutDialog(
+                    onDismiss = { showLogoutDialog = false },
+                    onConfirm = {
+                        showLogoutDialog = false
+                        authViewModel.logout()
+                        navController.navigate("login") {
+                            popUpTo("main") { inclusive = true }
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -218,4 +244,60 @@ fun OptionItem(
             )
         }
     }
+}
+
+@Composable
+fun LogoutDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(id = R.string.logout),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(id = R.string.logout_message),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirm()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.logout_success),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .height(40.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(stringResource(id = R.string.logout))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    stringResource(id = R.string.logout_cancel),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        shape = RoundedCornerShape(20.dp)
+    )
 }

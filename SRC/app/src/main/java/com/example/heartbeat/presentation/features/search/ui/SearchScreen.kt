@@ -204,7 +204,9 @@ fun SearchScreen(
                                     navController.currentBackStackEntry
                                         ?.savedStateHandle
                                         ?.set("selectedTab", 1)
-                                    navController.navigate("event_detail/${suggestion.event.id}")
+                                    navController.navigate("event_detail/${suggestion.event.id}") {
+                                        launchSingleTop = true
+                                    }
                                 }
                             }
                         }
@@ -221,7 +223,14 @@ fun SearchScreen(
                     isLoading = isRecentSearchLoading,
                     hospitalViewModel = hospitalViewModel,
                     unifiedSearchViewModel = unifiedSearchViewModel,
-                    navController = navController
+                    onNavigateToDetail = { eventId ->
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("selectedTab", 1)
+                        navController.navigate("event_detail/$eventId") {
+                            launchSingleTop = true
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(Dimens.PaddingSM))
@@ -231,7 +240,14 @@ fun SearchScreen(
                     isLoading = isRecentViewedLoading,
                     onClear = { recentViewedViewModel.clearRecentViewed() },
                     hospitalViewModel = hospitalViewModel,
-                    navController = navController
+                    onNavigateToDetail = { eventId ->
+                        navController.currentBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("selectedTab", 1)
+                        navController.navigate("event_detail/$eventId") {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
         }

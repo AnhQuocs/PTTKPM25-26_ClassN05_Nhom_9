@@ -48,7 +48,7 @@ fun RecentSearchCard(
     isLoading: Boolean,
     hospitalViewModel: HospitalViewModel,
     unifiedSearchViewModel: UnifiedSearchViewModel,
-    navController: NavController
+    onNavigateToDetail: (String) -> Unit
 ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -114,13 +114,9 @@ fun RecentSearchCard(
                                     updatedAt = null
                                 )
                                 val suggestion = SearchSuggestionItem.EventSuggestion(fakeEvent)
-
                                 unifiedSearchViewModel.onSuggestionClicked(suggestion)
 
-                                navController.currentBackStackEntry
-                                    ?.savedStateHandle
-                                    ?.set("selectedTab", 1)
-                                navController.navigate("event_detail/${suggestion.event.id}")
+                                onNavigateToDetail(suggestion.event.id)
                             }
                         )
                     }

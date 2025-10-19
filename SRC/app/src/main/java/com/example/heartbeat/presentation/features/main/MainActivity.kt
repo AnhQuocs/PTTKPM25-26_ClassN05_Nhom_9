@@ -5,6 +5,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -44,6 +48,7 @@ class MainActivity : BaseComponentActivity() {
             val navController = rememberNavController()
             val authState by authViewModel.authState.collectAsState()
             val isLoading by authViewModel.isUserLoading.collectAsState()
+            val slideDuration = 200
 
             AnimatedNavHost(navController = navController, startDestination = "splash") {
                 composable("splash") { SplashScreen() }
@@ -79,7 +84,19 @@ class MainActivity : BaseComponentActivity() {
                 }
                 composable(
                     route = "event_detail/{eventId}",
-                    arguments = listOf(navArgument("eventId") {type = NavType.StringType})
+                    arguments = listOf(navArgument("eventId") { type = NavType.StringType }),
+                    enterTransition = {
+                        slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(slideDuration))
+                    },
+                    exitTransition = {
+                        slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth / 2 }, animationSpec = tween(slideDuration))
+                    },
+                    popEnterTransition = {
+                        slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(slideDuration))
+                    },
+                    popExitTransition = {
+                        slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(slideDuration))
+                    }
                 ) { backStackEntry ->
                     val eventId = backStackEntry.arguments?.getString("eventId")
                     EventDetailScreen(eventId = eventId ?: "", navController = navController)
@@ -93,13 +110,16 @@ class MainActivity : BaseComponentActivity() {
                         "user" -> navController.navigate("main") {
                             popUpTo("splash") { inclusive = true }
                         }
+
                         "admin" -> navController.navigate("admin_main") {
                             popUpTo("splash") { inclusive = true }
                             popUpTo("onboarding") { inclusive = true }
                         }
+
                         "staff" -> navController.navigate("staff_main") {
                             popUpTo("splash") { inclusive = true }
                         }
+
                         else -> navController.navigate("onboarding") {
                             popUpTo("splash") { inclusive = true }
                         }

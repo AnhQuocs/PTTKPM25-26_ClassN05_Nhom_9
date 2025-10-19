@@ -65,6 +65,8 @@ import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.Green500
 import com.example.heartbeat.ui.theme.OceanBlue
 import com.example.heartbeat.ui.theme.PeachBackground
+import com.google.firebase.auth.FirebaseAuth
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -86,143 +88,154 @@ fun EventDetailScreen(
     LaunchedEffect(selectedEvent?.id) {
         selectedEvent?.let { event ->
             hospitalViewModel.loadHospitalById(event.locationId)
-            eventViewModel.observeDonorCount(event.id)
         }
     }
 
     selectedEvent?.let { event ->
         val hospital = hospitalViewModel.hospitalDetails[event.locationId]
+        val isValid = isFutureTime(isoString = event.deadline.toString())
 
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(Dimens.HeightXL)
-                        .background(PeachBackground)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_back),
-                        contentDescription = null,
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Scaffold(
+                topBar = {
+                    Box(
                         modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .padding(top = Dimens.PaddingL, start = Dimens.PaddingSM)
-                            .size(Dimens.SizeL)
-                            .clickable { navController.popBackStack() }
-                    )
-
-                    Text(
-                        stringResource(id = R.string.search_events),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 20.sp
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(top = Dimens.PaddingL)
-                    )
-                }
-            },
-            bottomBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = Dimens.PaddingSM)
-                        .padding(horizontal = Dimens.PaddingM),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingM),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            hospital?.phone?.let { phone ->
-                                val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
-                                context.startActivity(dialIntent)
-                            }
-                        },
-                        shape = RoundedCornerShape(AppShape.ExtraLargeShape),
-                        colors = ButtonDefaults.buttonColors(containerColor = Green500),
-                        modifier = Modifier
-                            .weight(0.4f)
-                            .height(Dimens.HeightDefault)
+                            .fillMaxWidth()
+                            .height(Dimens.HeightXL)
+                            .background(PeachBackground)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(
-                                Icons.Default.Call,
-                                contentDescription = null,
-                                modifier = Modifier.size(Dimens.SizeML)
-                            )
-
-                            Spacer(modifier = Modifier.width(AppSpacing.MediumLarge))
-
-                            Text(stringResource(id = R.string.contact), style = MaterialTheme.typography.titleSmall)
-                        }
-                    }
-
-                    AppButton(
-                        text = stringResource(id = R.string.register_now),
-                        onClick = {},
-                        modifier = Modifier.weight(0.5f)
-                    )
-                }
-            },
-            modifier = Modifier.fillMaxSize()
-        ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color(0xFFF2F4F4))
-                    .padding(paddingValues)
-                    .padding(Dimens.PaddingM)
-            ) {
-                item {
-                    EventWelcomeBanner()
-                }
-
-                item { Spacer(modifier = Modifier.height(AppSpacing.LargePlus)) }
-
-                item {
-                    EventInfoCard(event = event)
-                }
-
-                item { Spacer(modifier = Modifier.height(AppSpacing.LargePlus)) }
-
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Divider(
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_back),
+                            contentDescription = null,
                             modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .weight(0.3f),
-                            color = Color.LightGray.copy(alpha = 0.5f)
+                                .align(Alignment.CenterStart)
+                                .padding(top = Dimens.PaddingL, start = Dimens.PaddingSM)
+                                .size(Dimens.SizeL)
+                                .clickable { navController.popBackStack() }
                         )
 
                         Text(
-                            text = "Hosted by",
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Gray,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(horizontal = Dimens.PaddingS)
-                        )
-
-                        Divider(
+                            stringResource(id = R.string.event_detail),
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 20.sp
+                            ),
                             modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .weight(0.3f),
-                            color = Color.LightGray.copy(alpha = 0.5f)
+                                .align(Alignment.Center)
+                                .padding(top = Dimens.PaddingL)
                         )
                     }
-                }
+                },
+                bottomBar = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = Dimens.PaddingSM)
+                            .padding(horizontal = Dimens.PaddingM),
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingM),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Button(
+                            onClick = {
+                                hospital?.phone?.let { phone ->
+                                    val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
+                                    context.startActivity(dialIntent)
+                                }
+                            },
+                            shape = RoundedCornerShape(AppShape.ExtraLargeShape),
+                            colors = ButtonDefaults.buttonColors(containerColor = Green500),
+                            modifier = Modifier
+                                .weight(0.4f)
+                                .height(Dimens.HeightDefault)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(
+                                    Icons.Default.Call,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(Dimens.SizeML)
+                                )
 
-                item { Spacer(modifier = Modifier.height(AppSpacing.LargePlus)) }
+                                Spacer(modifier = Modifier.width(AppSpacing.MediumLarge))
 
-                item {
-                    hospital?.let {
-                        HospitalInfoCard(hospital = it)
+                                Text(stringResource(id = R.string.contact), style = MaterialTheme.typography.titleSmall)
+                            }
+                        }
+
+                        AppButton(
+                            text = stringResource(id = R.string.register_now),
+                            enabled = isValid,
+                            onClick = {
+                                val userId = FirebaseAuth.getInstance().currentUser?.uid
+                                navController.navigate("register_donation/$eventId/$userId") {
+                                    popUpTo("event_detail/{eventId}") { inclusive = true }
+                                }
+                            },
+                            modifier = Modifier.weight(0.5f)
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            ) { paddingValues ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color(0xFFF2F4F4))
+                        .padding(paddingValues)
+                        .padding(Dimens.PaddingM)
+                ) {
+                    item {
+                        EventWelcomeBanner()
+                    }
+
+                    item { Spacer(modifier = Modifier.height(AppSpacing.LargePlus)) }
+
+                    item {
+                        EventInfoCard(eventId = event.id)
+                    }
+
+                    item { Spacer(modifier = Modifier.height(AppSpacing.LargePlus)) }
+
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Divider(
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .weight(0.3f),
+                                color = Color.LightGray.copy(alpha = 0.5f)
+                            )
+
+                            Text(
+                                text = "Hosted by",
+                                fontWeight = FontWeight.Medium,
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(horizontal = Dimens.PaddingS)
+                            )
+
+                            Divider(
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .weight(0.3f),
+                                color = Color.LightGray.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+
+                    item { Spacer(modifier = Modifier.height(AppSpacing.LargePlus)) }
+
+                    item {
+                        hospital?.let {
+                            HospitalInfoCard(hospital = it)
+                        }
                     }
                 }
             }
@@ -270,7 +283,15 @@ fun EventWelcomeBanner() {
 }
 
 @Composable
-fun EventInfoCard(event: Event) {
+fun EventInfoCard(eventId: String, eventViewModel: EventViewModel = hiltViewModel()) {
+    val events by eventViewModel.events.collectAsState()
+
+    val event = events.find { it.id == eventId } ?: return
+
+    LaunchedEffect(eventId) {
+        eventViewModel.observeDonorCount(eventId)
+    }
+
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
     val (startStr, endStr) = event.time.split(" ")
@@ -326,7 +347,7 @@ fun EventInfoCard(event: Event) {
                 text = stringResource(id = R.string.description) + ": " + event.description,
             )
 
-            Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
+            Spacer(modifier = Modifier.height(AppSpacing.Small))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -337,16 +358,14 @@ fun EventInfoCard(event: Event) {
                     modifier = Modifier.align(Alignment.Top)
                 )
 
-                Column(
-                    horizontalAlignment = Alignment.End
-                ) {
+                Column{
                     TextInfo(text = event.date)
 
                     TextInfo(text = time, fontSize = 14)
                 }
             }
 
-            Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
+            Spacer(modifier = Modifier.height(AppSpacing.Small))
 
             Text(
                 text = stringResource(id = R.string.deadline) + ": " + formatDateTime(event.deadline.toString()),
@@ -491,4 +510,12 @@ fun formatDateTime(isoString: String): String {
 
     val dateTime = LocalDateTime.parse(isoString, inputFormatter)
     return dateTime.format(outputFormatter)
+}
+
+fun isFutureTime(isoString: String): Boolean {
+    val inputFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    val dateTime = LocalDateTime.parse(isoString, inputFormatter)
+    val now = LocalDateTime.now()
+
+    return dateTime.isAfter(now)
 }

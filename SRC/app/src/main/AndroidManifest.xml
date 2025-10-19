@@ -16,6 +16,9 @@
         android:theme="@style/Theme.HeartBeat"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.features.system.setting.ChangeLanguageActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.features.users.donor.ui.profile_setup.ProfileSetupActivity"
             android:exported="false" />
         <activity

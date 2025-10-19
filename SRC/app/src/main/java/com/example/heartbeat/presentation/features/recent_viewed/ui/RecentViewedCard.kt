@@ -60,7 +60,7 @@ fun RecentViewedCard(
     isLoading: Boolean,
     eventViewModel: EventViewModel = hiltViewModel(),
     hospitalViewModel: HospitalViewModel,
-    navController: NavController
+    onNavigateToDetail: (String) -> Unit
 ) {
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
 
@@ -116,19 +116,16 @@ fun RecentViewedCard(
                             }
                         }
 
-                        if (event != null && hospital != null) {
-                            RecentViewedItem(
-                                event = event!!,
-                                hospital = hospital!!,
-                                onClick = {
-                                    navController.currentBackStackEntry
-                                        ?.savedStateHandle
-                                        ?.set("selectedTab", 1)
-                                    navController.navigate("event_detail/${event!!.id}")
-                                }
-                            )
+                        event?.let { e ->
+                            hospital?.let { h ->
+                                RecentViewedItem(
+                                    event = e,
+                                    hospital = h,
+                                    onClick = { onNavigateToDetail(e.id) }
+                                )
 
-                            Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
+                                Spacer(modifier = Modifier.height(AppSpacing.MediumPlus))
+                            }
                         }
                     }
                 }

@@ -1,18 +1,27 @@
 package com.example.heartbeat.presentation.features.system.setting
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,99 +32,195 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.example.heartbeat.domain.entity.system.AppLanguage
-import com.example.heartbeat.presentation.components.AppButton
-import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.R
+import com.example.heartbeat.domain.entity.users.AuthUser
+import com.example.heartbeat.domain.entity.users.DonorAvatar
+import com.example.heartbeat.presentation.components.AppLineGrey
+import com.example.heartbeat.presentation.features.main.home.base64ToImageBitmap
 import com.example.heartbeat.presentation.features.system.language.LanguageViewModel
-import com.example.heartbeat.utils.LangUtils
+import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.ui.dimens.AppSpacing
+import com.example.heartbeat.ui.dimens.Dimens
+import com.example.heartbeat.ui.theme.PeachBackground
 
 @Composable
 fun SettingScreen(
-    navController: NavController,
-    languageViewModel: LanguageViewModel = hiltViewModel(),
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    donorViewModel: DonorViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val activity = context as? ComponentActivity
-    val currentLang by languageViewModel.currentLanguage.collectAsState()
-    var lastLang by remember { mutableStateOf(currentLang) }
 
-    var selectedLang by remember { mutableStateOf(currentLang) }
+    val authState by authViewModel.authState.collectAsState()
+    val avatar by donorViewModel.donorAvatar.collectAsState()
+    val user = authState?.getOrNull()
 
-    LaunchedEffect(currentLang) {
-        if (currentLang != lastLang) {
-            lastLang = currentLang
-            activity?.recreate()
+    LaunchedEffect(Unit) {
+        authState?.getOrNull()?.let { user ->
+            authViewModel.loadCurrentUser()
+            donorViewModel.getCurrentDonor()
+            donorViewModel.getAvatar(user.uid)
         }
     }
 
+    Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.HeightXL),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    stringResource(id = R.string.setting),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 22.sp
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = Dimens.PaddingXL)
+                        .fillMaxWidth()
+                )
+            }
+        },
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .background(Color.White)
+                .padding(paddingValues)
+                .padding(Dimens.PaddingM)
+                .fillMaxSize()
+        ) {
+            user?.let {
+                UserInfo(user, avatar)
+            }
+
+            Spacer(modifier = Modifier.height(AppSpacing.ExtraLarge))
+
+            OptionItem(iconRes = R.drawable.ic_account, text = stringResource(id = R.string.account), onClick = {})
+            OptionItem(iconRes = R.drawable.ic_info, text = stringResource(id = R.string.personal_info), onClick = {})
+            OptionItem(iconRes = R.drawable.ic_language, text = stringResource(id = R.string.language), onClick = {
+                context.startActivity(Intent(context, ChangeLanguageActivity::class.java))
+            })
+            OptionItem(iconRes = R.drawable.ic_history, text = stringResource(id = R.string.history), onClick = {})
+
+            AppLineGrey(modifier = Modifier.padding(Dimens.PaddingXS))
+
+            OptionItem(iconRes = R.drawable.ic_key, text = stringResource(id = R.string.privacy_policy), onClick = {})
+            OptionItem(iconRes = R.drawable.ic_help_center, text = stringResource(id = R.string.help_center), onClick = {})
+            OptionItem(iconRes = R.drawable.ic_logout, text = stringResource(id = R.string.logout), onClick = {})
+        }
+    }
+}
+
+@Composable
+fun UserInfo(user: AuthUser, avatar: DonorAvatar?) {
+    val imgBitmap = remember(avatar?.avatarUrl) {
+        avatar?.avatarUrl?.let { base64ToImageBitmap(it) }
+    }
+
+    val avtSize = Dimens.SizeMega + 10.dp
+
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(18.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (imgBitmap != null) {
+            Image(
+                bitmap = imgBitmap,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(avtSize)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.ic_default_avatar),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(avtSize)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        Spacer(modifier = Modifier.height(AppSpacing.MediumLarge))
+
+        user.username?.let {
+            Text(
+                text = it,
+                color = Color.Black,
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(AppSpacing.Small))
+
+        user.email?.let {
+            Text(
+                text = it,
+                color = Color(0xFF767E8C),
+                style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp, fontWeight = FontWeight.Normal)
+            )
+        }
+    }
+}
+
+@Composable
+fun OptionItem(
+    @DrawableRes iconRes: Int,
+    text: String,
+    onClick: () -> Unit
+) {
+    val color = Color(0xFF767E8C)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = Dimens.PaddingXXS),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color),
+            modifier = Modifier.size(Dimens.SizeM)
+        )
+
+        Spacer(modifier = Modifier.width(AppSpacing.MediumPlus))
+
         Text(
-            text = "Select Language",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 16.dp)
+            text = text,
+            color = color,
+            style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp, fontWeight = FontWeight.Normal)
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { selectedLang = AppLanguage.ENGLISH }
-                .padding(vertical = 4.dp)
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(
+            onClick = onClick
         ) {
-            RadioButton(
-                selected = selectedLang == AppLanguage.ENGLISH,
-                onClick = { selectedLang = AppLanguage.ENGLISH }
+            Icon(
+                Icons.Default.ArrowForwardIos,
+                contentDescription = null,
+                tint = Color.Black.copy(0.4f),
+                modifier = Modifier.size(Dimens.SizeSM)
             )
-            Text("English 🇬🇧")
         }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { selectedLang = AppLanguage.VIETNAMESE }
-                .padding(vertical = 4.dp)
-        ) {
-            RadioButton(
-                selected = selectedLang == AppLanguage.VIETNAMESE,
-                onClick = { selectedLang = AppLanguage.VIETNAMESE }
-            )
-            Text("Tiếng Việt 🇻🇳")
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                val code = selectedLang.code
-                LangUtils.updateLocale(context, code)
-                languageViewModel.changeLanguage(selectedLang)
-            }
-        ) {
-            Text("Change")
-        }
-
-        AppButton(
-            onClick = {
-                authViewModel.logout()
-                navController.navigate("login") {
-                    popUpTo("main") { inclusive = true }
-                }
-            },
-            text = "Logout"
-        )
     }
 }

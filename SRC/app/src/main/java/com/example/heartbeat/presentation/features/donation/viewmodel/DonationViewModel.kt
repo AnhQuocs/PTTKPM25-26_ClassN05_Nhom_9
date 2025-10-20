@@ -205,6 +205,8 @@ class DonationViewModel @Inject constructor(
         onResult: (List<Triple<Donation, Event?, Hospital?>>) -> Unit
     ) {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
             val allDonations = donationUseCases.getDonationsByDonor(donorId)
             val donatedList = allDonations.filter { it.status == "DONATED" }
 
@@ -221,6 +223,8 @@ class DonationViewModel @Inject constructor(
             }
 
             onResult(result)
+
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 }

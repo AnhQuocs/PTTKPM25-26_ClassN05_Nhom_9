@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,7 +91,16 @@ fun DonationHistoryScreen(
 
     var donationDetails by remember { mutableStateOf<List<Triple<Donation, Event?, Hospital?>>>(emptyList()) }
 
+    LaunchedEffect(userId) {
+        donationViewModel.getDonationsByDonor(userId)
+    }
+
     LaunchedEffect(uiState.donations, userId) {
+        if (uiState.donations.isEmpty()) {
+            Log.d("DonationHistoryScreen", "Waiting for donations to load...")
+            kotlinx.coroutines.delay(500)
+        }
+
         if (uiState.donations.isNotEmpty()) {
             donationViewModel.getDonatedDonationsWithEventAndHospital(
                 donorId = userId,
@@ -100,36 +110,55 @@ fun DonationHistoryScreen(
                 donationDetails = result
                 Log.d("DonationHistoryScreen", "Loaded ${result.size} donated items")
             }
+        } else {
+            Log.d("DonationHistoryScreen", "Donations list is empty, skipping load")
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(Dimens.PaddingM + 2.dp)
-            .padding(top = Dimens.PaddingM)
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        SettingTitle(
-            text = stringResource(R.string.history),
-            onClick = onBackClick
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(Dimens.PaddingM + 2.dp)
+                .padding(top = Dimens.PaddingM)
+        ) {
+            SettingTitle(
+                text = stringResource(R.string.history),
+                onClick = onBackClick
+            )
 
-        Spacer(modifier = Modifier.height(AppSpacing.Jumbo))
+            Spacer(modifier = Modifier.height(AppSpacing.Jumbo))
 
-        LazyColumn {
-            items(
-                items = donationDetails,
-                key = { it.second?.id ?: it.first.donationId }
-            ) { (_, event, hospital) ->
-                Log.d("DonationHistoryScreen", "Hospital: $hospital")
-                if (event != null && hospital != null) {
-                    HistoryEventCard(
-                        event = event,
-                        hospital = hospital,
-                        onViewDetail = {}
-                    )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.PaddingM)
+            ) {
+                items(
+                    items = donationDetails,
+                    key = { it.second?.id ?: it.first.donationId }
+                ) { (_, event, hospital) ->
+                    Log.d("DonationHistoryScreen", "Hospital: $hospital")
+                    if (event != null && hospital != null) {
+                        HistoryEventCard(
+                            event = event,
+                            hospital = hospital,
+                            onViewDetail = {}
+                        )
+                    }
                 }
+            }
+        }
+
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize().background(Color.Black.copy(0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = BloodRed)
             }
         }
     }
@@ -142,10 +171,10 @@ fun HistoryEventCard(
     onViewDetail: () -> Unit
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(AppShape.ExtraLargeShape),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().border(1.dp, color = Color.Gray, RoundedCornerShape(AppShape.ExtraLargeShape))
     ) {
         Column(
             modifier = Modifier
@@ -211,9 +240,10 @@ fun HistoryEventCard(
 
             Button(
                 onClick = onViewDetail,
+                shape = RoundedCornerShape(AppShape.ExtraLargeShape),
                 colors = ButtonDefaults.buttonColors(containerColor = HeroLavenderText),
                 modifier = Modifier
-                    .fillMaxWidth(0.4f)
+                    .fillMaxWidth(0.5f)
                     .align(Alignment.End)
             ) {
                 Text(

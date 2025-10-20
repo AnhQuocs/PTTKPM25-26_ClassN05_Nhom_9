@@ -56,6 +56,7 @@ import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.presentation.components.AppButton
 import com.example.heartbeat.presentation.components.TitleSection
+import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.main.home.ProgressBar
@@ -73,13 +74,18 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun EventDetailScreen(
+    donorId: String? = null,
     eventId: String,
     navController: NavController,
     eventViewModel: EventViewModel = hiltViewModel(),
-    hospitalViewModel: HospitalViewModel = hiltViewModel()
+    hospitalViewModel: HospitalViewModel = hiltViewModel(),
+    donationViewModel: DonationViewModel = hiltViewModel()
 ) {
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
     val context = LocalContext.current
+
+    val uiState by donationViewModel.uiState.collectAsState()
+    val selectedDonation = uiState.selectedDonation
 
     LaunchedEffect(Unit) {
         eventViewModel.getEventById(eventId)
@@ -90,6 +96,12 @@ fun EventDetailScreen(
             hospitalViewModel.loadHospitalById(event.locationId)
         }
     }
+
+    LaunchedEffect(donorId) {
+        donorId?.let { donationViewModel.observeDonationForDonor(eventId, it) }
+    }
+
+    val isButtonEnable = selectedDonation?.status == "REJECTED" || selectedDonation?.status == null
 
     selectedEvent?.let { event ->
         val hospital = hospitalViewModel.hospitalDetails[event.locationId]
@@ -169,7 +181,7 @@ fun EventDetailScreen(
 
                         AppButton(
                             text = stringResource(id = R.string.register_now),
-                            enabled = isValid,
+                            enabled = isValid && isButtonEnable,
                             onClick = {
                                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                                 navController.navigate("register_donation/$eventId/$userId") {
@@ -401,7 +413,7 @@ fun HospitalInfoCard(hospital: Hospital) {
                 modifier = Modifier.padding(horizontal = Dimens.PaddingM)
             ) {
                 TitleSection(
-                    text1 = stringResource(id = R.string.event_info),
+                    text1 = stringResource(id = R.string.hospital_info),
                     text2 = ""
                 )
             }

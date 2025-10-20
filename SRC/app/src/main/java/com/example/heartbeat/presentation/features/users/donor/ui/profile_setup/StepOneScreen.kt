@@ -41,7 +41,6 @@ fun StepOneScreen(
 
     val bloodList = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
     val provinces by provinceViewModel.provinces.collectAsState()
-    val provinceIDs: List<String> = provinces.map { it.id }
     val provinceNames: List<String> = provinces.map { it.name }
 
     val scrollState = rememberScrollState()

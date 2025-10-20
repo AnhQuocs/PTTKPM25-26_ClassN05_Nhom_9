@@ -172,6 +172,8 @@
     <string name="pending_check_status">Check status</string>
     <string name="approved_title">Your registration was approved</string>
     <string name="approved_message">Congratulations! Your blood donation request has been approved. You may contact the hospital for more details.</string>
+    <string name="donated_title">Your donation was successful</string>
+    <string name="donated_message">Thank you for donating! Your blood has been successfully collected. You can view your donation details below.</string>
     <string name="view_details">View Details</string>
     <string name="rejected_title">Your registration was rejected</string>
     <string name="rejected_message">Unfortunately, your donation request was not approved. You may contact the hospital for more details.</string>
@@ -228,5 +230,19 @@
 
     <!-- Setting/History -->
     <string name="no_donation_yet">You haven’t donated to any events yet</string>
+
+    <!-- Setting/Personal Information -->
+    <string name="under_18_error">You must be at least 18 years old to donate blood.</string>
+    <string name="update">Update</string>
+
+    <!-- DonatedDetail -->
+    <string name="donation_details">Donation Details</string>
+    <string name="thank_banner_title">Thanks for donating!</string>
+    <string name="thank_banner_subtitle">Your support helps those in need.</string>
+    <string name="donor_info">Donor Information</string>
+    <string name="donation_info_card">Donation Info</string>
+    <string name="hospital_info">Hospital Information</string>
+    <string name="donated_volume">Donated Volume</string>
+    <string name="hosted_by">Hosted by</string>
 
 </resources>

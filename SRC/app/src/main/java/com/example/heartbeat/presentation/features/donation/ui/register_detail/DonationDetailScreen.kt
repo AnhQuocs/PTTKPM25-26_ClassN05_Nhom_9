@@ -161,7 +161,7 @@ fun DonationDetailScreen(
                                     navController.popBackStack()
                                 })
                                 "APPROVED" -> ApprovedScreen(onViewDetail = {
-                                    // Navigation
+                                    navController.navigate("event_detail/$eventId")
                                 })
 
                                 "REJECTED" -> RejectedScreen(onRegisterAgain = {
@@ -172,7 +172,7 @@ fun DonationDetailScreen(
                                     }
                                 })
 
-                                "DONATED" -> DonatedScreen()
+                                "DONATED" -> DonatedScreen(onViewDetail = {})
                             }
                         }
                     }

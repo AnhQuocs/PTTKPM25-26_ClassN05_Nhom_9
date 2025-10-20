@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.presentation.components.AppButton
-import com.example.heartbeat.presentation.components.DatePickerField
+import com.example.heartbeat.presentation.components.DatePickerFieldForEvent
 import com.example.heartbeat.presentation.features.donation.util.DonationValidator
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.ui.dimens.AppShape
@@ -130,7 +130,7 @@ fun DonationForm(
 
         Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-        DatePickerField(
+        DatePickerFieldForEvent(
             title = stringResource(id = R.string.label_last_donation) + ": ",
             placeholder = stringResource(id = R.string.placeholder_last_donation),
             fontWeight = FontWeight.SemiBold,

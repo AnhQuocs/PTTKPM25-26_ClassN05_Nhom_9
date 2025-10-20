@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.system.setting
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
@@ -34,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,8 +42,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,6 +56,7 @@ import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
+import com.example.heartbeat.presentation.features.event.ui.donated_detail.DonatedEventDetailActivity
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.ui.dimens.AppShape
@@ -61,7 +64,6 @@ import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.Green500
-import com.example.heartbeat.ui.theme.HeroLavenderText
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -84,12 +86,18 @@ fun DonationHistoryScreen(
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val uiState by donationViewModel.uiState.collectAsState()
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
     Log.d("DonationHistoryScreen", "Current userId = $userId")
 
-    var donationDetails by remember { mutableStateOf<List<Triple<Donation, Event?, Hospital?>>>(emptyList()) }
+    var donationDetails by remember {
+        mutableStateOf<List<Triple<Donation, Event?, Hospital?>>>(
+            emptyList()
+        )
+    }
 
     LaunchedEffect(userId) {
         donationViewModel.getDonationsByDonor(userId)
@@ -98,7 +106,7 @@ fun DonationHistoryScreen(
     LaunchedEffect(uiState.donations, userId) {
         if (uiState.donations.isEmpty()) {
             Log.d("DonationHistoryScreen", "Waiting for donations to load...")
-            kotlinx.coroutines.delay(500)
+            kotlinx.coroutines.delay(800)
         }
 
         if (uiState.donations.isNotEmpty()) {
@@ -137,17 +145,39 @@ fun DonationHistoryScreen(
                     .fillMaxWidth()
                     .padding(vertical = Dimens.PaddingM)
             ) {
-                items(
-                    items = donationDetails,
-                    key = { it.second?.id ?: it.first.donationId }
-                ) { (_, event, hospital) ->
-                    Log.d("DonationHistoryScreen", "Hospital: $hospital")
-                    if (event != null && hospital != null) {
-                        HistoryEventCard(
-                            event = event,
-                            hospital = hospital,
-                            onViewDetail = {}
-                        )
+                if (donationDetails.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.no_donation_yet),
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                } else {
+                    items(
+                        items = donationDetails,
+                        key = { it.second?.id ?: it.first.donationId }
+                    ) { (_, event, hospital) ->
+                        Log.d("DonationHistoryScreen", "Hospital: $hospital")
+                        if (event != null && hospital != null) {
+                            HistoryEventCard(
+                                event = event,
+                                hospital = hospital,
+                                onViewDetail = {
+                                    val intent = Intent(context, DonatedEventDetailActivity::class.java)
+                                        .putExtra("eventId", event.id)
+                                        .putExtra("donorId", userId)
+                                        .putExtra("hospitalId", event.locationId)
+                                    context.startActivity(intent)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -155,7 +185,9 @@ fun DonationHistoryScreen(
 
         if (uiState.isLoading) {
             Box(
-                modifier = Modifier.fillMaxSize().background(Color.Black.copy(0.2f)),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(0.2f)),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = BloodRed)
@@ -174,7 +206,9 @@ fun HistoryEventCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(AppShape.ExtraLargeShape),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier.fillMaxWidth().border(1.dp, color = Color.Gray, RoundedCornerShape(AppShape.ExtraLargeShape))
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, color = Color.Gray, RoundedCornerShape(AppShape.ExtraLargeShape))
     ) {
         Column(
             modifier = Modifier

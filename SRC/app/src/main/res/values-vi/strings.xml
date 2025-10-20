@@ -172,6 +172,8 @@
     <string name="pending_check_status">Kiểm tra trạng thái</string>
     <string name="approved_title">Đăng ký của bạn đã được chấp nhận</string>
     <string name="approved_message">Chúc mừng! Yêu cầu hiến máu của bạn đã được phê duyệt. Bạn có thể liên hệ với bệnh viện để biết thêm chi tiết.</string>
+    <string name="donated_title">Bạn đã hoàn tất hiến máu</string>
+    <string name="donated_message">Cảm ơn bạn đã hiến máu! Máu của bạn đã được thu nhận thành công. Bạn có thể xem chi tiết lần hiến bên dưới.</string>
     <string name="view_details">Xem chi tiết</string>
     <string name="rejected_title">Đăng ký của bạn đã bị từ chối</string>
     <string name="rejected_message">Rất tiếc! Yêu cầu hiến máu của bạn không được chấp thuận. Bạn có thể liên hệ với bệnh viện để biết thêm chi tiết.</string>
@@ -227,6 +229,20 @@
     <string name="change_pass_placeholder">Mật khẩu phải tối thiểu 8 kí tự</string>
 
     <!-- Setting/History -->
-    <string name="no_donation_yet">You haven’t donated to any events yet</string>
+    <string name="no_donation_yet">Bạn chưa tham gia hiến máu cho sự kiện nào</string>
+
+    <!-- Setting/Personal Information -->
+    <string name="under_18_error">Bạn phải từ 18 tuổi trở lên mới có thể hiến máu</string>
+    <string name="update">Cập nhật</string>
+
+    <!-- DonatedDetail -->
+    <string name="donation_details">Thông tin hiến máu</string>
+    <string name="thank_banner_title">Cảm ơn bạn đã hiến máu!</string>
+    <string name="thank_banner_subtitle">Sự đóng góp của bạn giúp những người cần máu.</string>
+    <string name="donor_info">Thông tin người hiến</string>
+    <string name="donation_info_card">Thông tin hiến</string>
+    <string name="hospital_info">Thông tin bệnh viện</string>
+    <string name="donated_volume">Lượng máu hiến</string>
+    <string name="hosted_by">Tổ chức bởi</string>
 
 </resources>

@@ -29,7 +29,7 @@ import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.presentation.components.AppButton
-import com.example.heartbeat.presentation.components.DatePickerField
+import com.example.heartbeat.presentation.components.DatePickerFieldForEvent
 import com.example.heartbeat.presentation.components.DeadlinePickerField
 import com.example.heartbeat.presentation.components.TimePickerField
 import com.example.heartbeat.presentation.features.event.util.EventValidator
@@ -200,7 +200,7 @@ fun EventForm(
             )
         )
 
-        DatePickerField(
+        DatePickerFieldForEvent(
             title = stringResource(id = R.string.date),
             selectedDate = selectedDate,
             onDateChange = { newDate -> selectedDate = newDate },

@@ -35,6 +35,9 @@ class DonorViewModel @Inject constructor(
     private val _donorAvatar = MutableStateFlow<DonorAvatar?>(null)
     val donorAvatar: StateFlow<DonorAvatar?> = _donorAvatar
 
+    private val _originalDonor = MutableStateFlow<Donor?>(null)
+    val originalDonor: StateFlow<Donor?> = _originalDonor
+
     //Personal info
     fun updatePersonalInfo(
         name: String,
@@ -176,20 +179,26 @@ class DonorViewModel @Inject constructor(
             try {
                 _isLoading.value = true
 
-                val donor = donorUseCase.getCurrentDonorUseCase(donorId)!!
+                val donor = donorUseCase.getCurrentDonorUseCase(donorId)
 
-                _formState.update { current ->
-                    current.copy(
-                        name = donor.name,
-                        phoneNumber = donor.phoneNumber,
-                        bloodGroup = donor.bloodGroup,
-                        cityId = donor.cityId,
-                        dateOfBirth = donor.dateOfBirth,
-                        age = donor.age,
-                        gender = donor.gender,
-                        willingToDonate = donor.willingToDonate,
-                        about = donor.about
-                    )
+                if (donor != null) {
+                    _originalDonor.value = donor
+
+                    _formState.update { current ->
+                        current.copy(
+                            name = donor.name,
+                            phoneNumber = donor.phoneNumber,
+                            bloodGroup = donor.bloodGroup,
+                            cityId = donor.cityId,
+                            dateOfBirth = donor.dateOfBirth,
+                            age = donor.age,
+                            gender = donor.gender,
+                            willingToDonate = donor.willingToDonate,
+                            about = donor.about
+                        )
+                    }
+                } else {
+                    _formState.update { it.copy(error = "Donor not found") }
                 }
             } catch (e: Exception) {
                 _formState.update { it.copy(error = e.message) }

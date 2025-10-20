@@ -32,7 +32,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun DatePickerField(
+fun DatePickerFieldForEvent(
     modifier: Modifier = Modifier,
     title: String,
     placeholder: String = "",

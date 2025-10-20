@@ -87,6 +87,9 @@ import com.example.heartbeat.ui.theme.VitalPink
 import com.example.heartbeat.ui.theme.VitalPinkText
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -390,7 +393,29 @@ fun UpcomingEventCard(
     recentViewedViewModel: RecentViewedViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault())
+    val now = LocalDateTime.now()
+
+    val upcomingEvents = remember(events) {
+        events.filter { event ->
+            try {
+                val eventDate = LocalDate.parse(event.date, dateFormatter)
+                val startStr = event.time.split(" ")[0]
+                val eventTime = LocalTime.parse(startStr, timeFormatter)
+                val eventDateTime = LocalDateTime.of(eventDate, eventTime)
+
+                eventDateTime.isAfter(now)
+            } catch (e: Exception) {
+                false
+            }
+        }.sortedBy { event ->
+            val eventDate = LocalDate.parse(event.date, dateFormatter)
+            val startStr = event.time.split(" ")[0]
+            val eventTime = LocalTime.parse(startStr, timeFormatter)
+            LocalDateTime.of(eventDate, eventTime)
+        }
+    }
 
     LaunchedEffect(events) {
         events.forEach { event ->
@@ -414,7 +439,7 @@ fun UpcomingEventCard(
         )
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)) {
-            items(events.take(3)) { event ->
+            items(upcomingEvents.take(3)) { event ->
                 val (startStr, _) = event.time.split(" ")
                 val startTime = LocalTime.parse(startStr, timeFormatter)
 

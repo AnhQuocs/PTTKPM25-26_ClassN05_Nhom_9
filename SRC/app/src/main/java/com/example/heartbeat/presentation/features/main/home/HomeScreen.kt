@@ -1,5 +1,7 @@
 package com.example.heartbeat.presentation.features.main.home
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
@@ -48,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,6 +62,7 @@ import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.presentation.components.AppTitle
 import com.example.heartbeat.presentation.components.TitleSection
+import com.example.heartbeat.presentation.features.event.ui.AllEventsActivity
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.recent_viewed.viewmodel.RecentViewedViewModel
@@ -99,6 +103,8 @@ fun HomeScreen(
     provinceViewModel: ProvinceViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val context = LocalContext.current
+
     val authState by authViewModel.authState.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
     val avatar by donorViewModel.donorAvatar.collectAsState()
@@ -185,7 +191,7 @@ fun HomeScreen(
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
                 item { WhyDonateList() }
                 item { Spacer(modifier = Modifier.height(AppSpacing.Jumbo)) }
-                item { user?.let { UpcomingEventCard(donorId = it.uid, events = events, navController = navController) } }
+                item { user?.let { UpcomingEventCard(context = context, donorId = it.uid, events = events, navController = navController) } }
             }
 
             formState.error?.let { errorMsg ->
@@ -386,6 +392,7 @@ fun BloodGroup() {
 
 @Composable
 fun UpcomingEventCard(
+    context: Context,
     donorId: String,
     events: List<Event>,
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
@@ -434,7 +441,9 @@ fun UpcomingEventCard(
             text1 = stringResource(id = R.string.upcoming_event),
             text2 = stringResource(id = R.string.see_all),
             onClick = {
-                // navigate to all events screen
+                val intent = Intent(context, AllEventsActivity::class.java)
+                    .putExtra("donorId", donorId)
+                context.startActivity(intent)
             }
         )
 
@@ -448,7 +457,7 @@ fun UpcomingEventCard(
                 Card(
                     modifier = Modifier
                         .border(0.1.dp, Color.LightGray, RoundedCornerShape(AppShape.ExtraExtraLargeShape))
-                        .height(Dimens.HeightXL3)
+                        .height(Dimens.HeightXL3 + 5.dp)
                         .aspectRatio(2f)
                         .clickable {
                             recentViewedViewModel.addRecentViewed(id = event.id)

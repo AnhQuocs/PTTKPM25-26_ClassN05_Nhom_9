@@ -41,6 +41,7 @@ fun StepOneScreen(
 
     val bloodList = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
     val provinces by provinceViewModel.provinces.collectAsState()
+    val provinceIDs: List<String> = provinces.map { it.id }
     val provinceNames: List<String> = provinces.map { it.name }
 
     val scrollState = rememberScrollState()
@@ -57,7 +58,7 @@ fun StepOneScreen(
             title = stringResource(id = R.string.your_full_name),
             value = formState.name,
             onValueChange = {
-                onUpdate(it, formState.phoneNumber, formState.bloodGroup, formState.city)
+                onUpdate(it, formState.phoneNumber, formState.bloodGroup, formState.cityId)
             },
             placeholder = stringResource(id = R.string.your_full_name),
             leadingIcon = Icons.Default.Person,
@@ -72,7 +73,7 @@ fun StepOneScreen(
             title = stringResource(id = R.string.phone_number),
             value = formState.phoneNumber,
             onValueChange = {
-                onUpdate(formState.name, it, formState.bloodGroup, formState.city)
+                onUpdate(formState.name, it, formState.bloodGroup, formState.cityId)
             },
             placeholder = stringResource(id = R.string.phone_number),
             leadingIcon = Icons.Default.Phone,
@@ -88,7 +89,7 @@ fun StepOneScreen(
             title = stringResource(id = R.string.blood_group),
             value = formState.bloodGroup,
             onValueChange = {
-                onUpdate(formState.name, formState.phoneNumber, it, formState.city)
+                onUpdate(formState.name, formState.phoneNumber, it, formState.cityId)
             },
             placeholder = stringResource(id = R.string.select_group),
             leadingIcon = Icons.Default.Bloodtype,
@@ -103,9 +104,15 @@ fun StepOneScreen(
 
         ProfileSetupTextField(
             title = stringResource(id = R.string.city),
-            value = formState.city,
-            onValueChange = {
-                onUpdate(formState.name, formState.phoneNumber, formState.bloodGroup, it)
+            value = provinces.firstOrNull { it.id == formState.cityId }?.name ?: "",
+            onValueChange = { selectedName ->
+                val selectedId = provinces.firstOrNull { it.name == selectedName }?.id ?: ""
+                onUpdate(
+                    formState.name,
+                    formState.phoneNumber,
+                    formState.bloodGroup,
+                    selectedId
+                )
             },
             placeholder = stringResource(id = R.string.select_city),
             leadingIcon = Icons.Default.LocationOn,

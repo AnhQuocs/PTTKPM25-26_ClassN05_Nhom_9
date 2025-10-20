@@ -5,7 +5,7 @@ data class Donor(
     val name: String,
     val phoneNumber: String,
     val bloodGroup: String,
-    val city: String,
+    val cityId: String,
     val dateOfBirth: String,
     val age: Int,
     val gender: String,

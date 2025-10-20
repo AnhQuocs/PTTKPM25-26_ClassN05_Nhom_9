@@ -25,7 +25,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +43,6 @@ import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.presentation.features.event.ui.CircularProgressBar
-import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
@@ -258,7 +256,7 @@ fun RegisterDonationScreen(
 
                         FormItem(
                             title = stringResource(id = R.string.city),
-                            value = formState.city
+                            value = formState.cityId
                         )
 
                         Spacer(modifier = Modifier.height(AppSpacing.Small))

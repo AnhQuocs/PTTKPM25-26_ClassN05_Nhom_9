@@ -4,6 +4,7 @@ import com.example.heartbeat.data.repository.system.ProvinceRepositoryImpl
 import com.example.heartbeat.data.source.remote.FirebaseProvinceDataSource
 import com.example.heartbeat.domain.repository.system.ProvinceRepository
 import com.example.heartbeat.domain.usecase.system.province.GetAllProvincesUseCase
+import com.example.heartbeat.domain.usecase.system.province.GetProvinceByIdUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,4 +35,10 @@ object SystemModule {
     fun provideGetAllProvinceUseCase(
         repository: ProvinceRepository
     ) = GetAllProvincesUseCase(repository)
+
+    @Provides
+    @Singleton
+    fun provideGetProvinceByIdUseCase(
+        repository: ProvinceRepository
+    ) = GetProvinceByIdUseCase(repository)
 }

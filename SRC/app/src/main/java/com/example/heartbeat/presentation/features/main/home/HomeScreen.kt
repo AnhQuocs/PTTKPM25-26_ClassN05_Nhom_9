@@ -62,6 +62,7 @@ import com.example.heartbeat.presentation.components.TitleSection
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.recent_viewed.viewmodel.RecentViewedViewModel
+import com.example.heartbeat.presentation.features.system.province.viewmodel.ProvinceViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.ui.dimens.AppShape
@@ -92,6 +93,7 @@ fun HomeScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
     donorViewModel: DonorViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel(),
+    provinceViewModel: ProvinceViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val authState by authViewModel.authState.collectAsState()
@@ -112,15 +114,22 @@ fun HomeScreen(
 
     val user = authState?.getOrNull()
 
+    val selectedProvince by provinceViewModel.selectedProvince.collectAsState()
+
     LaunchedEffect(Unit) {
         authViewModel.loadCurrentUser()
     }
 
     LaunchedEffect(authState) {
         authState?.getOrNull()?.let { user ->
-            Log.d("HomeScreen", "Fetching donor data for ${user.uid}")
             donorViewModel.getCurrentDonor()
             donorViewModel.getAvatar(user.uid)
+        }
+    }
+
+    LaunchedEffect(formState.cityId) {
+        if (formState.cityId.isNotBlank()) {
+            provinceViewModel.loadProvinceById(formState.cityId)
         }
     }
 
@@ -138,11 +147,13 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     user?.let {
-                        UserTopBar(
-                            avatar = avatar,
-                            formState = formState,
-                            user = it
-                        )
+                        selectedProvince?.let { it1 ->
+                            UserTopBar(
+                                avatar = avatar,
+                                user = it,
+                                cityName = it1.name
+                            )
+                        }
                     }
                 }
             }

@@ -90,6 +90,7 @@ fun ProfileSetupScreen(
     val formState by donorViewModel.formState.collectAsState()
     val provinces by provinceViewModel.provinces.collectAsState()
     val provinceNames = provinces.map { it.name }
+    val provinceIDs = provinces.map { it.id }
 
     val bloodList = listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-")
     val genderList = listOf(
@@ -161,7 +162,7 @@ fun ProfileSetupScreen(
     }
 
     val isButtonEnabled = when (pagerState.currentPage) {
-        0 -> formState.isStepOneValid(provinceNames, bloodList)
+        0 -> formState.isStepOneValid(provinceIDs, bloodList)
         1 -> formState.isStepTwoValid(genderList)
         2 -> formState.isStepThreeValid()
         else -> false

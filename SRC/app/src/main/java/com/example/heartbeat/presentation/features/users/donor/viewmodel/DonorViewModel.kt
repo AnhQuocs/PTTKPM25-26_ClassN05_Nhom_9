@@ -47,7 +47,7 @@ class DonorViewModel @Inject constructor(
                 name = name,
                 phoneNumber = phoneNumber,
                 bloodGroup = bloodGroup,
-                city = city
+                cityId = city
             )
         }
     }
@@ -109,7 +109,7 @@ class DonorViewModel @Inject constructor(
                     name = _formState.value.name,
                     phoneNumber = _formState.value.phoneNumber,
                     bloodGroup = _formState.value.bloodGroup,
-                    city = _formState.value.city,
+                    cityId = _formState.value.cityId,
                     dateOfBirth = _formState.value.dateOfBirth,
                     age = _formState.value.age,
                     gender = _formState.value.gender,
@@ -150,7 +150,7 @@ class DonorViewModel @Inject constructor(
                             name = donor.name,
                             phoneNumber = donor.phoneNumber,
                             bloodGroup = donor.bloodGroup,
-                            city = donor.city,
+                            cityId = donor.cityId,
                             dateOfBirth = donor.dateOfBirth,
                             age = donor.age,
                             gender = donor.gender,
@@ -183,7 +183,7 @@ class DonorViewModel @Inject constructor(
                         name = donor.name,
                         phoneNumber = donor.phoneNumber,
                         bloodGroup = donor.bloodGroup,
-                        city = donor.city,
+                        cityId = donor.cityId,
                         dateOfBirth = donor.dateOfBirth,
                         age = donor.age,
                         gender = donor.gender,

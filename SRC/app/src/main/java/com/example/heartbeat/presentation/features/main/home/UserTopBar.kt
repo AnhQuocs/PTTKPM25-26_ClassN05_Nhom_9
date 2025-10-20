@@ -49,7 +49,7 @@ fun base64ToImageBitmap(base64: String): ImageBitmap? {
 }
 
 @Composable
-fun UserTopBar(avatar: DonorAvatar?, formState: DonorFormState, user: AuthUser) {
+fun UserTopBar(avatar: DonorAvatar?, user: AuthUser, cityName: String) {
     val imgBitmap = remember(avatar?.avatarUrl) {
         avatar?.avatarUrl?.let { base64ToImageBitmap(it) }
     }
@@ -107,7 +107,7 @@ fun UserTopBar(avatar: DonorAvatar?, formState: DonorFormState, user: AuthUser) 
                 Spacer(modifier = Modifier.width(AppSpacing.Small))
 
                 Text(
-                    text = formState.city,
+                    text = cityName,
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Normal),
                     color = Green500
                 )

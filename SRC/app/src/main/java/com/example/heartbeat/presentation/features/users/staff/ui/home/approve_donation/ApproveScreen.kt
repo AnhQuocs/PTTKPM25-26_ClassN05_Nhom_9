@@ -2,12 +2,6 @@ package com.example.heartbeat.presentation.features.users.staff.ui.home.approve_
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apartment
@@ -54,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -173,7 +165,7 @@ fun ApproveScreen(
                                         name = it.name,
                                         phoneNumber = it.phoneNumber,
                                         bloodGroup = it.bloodGroup,
-                                        city = it.city,
+                                        cityId = it.cityId,
                                         dateOfBirth = it.dateOfBirth,
                                         age = it.age,
                                         gender = it.gender
@@ -386,7 +378,7 @@ fun DonorInfo(
                     verticalArrangement = Arrangement.spacedBy(Dimens.PaddingXS)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.city) + ": ${formState.city}",
+                        text = stringResource(id = R.string.city) + ": ${formState.cityId}",
                         style = detailStyle
                     )
                     Text(

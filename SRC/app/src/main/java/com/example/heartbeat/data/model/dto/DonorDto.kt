@@ -5,7 +5,7 @@ data class DonorDto(
     val name: String? = null,
     val phoneNumber: String? = null,
     val bloodGroup: String? = null,
-    val city: String? = null,
+    val cityId: String? = null,
     val dateOfBirth: String? = null,
     val age: Int? = null,
     val gender: String? = null,

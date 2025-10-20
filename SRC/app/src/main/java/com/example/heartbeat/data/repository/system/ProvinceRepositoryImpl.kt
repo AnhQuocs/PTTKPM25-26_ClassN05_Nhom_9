@@ -14,4 +14,9 @@ class ProvinceRepositoryImpl(
             dto.toProvince(id)
         }
     }
+
+    override suspend fun getProvinceById(id: String): Province? {
+        val pair = dataSource.fetchProvinceById(id)
+        return pair?.second?.toProvince(pair.first)
+    }
 }

@@ -4,7 +4,7 @@ data class DonorFormState(
     val name: String = "",
     val phoneNumber: String = "",
     val bloodGroup: String = "",
-    val city: String = "",
+    val cityId: String = "",
     val dateOfBirth: String = "",
     val age: Int = 0,
     val gender: String = "",
@@ -18,12 +18,12 @@ data class DonorFormState(
     val error: String? = null,
     val isSubmitSuccess: Boolean = false
 ) {
-    fun isStepOneValid(provinceNames: List<String>, bloodList: List<String>): Boolean =
+    fun isStepOneValid(provinceIds: List<String>, bloodList: List<String>): Boolean =
         name.isNotBlank() &&
                 phoneNumber.isValidPhone() &&
                 bloodList.contains(bloodGroup) &&
-                city.isNotBlank() &&
-                provinceNames.contains(city)
+                cityId.isNotBlank() &&
+                provinceIds.contains(cityId)
 
     fun isStepTwoValid(genderList: List<String>) =
         dateOfBirth.isNotBlank()

@@ -3,7 +3,6 @@ package com.example.heartbeat.presentation.features.system.setting
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,13 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,15 +21,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.BaseComponentActivity
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.users.Donor
+import com.example.heartbeat.presentation.components.AppButton
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.ui.dimens.AppShape
+import com.example.heartbeat.ui.dimens.AppSpacing
+import com.example.heartbeat.ui.dimens.Dimens
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -46,7 +42,7 @@ class PersonalInformationActivity : BaseComponentActivity() {
         val donorId = intent.getStringExtra("donorId")
 
         setContent {
-            donorId?.let { PersonalInformationScreen(donorId = it) }
+            donorId?.let { PersonalInformationScreen(donorId = it, onBackClick = { finish() }) }
         }
     }
 }
@@ -54,6 +50,7 @@ class PersonalInformationActivity : BaseComponentActivity() {
 @Composable
 fun PersonalInformationScreen(
     donorId: String,
+    onBackClick: () -> Unit,
     donorViewModel: DonorViewModel = hiltViewModel()
 ) {
     val formState by donorViewModel.formState.collectAsState()
@@ -66,46 +63,42 @@ fun PersonalInformationScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(Dimens.PaddingM)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM)
     ) {
-
-        Text(
-            text = "Cập nhật thông tin cá nhân",
-            style = MaterialTheme.typography.titleLarge
+        SettingTitle(
+            text = stringResource(id = R.string.personal_info),
+            onClick = onBackClick
         )
 
-        OutlinedTextField(
+        Spacer(modifier = Modifier.height(AppSpacing.Large))
+
+        PersonalInfoTextField(
             value = formState.name,
-            onValueChange = { donorViewModel.updatePersonalInfo(it, formState.phoneNumber, formState.bloodGroup, formState.city) },
-            label = { Text("Họ và tên") },
-            modifier = Modifier.fillMaxWidth()
+            onValueChange = { donorViewModel.updatePersonalInfo(it, formState.phoneNumber, formState.bloodGroup, formState.cityId) },
+            label = stringResource(id = R.string.full_name)
         )
 
-        OutlinedTextField(
+        PersonalInfoTextField(
             value = formState.phoneNumber,
-            onValueChange = { donorViewModel.updatePersonalInfo(formState.name, it, formState.bloodGroup, formState.city) },
-            label = { Text("Số điện thoại") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+            onValueChange = { donorViewModel.updatePersonalInfo(formState.name, it, formState.bloodGroup, formState.cityId) },
+            label = stringResource(id = R.string.phone_number)
         )
 
-        OutlinedTextField(
+        PersonalInfoTextField(
             value = formState.bloodGroup,
-            onValueChange = { donorViewModel.updatePersonalInfo(formState.name, formState.phoneNumber, it, formState.city) },
-            label = { Text("Nhóm máu") },
-            modifier = Modifier.fillMaxWidth()
+            onValueChange = { donorViewModel.updatePersonalInfo(formState.name, formState.phoneNumber, it, formState.cityId) },
+            label = stringResource(id = R.string.blood_group)
         )
 
-        OutlinedTextField(
-            value = formState.city,
+        PersonalInfoTextField(
+            value = formState.cityId,
             onValueChange = { donorViewModel.updatePersonalInfo(formState.name, formState.phoneNumber, formState.bloodGroup, it) },
-            label = { Text("Thành phố") },
-            modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.city)
         )
 
-        OutlinedTextField(
+        PersonalInfoTextField(
             value = formState.dateOfBirth,
             onValueChange = {
                 donorViewModel.updateBasicInfo(
@@ -116,11 +109,10 @@ fun PersonalInformationScreen(
                     about = formState.about
                 )
             },
-            label = { Text("Ngày sinh") },
-            modifier = Modifier.fillMaxWidth()
+            label = stringResource(id = R.string.date_of_birth)
         )
 
-        OutlinedTextField(
+        PersonalInfoTextField(
             value = formState.about,
             onValueChange = {
                 donorViewModel.updateBasicInfo(
@@ -131,23 +123,20 @@ fun PersonalInformationScreen(
                     about = it
                 )
             },
-            label = { Text("Giới thiệu bản thân") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
+            label = stringResource(id = R.string.about_yourself),
+            modifier = Modifier.height(Dimens.HeightXL)
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-        // 🔹 Nút cập nhật
-        Button(
+        AppButton(
             onClick = {
                 val updatedDonor = Donor(
                     donorId = donorId,
                     name = formState.name,
                     phoneNumber = formState.phoneNumber,
                     bloodGroup = formState.bloodGroup,
-                    city = formState.city,
+                    cityId = formState.cityId,
                     dateOfBirth = formState.dateOfBirth,
                     age = formState.age,
                     gender = formState.gender,
@@ -156,34 +145,44 @@ fun PersonalInformationScreen(
                 )
                 donorViewModel.updateDonor(updatedDonor)
             },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    modifier = Modifier.size(20.dp)
-                )
-            } else {
-                Text("Cập nhật")
-            }
-        }
+            enabled = !isLoading,
+            text = "Update"
+        )
 
-        // 🔹 Hiển thị lỗi hoặc thông báo
         formState.error?.let { error ->
             Text(
                 text = "Lỗi: $error",
                 color = Color.Red,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = Dimens.PaddingS)
             )
         }
 
         if (formState.isSubmitSuccess) {
             Text(
-                text = "Cập nhật thành công!",
+                text = stringResource(id = R.string.update_success),
                 color = Color(0xFF00C853),
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = Dimens.PaddingS)
             )
         }
     }
+}
+
+@Composable
+fun PersonalInfoTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    label: String,
+    onValueChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = {
+          Text(text = label)
+        },
+        shape = RoundedCornerShape(AppShape.ExtraLargeShape),
+        modifier = modifier
+            .padding(top = Dimens.PaddingS)
+            .fillMaxWidth()
+    )
 }

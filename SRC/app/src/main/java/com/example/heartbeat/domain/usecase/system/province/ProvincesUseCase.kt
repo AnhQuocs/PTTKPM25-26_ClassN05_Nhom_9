@@ -8,3 +8,9 @@ class GetAllProvincesUseCase(private val repository: ProvinceRepository) {
         return repository.getAllProvinces()
     }
 }
+
+class GetProvinceByIdUseCase(private val repository: ProvinceRepository) {
+    suspend operator fun invoke(id: String): Province? {
+        return repository.getProvinceById(id)
+    }
+}

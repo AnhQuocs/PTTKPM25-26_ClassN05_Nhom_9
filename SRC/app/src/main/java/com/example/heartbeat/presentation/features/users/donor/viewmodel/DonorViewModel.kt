@@ -199,6 +199,28 @@ class DonorViewModel @Inject constructor(
         }
     }
 
+    fun updateDonor(donor: Donor) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        viewModelScope.launch {
+            try {
+                _formState.update { it.copy(isLoading = true, error = null, isSubmitSuccess = false) }
+
+                donorUseCase.updateDonorUseCase(userId, donor)
+
+                _formState.update { it.copy(isLoading = false, isSubmitSuccess = true) }
+
+                Log.d("DonorViewModel", "Donor $userId updated successfully")
+
+            } catch (e: Exception) {
+                _formState.update {
+                    it.copy(isLoading = false, error = e.message, isSubmitSuccess = false)
+                }
+                Log.e("DonorViewModel", "Error updating donor", e)
+            }
+        }
+    }
+
     fun fetchDonorAndCache(donorId: String) {
         viewModelScope.launch {
             try {

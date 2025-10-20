@@ -241,7 +241,7 @@ fun HistoryEventCard(
             Button(
                 onClick = onViewDetail,
                 shape = RoundedCornerShape(AppShape.ExtraLargeShape),
-                colors = ButtonDefaults.buttonColors(containerColor = HeroLavenderText),
+                colors = ButtonDefaults.buttonColors(containerColor = Green500),
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .align(Alignment.End)

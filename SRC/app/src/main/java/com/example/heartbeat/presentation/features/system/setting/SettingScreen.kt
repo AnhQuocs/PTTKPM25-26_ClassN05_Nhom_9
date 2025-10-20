@@ -184,7 +184,11 @@ fun SettingScreen(
             OptionItem(
                 iconRes = R.drawable.ic_info,
                 text = stringResource(id = R.string.personal_info),
-                onClick = {}
+                onClick = {
+                    val intent = Intent(context, PersonalInformationActivity::class.java)
+                    intent.putExtra("donorId", user?.uid)
+                    context.startActivity(intent)
+                }
             )
 
             OptionItem(

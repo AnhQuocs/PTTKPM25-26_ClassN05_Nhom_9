@@ -159,12 +159,13 @@
     <string name="donors_pending_approval">donors pending approval</string>
 
     <!-- Staff/Home -->
-    <string name="donation_stats_title">Donation Statistics</string>
+    <string name="donation_stats_title">Registration Overview</string>
     <string name="no_donation_data">No donation data</string>
     <string name="day_label">Day</string>
     <string name="week_label">Week</string>
     <string name="month_label">Month</string>
     <string name="total_registered">registered</string>
+    <string name="blood_stats_title">Blood Overview</string>
 
     <!-- Donation -->
     <string name="citizen_id">Citizen ID</string>

@@ -2,6 +2,7 @@ package com.example.heartbeat.domain.usecase.donation
 
 import com.example.heartbeat.domain.usecase.donation.create.AddDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.delete.DeleteDonationUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetAllDonationsListUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetAllDonationsUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDayUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDonorUseCase
@@ -31,5 +32,6 @@ data class DonationUseCases(
     val getDonationsByDayUseCase: GetDonationsByDayUseCase,
     val getDonationsByWeekUseCase: GetDonationsByWeekUseCase,
     val getDonationsByMonthUseCase: GetDonationsByMonthUseCase,
-    val getAllDonationsUseCase: GetAllDonationsUseCase
+    val getAllDonationsUseCase: GetAllDonationsUseCase,
+    val getAllDonationsListUseCase: GetAllDonationsListUseCase
 )

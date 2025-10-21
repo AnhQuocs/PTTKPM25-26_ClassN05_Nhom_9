@@ -88,20 +88,20 @@ fun PendingListSection(
         return
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TitleSection(
-            text1 = stringResource(id = R.string.pending_requests),
-            text2 = stringResource(id = R.string.see_all),
-            onClick = {}
-        )
+    if (entries.isEmpty()) {
+        // EmptyPendingState()
+    } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            TitleSection(
+                text1 = stringResource(id = R.string.pending_requests),
+                text2 = stringResource(id = R.string.see_all),
+                onClick = {}
+            )
 
-        Spacer(modifier = Modifier.height(AppSpacing.Medium))
+            Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-        Log.d("PendingListSection", "Size: ${entries.size}")
+            Log.d("PendingListSection", "Size: ${entries.size}")
 
-        if (entries.isEmpty()) {
-            // EmptyPendingState()
-        } else {
             AnimatedContent(
                 targetState = entries.take(3).map { it.key },
                 transitionSpec = {
@@ -220,6 +220,8 @@ fun PendingListSection(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(AppSpacing.Large))
         }
     }
 }

@@ -194,6 +194,17 @@ class DonationViewModel @Inject constructor(
         }
     }
 
+    fun getAllDonatedDonations() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+        try {
+            val allDonations = donationUseCases.getAllDonationsListUseCase()
+            val donated = allDonations.filter { it.status == "DONATED" }
+            _uiState.update { it.copy(isLoading = false, donatedList = donated) }
+        } catch (e: Exception) {
+            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+        }
+    }
+
     fun observeDonationForDonor(eventId: String, donorId: String) {
         viewModelScope.launch {
             donationUseCases.observeDonationByDonorUseCase(eventId, donorId)
@@ -208,35 +219,5 @@ class DonationViewModel @Inject constructor(
     // reset state
     fun clearMessages() {
         _uiState.update { it.copy(errorMessage = null, successMessage = null) }
-    }
-
-    fun getDonatedDonationsWithEventAndHospital(
-        donorId: String,
-        eventViewModel: EventViewModel,
-        hospitalViewModel: HospitalViewModel,
-        onResult: (List<Triple<Donation, Event?, Hospital?>>) -> Unit
-    ) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-
-            val allDonations = donationUseCases.getDonationsByDonor(donorId)
-            val donatedList = allDonations.filter { it.status == "DONATED" }
-
-            val result = donatedList.mapNotNull { donation ->
-                val event = eventViewModel.getEventByIdDirect(donation.eventId)
-                val hospital = event.locationId.let { locationId ->
-                    hospitalViewModel.loadHospitalById(locationId)
-                    hospitalViewModel.hospitalDetails[locationId]
-                }
-
-                if (hospital != null) {
-                    Triple(donation, event, hospital)
-                } else null
-            }
-
-            onResult(result)
-
-            _uiState.update { it.copy(isLoading = false) }
-        }
     }
 }

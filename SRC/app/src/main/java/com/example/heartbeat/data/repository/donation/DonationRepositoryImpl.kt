@@ -107,6 +107,11 @@ class DonationRepositoryImpl(
         return snapshot.size()
     }
 
+    override suspend fun getAllDonationsList(): List<Donation> {
+        val snapshot = collection.get().await()
+        return snapshot.toObjects(DonationDto::class.java).mapNotNull { it.toDomain() }
+    }
+
     override suspend fun updateDonation(donation: Donation): Donation {
         collection.document(donation.donationId).set(donation.toDto()).await()
         return donation

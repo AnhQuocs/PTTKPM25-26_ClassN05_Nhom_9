@@ -21,7 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,9 +36,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
+import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.presentation.features.users.staff.ui.home.stats.BloodBankStats
 import com.example.heartbeat.presentation.features.users.staff.ui.home.stats.DonationStatsCard
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
@@ -54,6 +59,8 @@ fun StaffHomeScreen(
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel(),
+    donationViewModel: DonationViewModel = hiltViewModel(),
+    donorViewModel: DonorViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val authState by authViewModel.authState.collectAsState()
@@ -92,9 +99,26 @@ fun StaffHomeScreen(
         CoralRed
     )
 
+    val donorCache by donorViewModel.donorCache.collectAsState()
+
+    val uiState by donationViewModel.uiState.collectAsState()
+    val donatedList = uiState.donatedList
+
+    val allDonorsLoaded by remember(donatedList, donorCache) {
+        derivedStateOf {
+            donatedList.all { donorCache.containsKey(it.donorId) }
+        }
+    }
+
     LaunchedEffect(Unit) {
+        donationViewModel.getAllDonatedDonations()
         hospitalViewModel.loadHospitals()
         authViewModel.loadCurrentUser()
+    }
+
+    LaunchedEffect(donatedList) {
+        val missingIds = donatedList.map { it.donorId }.filter { !donorCache.containsKey(it) }
+        missingIds.forEach { donorViewModel.fetchDonorAndCache(it) }
     }
 
     Scaffold(
@@ -166,37 +190,21 @@ fun StaffHomeScreen(
                 .fillMaxSize()
                 .background(color = Color.White)
                 .padding(top = paddingValues.calculateTopPadding())
-                .padding(top = Dimens.PaddingL)
                 .padding(horizontal = Dimens.PaddingM)
         ) {
             item {
                 DonationStatsCard()
             }
 
-            item { Spacer(modifier = Modifier.height(AppSpacing.Medium)) }
+            item {
+                BloodBankStats(donatedList = donatedList, donorCache = donorCache)
+            }
+
+            item { Spacer(modifier = Modifier.height(AppSpacing.ExtraSmall)) }
 
             item {
                 PendingListSection(navController = navController)
             }
-
-//            itemsIndexed(events) { index, event ->
-//                LaunchedEffect(Unit) {
-//                    hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
-//                }
-//
-//                val hospital = hospitalViewModel.hospitalDetails[event.locationId]
-//                val location = "${hospital?.district}, ${hospital?.province}"
-//
-//                val gradient = gradients[index % gradients.size]
-//                val accentColor = accentColors[index % accentColors.size]
-//
-////                StaffEventCard(
-////                    gradient = gradient,
-////                    event = event,
-////                    accentColor = accentColor,
-////                    location = location
-////                )
-//            }
         }
     }
 }

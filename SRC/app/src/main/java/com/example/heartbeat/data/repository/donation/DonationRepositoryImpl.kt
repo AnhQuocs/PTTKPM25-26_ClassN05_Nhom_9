@@ -5,6 +5,7 @@ import com.example.heartbeat.data.model.mapper.toDomain
 import com.example.heartbeat.data.model.mapper.toDto
 import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.repository.donation.DonationRepository
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,10 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.firstOrNull
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.ZoneId
+import java.util.Date
 
 class DonationRepositoryImpl(
     firestore: FirebaseFirestore,
@@ -53,6 +58,53 @@ class DonationRepositoryImpl(
             .whereEqualTo("eventId", eventId)
             .get().await()
         return snapshot.toObjects(DonationDto::class.java).mapNotNull { it.toDomain() }
+    }
+
+    override suspend fun getDonationsByDay(day: LocalDate): Int {
+        val startOfDay = day.atStartOfDay()
+        val endOfDay = day.plusDays(1).atStartOfDay()
+
+        val snapshot = collection
+            .whereGreaterThanOrEqualTo("createAt", Timestamp(Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant())))
+            .whereLessThan("createAt", Timestamp(Date.from(endOfDay.atZone(ZoneId.systemDefault()).toInstant())))
+            .get()
+            .await()
+
+        return snapshot.size()
+    }
+
+    override suspend fun getDonationsByWeek(weekStart: LocalDate): Int {
+        val startOfWeek = weekStart.atStartOfDay()
+        val endOfWeek = weekStart.plusDays(7).atStartOfDay()
+
+        val snapshot = collection
+            .whereGreaterThanOrEqualTo("createAt", Timestamp(Date.from(startOfWeek.atZone(ZoneId.systemDefault()).toInstant())))
+            .whereLessThan("createAt", Timestamp(Date.from(endOfWeek.atZone(ZoneId.systemDefault()).toInstant())))
+            .get()
+            .await()
+
+        return snapshot.size()
+    }
+
+    override suspend fun getDonationsByMonth(month: YearMonth): Int {
+        val startOfMonth = month.atDay(1).atStartOfDay()
+        val endOfMonth = month.plusMonths(1).atDay(1).atStartOfDay()
+
+        val snapshot = collection
+            .whereGreaterThanOrEqualTo("createAt", Timestamp(Date.from(startOfMonth.atZone(ZoneId.systemDefault()).toInstant())))
+            .whereLessThan("createAt", Timestamp(Date.from(endOfMonth.atZone(ZoneId.systemDefault()).toInstant())))
+            .get()
+            .await()
+
+        return snapshot.size()
+    }
+
+    override suspend fun getAllDonations(): Int {
+        val snapshot = collection
+            .get()
+            .await()
+
+        return snapshot.size()
     }
 
     override suspend fun updateDonation(donation: Donation): Donation {

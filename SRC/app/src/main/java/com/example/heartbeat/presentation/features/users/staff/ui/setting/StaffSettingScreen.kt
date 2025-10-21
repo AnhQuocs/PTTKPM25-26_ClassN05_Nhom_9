@@ -1,6 +1,6 @@
 package com.example.heartbeat.presentation.features.users.staff.ui.setting
 
-import androidx.activity.ComponentActivity
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,32 +31,21 @@ import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.system.AppLanguage
 import com.example.heartbeat.presentation.components.AppButton
 import com.example.heartbeat.presentation.features.system.language.LanguageViewModel
+import com.example.heartbeat.presentation.features.system.setting.ChangeLanguageActivity
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.utils.LangUtils
 
 @Composable
 fun StaffSettingScreen(
-    modifier: Modifier = Modifier,
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel(),
-    languageViewModel: LanguageViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val activity = context as? ComponentActivity
-    val currentLang by languageViewModel.currentLanguage.collectAsState()
-    var lastLang by remember { mutableStateOf(currentLang) }
-
-    var selectedLang by remember { mutableStateOf(currentLang) }
-
-    LaunchedEffect(currentLang) {
-        if (currentLang != lastLang) {
-            lastLang = currentLang
-            activity?.recreate()
-        }
-    }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -67,44 +55,12 @@ fun StaffSettingScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { selectedLang = AppLanguage.ENGLISH }
-                .padding(vertical = 4.dp)
-        ) {
-            RadioButton(
-                selected = selectedLang == AppLanguage.ENGLISH,
-                onClick = { selectedLang = AppLanguage.ENGLISH }
-            )
-            Text("English 🇬🇧")
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { selectedLang = AppLanguage.VIETNAMESE }
-                .padding(vertical = 4.dp)
-        ) {
-            RadioButton(
-                selected = selectedLang == AppLanguage.VIETNAMESE,
-                onClick = { selectedLang = AppLanguage.VIETNAMESE }
-            )
-            Text("Tiếng Việt 🇻🇳")
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
+        AppButton(
             onClick = {
-                LangUtils.currentLang = selectedLang.code
-                languageViewModel.changeLanguage(selectedLang)
-            }
-        ) {
-            Text("Change")
-        }
+                context.startActivity(Intent(context, ChangeLanguageActivity::class.java))
+            },
+            text = "Language"
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 

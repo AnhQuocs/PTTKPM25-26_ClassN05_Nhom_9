@@ -158,6 +158,14 @@
     <string name="donors_pending">đang chờ</string>
     <string name="donors_pending_approval">đang chờ duyệt</string>
 
+    <!-- Staff/Home -->
+    <string name="donation_stats_title">Thống kê hiến máu</string>
+    <string name="no_donation_data">Chưa có dữ liệu hiến máu</string>
+    <string name="day_label">Ngày</string>
+    <string name="week_label">Tuần</string>
+    <string name="month_label">Tháng</string>
+    <string name="total_registered">đã đăng ký</string>
+
     <!-- Donation -->
     <string name="citizen_id">CCCD</string>
     <string name="hint_citizen_id">Nhập số CCCD</string>

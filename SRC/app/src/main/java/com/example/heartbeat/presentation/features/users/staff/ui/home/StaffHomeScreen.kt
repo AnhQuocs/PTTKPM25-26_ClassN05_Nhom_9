@@ -37,6 +37,7 @@ import com.example.heartbeat.R
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
+import com.example.heartbeat.presentation.features.users.staff.ui.home.stats.DonationStatsCard
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -163,100 +164,39 @@ fun StaffHomeScreen(
             verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM),
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = Color.White)
                 .padding(top = paddingValues.calculateTopPadding())
                 .padding(top = Dimens.PaddingL)
                 .padding(horizontal = Dimens.PaddingM)
         ) {
-            itemsIndexed(events) { index, event ->
-                LaunchedEffect(Unit) {
-                    hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
-                }
-
-                val hospital = hospitalViewModel.hospitalDetails[event.locationId]
-                val location = "${hospital?.district}, ${hospital?.province}"
-
-                val gradient = gradients[index % gradients.size]
-                val accentColor = accentColors[index % accentColors.size]
-
-//                StaffEventCard(
-//                    gradient = gradient,
-//                    event = event,
-//                    accentColor = accentColor,
-//                    location = location
-//                )
+            item {
+                DonationStatsCard()
             }
+
+            item { Spacer(modifier = Modifier.height(AppSpacing.Medium)) }
 
             item {
                 PendingListSection(navController = navController)
             }
-        }
 
-//        LazyColumn(
-//            verticalArrangement = Arrangement.spacedBy(Dimens.PaddingSM),
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(top = paddingValues.calculateTopPadding())
-//                .padding(top = Dimens.PaddingL)
-//                .padding(horizontal = Dimens.PaddingM)
-//        ) {
-//            // Test
-//            val eventList = listOf(
-//                Event(
-//                    id = "event_001",
-//                    locationId = "location_phenikaa",
-//                    name = "Giọt Hồng Yêu Thương",
-//                    description = "Chương trình hiến máu nhân đạo cho sinh viên & giảng viên tại ĐH Phenikaa.",
-//                    date = "03/10/2025",
-//                    time = "08:00 16:00",
-//                    deadline = LocalDateTime(2025, 10, 5, 23, 59, 0),
-//                    donorList = emptyList(),
-//                    capacity = 200,
-//                    donorCount = 75
-//                ),
-//                Event(
-//                    id = "event_001",
-//                    locationId = "location_phenikaa",
-//                    name = "Giọt Hồng Yêu Thương",
-//                    description = "Chương trình hiến máu nhân đạo cho sinh viên & giảng viên tại ĐH Phenikaa.",
-//                    date = "02/10/2025",
-//                    time = "08:00 18:00",
-//                    deadline = LocalDateTime(2025, 10, 5, 23, 59, 0),
-//                    donorList = emptyList(),
-//                    capacity = 200,
-//                    donorCount = 127
-//                ),
-//                Event(
-//                    id = "event_001",
-//                    locationId = "location_phenikaa",
-//                    name = "Giọt Hồng Yêu Thương",
-//                    description = "Chương trình hiến máu nhân đạo cho sinh viên & giảng viên tại ĐH Phenikaa.",
-//                    date = "28/09/2025",
-//                    time = "08:00 16:00",
-//                    deadline = LocalDateTime(2025, 10, 5, 23, 59, 0),
-//                    donorList = emptyList(),
-//                    capacity = 200,
-//                    donorCount = 190
-//                )
-//            )
+//            itemsIndexed(events) { index, event ->
+//                LaunchedEffect(Unit) {
+//                    hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
+//                }
 //
-//            val locationList = listOf(
-//                "Hà Đông, Hà Nội",
-//                "TP. Thái Nguyên",
-//                "Hoàn Kiếm, Hà Nội"
-//            )
+//                val hospital = hospitalViewModel.hospitalDetails[event.locationId]
+//                val location = "${hospital?.district}, ${hospital?.province}"
 //
-//            itemsIndexed(eventList) { index, event ->
 //                val gradient = gradients[index % gradients.size]
 //                val accentColor = accentColors[index % accentColors.size]
-//                val location = locationList[index]
 //
-//                EventCard(
-//                    gradient = gradient,
-//                    event = event,
-//                    accentColor = accentColor,
-//                    location = location
-//                )
+////                StaffEventCard(
+////                    gradient = gradient,
+////                    event = event,
+////                    accentColor = accentColor,
+////                    location = location
+////                )
 //            }
-//        }
+        }
     }
 }

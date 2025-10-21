@@ -5,9 +5,13 @@ import com.example.heartbeat.domain.repository.donation.DonationRepository
 import com.example.heartbeat.domain.usecase.donation.create.AddDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.delete.DeleteDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.DonationUseCases
+import com.example.heartbeat.domain.usecase.donation.read.GetAllDonationsUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDayUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByIdUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDonorUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByEventUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByMonthUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByWeekUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByDonorUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationsByEventUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObservePendingDonationsUseCase
@@ -45,7 +49,11 @@ object DonationModule {
             deleteDonation = DeleteDonationUseCase(repository),
             observePendingDonations = ObservePendingDonationsUseCase(repository),
             observeDonationsByEvent = ObserveDonationsByEventUseCase(repository),
-            observeDonationByDonorUseCase = ObserveDonationByDonorUseCase(repository)
+            observeDonationByDonorUseCase = ObserveDonationByDonorUseCase(repository),
+            getDonationsByDayUseCase = GetDonationsByDayUseCase(repository),
+            getDonationsByWeekUseCase = GetDonationsByWeekUseCase(repository),
+            getDonationsByMonthUseCase = GetDonationsByMonthUseCase(repository),
+            getAllDonationsUseCase = GetAllDonationsUseCase(repository)
         )
     }
 }

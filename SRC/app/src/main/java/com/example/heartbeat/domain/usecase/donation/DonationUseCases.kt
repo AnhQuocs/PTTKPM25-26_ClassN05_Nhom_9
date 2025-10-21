@@ -2,8 +2,12 @@ package com.example.heartbeat.domain.usecase.donation
 
 import com.example.heartbeat.domain.usecase.donation.create.AddDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.delete.DeleteDonationUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetAllDonationsUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDayUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDonorUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByEventUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByMonthUseCase
+import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByWeekUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByDonorUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByIdUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationsByEventUseCase
@@ -23,5 +27,9 @@ data class DonationUseCases(
     val deleteDonation: DeleteDonationUseCase,
     val observePendingDonations: ObservePendingDonationsUseCase,
     val observeDonationsByEvent: ObserveDonationsByEventUseCase,
-    val observeDonationByDonorUseCase: ObserveDonationByDonorUseCase
+    val observeDonationByDonorUseCase: ObserveDonationByDonorUseCase,
+    val getDonationsByDayUseCase: GetDonationsByDayUseCase,
+    val getDonationsByWeekUseCase: GetDonationsByWeekUseCase,
+    val getDonationsByMonthUseCase: GetDonationsByMonthUseCase,
+    val getAllDonationsUseCase: GetAllDonationsUseCase
 )

@@ -19,6 +19,7 @@ import javax.inject.Inject
 data class DonationUiState(
     val isLoading: Boolean = false,
     val donations: List<Donation> = emptyList(),
+    val donatedList: List<Donation> = emptyList(),
     val selectedDonation: Donation? = null,
     val errorMessage: String? = null,
     val successMessage: String? = null
@@ -80,6 +81,17 @@ class DonationViewModel @Inject constructor(
         try {
             val list = donationUseCases.getDonationsByEvent(eventId)
             _uiState.update { it.copy(isLoading = false, donations = list) }
+        } catch (e: Exception) {
+            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+        }
+    }
+
+    fun getDonatedDonations(donorId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+        try {
+            val allDonations = donationUseCases.getDonationsByDonor(donorId)
+            val donated = allDonations.filter { it.status == "DONATED" }
+            _uiState.update { it.copy(isLoading = false, donatedList = donated) }
         } catch (e: Exception) {
             _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
         }

@@ -1,6 +1,7 @@
 package com.example.heartbeat.presentation.features.system.setting
 
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -62,6 +63,7 @@ import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.users.AuthUser
 import com.example.heartbeat.domain.entity.users.DonorAvatar
 import com.example.heartbeat.presentation.components.AppLineGrey
+import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.main.home.base64ToImageBitmap
 import com.example.heartbeat.presentation.features.system.setting.account.AccountActivity
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
@@ -71,12 +73,14 @@ import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.TealPrimary
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Composable
 fun SettingScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
     donorViewModel: DonorViewModel = hiltViewModel(),
+    donationViewModel: DonationViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -109,6 +113,16 @@ fun SettingScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+
+    val donatedList by donationViewModel.uiState.map { it.donatedList }.collectAsState(initial = emptyList())
+
+    LaunchedEffect(user) {
+        user?.let {
+            donationViewModel.getDonatedDonations(donorId = it.uid)
+        }
+    }
+
+    Log.d("SettingScreen", "Size: ${donatedList.size}")
 
     Scaffold(
         topBar = {
@@ -203,7 +217,9 @@ fun SettingScreen(
                 iconRes = R.drawable.ic_history,
                 text = stringResource(id = R.string.history),
                 onClick = {
-                    context.startActivity(Intent(context, DonationHistoryActivity::class.java))
+                    val intent = Intent(context, DonationHistoryActivity::class.java)
+                    intent.putParcelableArrayListExtra("donated_list", ArrayList(donatedList))
+                    context.startActivity(intent)
                 }
             )
 

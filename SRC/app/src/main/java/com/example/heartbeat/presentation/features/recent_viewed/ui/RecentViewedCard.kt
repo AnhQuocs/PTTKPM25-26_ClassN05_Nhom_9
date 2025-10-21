@@ -62,8 +62,6 @@ fun RecentViewedCard(
     hospitalViewModel: HospitalViewModel,
     onNavigateToDetail: (String) -> Unit
 ) {
-    val selectedEvent by eventViewModel.selectedEvent.collectAsState()
-
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

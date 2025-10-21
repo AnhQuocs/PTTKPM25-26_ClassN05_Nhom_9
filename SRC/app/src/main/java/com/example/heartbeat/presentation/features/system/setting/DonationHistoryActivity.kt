@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,8 +74,10 @@ class DonationHistoryActivity : BaseComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val donatedList: ArrayList<Donation>?  = intent.getParcelableArrayListExtra("donated_list", Donation::class.java)
+
         setContent {
-            DonationHistoryScreen(onBackClick = { finish() })
+            donatedList?.let { DonationHistoryScreen(onBackClick = { finish() }, list = it) }
         }
     }
 }
@@ -82,6 +85,7 @@ class DonationHistoryActivity : BaseComponentActivity() {
 @Composable
 fun DonationHistoryScreen(
     onBackClick: () -> Unit,
+    list: List<Donation>,
     donationViewModel: DonationViewModel = hiltViewModel(),
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel()
@@ -92,35 +96,10 @@ fun DonationHistoryScreen(
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
     Log.d("DonationHistoryScreen", "Current userId = $userId")
-
-    var donationDetails by remember {
-        mutableStateOf<List<Triple<Donation, Event?, Hospital?>>>(
-            emptyList()
-        )
-    }
+    Log.d("DonationHistoryScreen", "List = $list")
 
     LaunchedEffect(userId) {
         donationViewModel.getDonationsByDonor(userId)
-    }
-
-    LaunchedEffect(uiState.donations, userId) {
-        if (uiState.donations.isEmpty()) {
-            Log.d("DonationHistoryScreen", "Waiting for donations to load...")
-            kotlinx.coroutines.delay(800)
-        }
-
-        if (uiState.donations.isNotEmpty()) {
-            donationViewModel.getDonatedDonationsWithEventAndHospital(
-                donorId = userId,
-                eventViewModel = eventViewModel,
-                hospitalViewModel = hospitalViewModel
-            ) { result ->
-                donationDetails = result
-                Log.d("DonationHistoryScreen", "Loaded ${result.size} donated items")
-            }
-        } else {
-            Log.d("DonationHistoryScreen", "Donations list is empty, skipping load")
-        }
     }
 
     Box(
@@ -145,7 +124,7 @@ fun DonationHistoryScreen(
                     .fillMaxWidth()
                     .padding(vertical = Dimens.PaddingM)
             ) {
-                if (donationDetails.isEmpty()) {
+                if (list.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -160,23 +139,33 @@ fun DonationHistoryScreen(
                         }
                     }
                 } else {
-                    items(
-                        items = donationDetails,
-                        key = { it.second?.id ?: it.first.donationId }
-                    ) { (_, event, hospital) ->
-                        Log.d("DonationHistoryScreen", "Hospital: $hospital")
-                        if (event != null && hospital != null) {
-                            HistoryEventCard(
-                                event = event,
-                                hospital = hospital,
-                                onViewDetail = {
-                                    val intent = Intent(context, DonatedEventDetailActivity::class.java)
-                                        .putExtra("eventId", event.id)
-                                        .putExtra("donorId", userId)
-                                        .putExtra("hospitalId", event.locationId)
-                                    context.startActivity(intent)
-                                }
-                            )
+                    items(list) {donation ->
+                        var event by remember { mutableStateOf<Event?>(null) }
+                        val hospital by remember(event) {
+                            derivedStateOf { event?.let { hospitalViewModel.hospitalDetails[it.locationId] } }
+                        }
+
+                        LaunchedEffect(donation.donationId) {
+                            event = eventViewModel.getEventByIdDirect(donation.eventId)
+                            event?.let { hospitalViewModel.loadHospitalById(it.locationId) }
+                        }
+
+                        Log.d("DonationHistoryScreen", "Hospital = $list")
+
+                        event?.let { e ->
+                            hospital?.let { h ->
+                                HistoryEventCard(
+                                    event = e,
+                                    hospital = h,
+                                    onViewDetail = {
+                                        val intent = Intent(context, DonatedEventDetailActivity::class.java)
+                                            .putExtra("eventId", e.id)
+                                            .putExtra("donorId", userId)
+                                            .putExtra("hospitalId", e.locationId)
+                                        context.startActivity(intent)
+                                    }
+                                )
+                            }
                         }
                     }
                 }

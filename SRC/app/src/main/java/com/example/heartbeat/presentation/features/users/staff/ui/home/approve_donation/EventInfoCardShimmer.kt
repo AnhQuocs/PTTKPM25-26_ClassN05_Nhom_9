@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
@@ -35,6 +36,7 @@ import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.CompassionBlue
 import com.example.heartbeat.ui.theme.HopeGreen
 
+@Preview(showBackground = true)
 @Composable
 fun EventInfoCardShimmer() {
     val shimmerColors = listOf(

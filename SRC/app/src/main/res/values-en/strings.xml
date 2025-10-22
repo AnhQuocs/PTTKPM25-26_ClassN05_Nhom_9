@@ -166,6 +166,7 @@
     <string name="week_label">Week</string>
     <string name="month_label">Month</string>
     <string name="total_registered">registered</string>
+    <string name="no_pending_requests">No pending donation requests</string>
 
     <!-- Donation -->
     <string name="citizen_id">Citizen ID</string>

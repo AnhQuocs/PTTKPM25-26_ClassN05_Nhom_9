@@ -166,6 +166,7 @@
     <string name="month_label">Tháng</string>
     <string name="total_registered">đã đăng ký</string>
     <string name="blood_stats_title">Tổng quan máu</string>
+    <string name="no_pending_requests">Chưa có yêu cầu hiến máu nào đang chờ</string>
 
     <!-- Donation -->
     <string name="citizen_id">CCCD</string>

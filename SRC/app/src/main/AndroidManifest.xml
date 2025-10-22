@@ -16,6 +16,9 @@
         android:theme="@style/Theme.HeartBeat"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.features.users.staff.ui.home.approve_donation.AllPendingRequestsActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.features.event.ui.AllEventsActivity"
             android:exported="false" />
         <activity

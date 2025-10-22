@@ -1,5 +1,7 @@
 package com.example.heartbeat.presentation.features.users.staff.ui.home
 
+import android.content.Intent
+import android.os.Parcelable
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -11,6 +13,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,10 +57,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
+import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.presentation.components.TitleSection
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
+import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.AllPendingRequestsActivity
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -67,8 +73,10 @@ import com.example.heartbeat.ui.theme.HopeGreenLight
 import com.example.heartbeat.ui.theme.HopeGreenText
 import com.example.heartbeat.ui.theme.SunshineYellowLight
 import com.example.heartbeat.ui.theme.SunshineYellowText
+import kotlinx.parcelize.Parcelize
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.ArrayList
 
 @Composable
 fun PendingListSection(
@@ -76,6 +84,8 @@ fun PendingListSection(
     eventViewModel: EventViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val context = LocalContext.current
+
     val uiState by donationViewModel.uiState.collectAsState()
     val pendingList = uiState.donations.filter { it.status == "PENDING" }
     val groupedByEvent = pendingList.groupBy { it.eventId }
@@ -84,7 +94,14 @@ fun PendingListSection(
     val eventCache = remember { mutableStateMapOf<String, Event>() }
 
     if (uiState.isLoading) {
-        CircularProgressIndicator(color = BloodRed)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimens.HeightXL2),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = BloodRed)
+        }
         return
     }
 
@@ -95,7 +112,10 @@ fun PendingListSection(
             TitleSection(
                 text1 = stringResource(id = R.string.pending_requests),
                 text2 = stringResource(id = R.string.see_all),
-                onClick = {}
+                onClick = {
+                    val intent = Intent(context, AllPendingRequestsActivity::class.java)
+                    context.startActivity(intent)
+                }
             )
 
             Spacer(modifier = Modifier.height(AppSpacing.Medium))
@@ -119,7 +139,7 @@ fun PendingListSection(
                             EventPendingApprovalCard(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(Dimens.HeightXL)
+                                    .height(Dimens.HeightXL2)
                                     .animateContentSize(),
                                 event = event,
                                 pendingCount = donations.size,
@@ -227,7 +247,7 @@ fun PendingListSection(
 }
 
 @Composable
-private fun EventFetcher(
+fun EventFetcher(
     eventId: String,
     eventViewModel: EventViewModel,
     eventCache: MutableMap<String, Event>,

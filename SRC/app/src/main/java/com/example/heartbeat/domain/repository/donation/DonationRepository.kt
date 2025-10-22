@@ -24,6 +24,7 @@ interface DonationRepository {
     suspend fun updateDonationVolume(donationId: String, volume: String): Donation?
     suspend fun getAllDonations(): Int
     suspend fun getAllDonationsList(): List<Donation>
+    suspend fun approveDonation(donationId: String, donorId: String)
 
     // DELETE
     suspend fun deleteDonation(donationId: String): Boolean

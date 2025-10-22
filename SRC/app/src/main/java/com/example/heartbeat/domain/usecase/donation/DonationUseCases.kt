@@ -13,6 +13,7 @@ import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByDonor
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByIdUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationsByEventUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObservePendingDonationsUseCase
+import com.example.heartbeat.domain.usecase.donation.update.ApproveDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateDonationVolumeUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateStatusUseCase
@@ -33,5 +34,6 @@ data class DonationUseCases(
     val getDonationsByWeekUseCase: GetDonationsByWeekUseCase,
     val getDonationsByMonthUseCase: GetDonationsByMonthUseCase,
     val getAllDonationsUseCase: GetAllDonationsUseCase,
-    val getAllDonationsListUseCase: GetAllDonationsListUseCase
+    val getAllDonationsListUseCase: GetAllDonationsListUseCase,
+    val approveDonationUseCase: ApproveDonationUseCase
 )

@@ -1,5 +1,6 @@
 package com.example.heartbeat.data.repository.donation
 
+import android.util.Log
 import com.example.heartbeat.data.model.dto.DonationDto
 import com.example.heartbeat.data.model.mapper.toDomain
 import com.example.heartbeat.data.model.mapper.toDto
@@ -22,6 +23,7 @@ class DonationRepositoryImpl(
     firestore: FirebaseFirestore,
 ): DonationRepository {
     private val collection = firestore.collection("donations")
+    private val firestoreRef = firestore
 
     override suspend fun addDonation(donation: Donation): Donation? {
         val dto = donation.toDto()
@@ -127,6 +129,34 @@ class DonationRepositoryImpl(
         return observeDonationById(donationId).firstOrNull()
     }
 
+    override suspend fun approveDonation(donationId: String, donorId: String) {
+        val eventsRef = firestoreRef.collection("events")
+
+        // Lấy toàn bộ donation của donor
+        val querySnapshot = collection
+            .whereEqualTo("donorId", donorId)
+            .get()
+            .await()
+
+        // Duyệt qua từng donation khác
+        for (doc in querySnapshot.documents) {
+            if (doc.id != donationId) {
+                val status = doc.getString("status") ?: ""
+                val eventId = doc.getString("eventId")
+                if (status != "DONATED" && status != "APPROVED" && eventId != null) {
+                    // Xoá donation
+                    doc.reference.delete().await()
+
+                    // Giảm donorCount trong event tương ứng
+                    val eventRef = eventsRef.document(eventId)
+                    val eventSnap = eventRef.get().await()
+                    val currentCount = eventSnap.getLong("donorCount") ?: 0
+                    eventRef.update("donorCount", maxOf(0, currentCount - 1)).await()
+                }
+            }
+        }
+    }
+
     override suspend fun deleteDonation(donationId: String): Boolean {
         return try {
             collection.document(donationId).delete().await()
@@ -150,9 +180,14 @@ class DonationRepositoryImpl(
     override fun observeDonationsByEvent(eventId: String): Flow<List<Donation>> = callbackFlow {
         val listener = collection
             .whereEqualTo("eventId", eventId)
-            .addSnapshotListener { snapshot, _ ->
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("DonationRepo", "Firestore listen failed", error)
+                    return@addSnapshotListener
+                }
                 val donations = snapshot?.toObjects(DonationDto::class.java)
                     ?.mapNotNull { it.toDomain() } ?: emptyList()
+                Log.d("DonationRepo", "Received ${donations.size} donations for eventId=$eventId")
                 trySendBlocking(donations)
             }
 

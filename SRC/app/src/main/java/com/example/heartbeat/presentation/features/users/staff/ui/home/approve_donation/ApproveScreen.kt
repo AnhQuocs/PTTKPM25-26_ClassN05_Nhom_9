@@ -91,6 +91,7 @@ fun ApproveScreen(
 
     LaunchedEffect(eventId) {
         donationViewModel.observeDonationsByEvent(eventId)
+//        donationViewModel.observePendingDonations()
         eventViewModel.getEventById(eventId)
     }
 
@@ -151,10 +152,13 @@ fun ApproveScreen(
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            items(donations.filter { it.status == "PENDING" }) { donation ->
+                            items(
+                                donations.filter { it.status == "PENDING" },
+                                key = { it.donationId }
+                            ) { donation ->
                                 val donor = donorCache[donation.donorId]
 
-                                LaunchedEffect(donation.donorId) {
+                                LaunchedEffect(donation.donationId) {
                                     if (donor == null) {
                                         donorViewModel.fetchDonorAndCache(donation.donorId)
                                     }
@@ -179,12 +183,19 @@ fun ApproveScreen(
                                                 donationId = donation.donationId,
                                                 status = "APPROVED"
                                             )
+
+                                            donationViewModel.approveDonation(
+                                                donationId = donation.donationId,
+                                                donorId = donation.donorId
+                                            )
                                         },
                                         onReject = {
                                             donationViewModel.updateStatus(
                                                 donationId = donation.donationId,
                                                 status = "REJECTED"
                                             )
+
+                                            eventViewModel.updateDonorCount(event.id, -1)
                                         }
                                     )
                                 }

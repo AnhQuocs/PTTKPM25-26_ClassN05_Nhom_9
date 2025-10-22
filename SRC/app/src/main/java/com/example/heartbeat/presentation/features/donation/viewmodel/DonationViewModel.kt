@@ -10,8 +10,12 @@ import com.example.heartbeat.domain.usecase.donation.DonationUseCases
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,10 +36,7 @@ class DonationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DonationUiState())
     val uiState: StateFlow<DonationUiState> = _uiState
 
-    init {
-        Log.d("DonationVM", "Instance hash: ${this.hashCode()}")
-        observePendingDonations()
-    }
+    private var observeJob: Job? = null
 
     // CREATE
     fun addDonation(donation: Donation) {
@@ -146,6 +147,29 @@ class DonationViewModel @Inject constructor(
         }
     }
 
+    fun approveDonation(donationId: String, donorId: String) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
+        try {
+            donationUseCases.approveDonationUseCase(donationId, donorId)
+
+            _uiState.update { state ->
+                val updatedDonations = state.donations.map { donation ->
+                    if (donation.donationId == donationId) {
+                        donation.copy(status = "APPROVED")
+                    } else donation
+                }
+
+                state.copy(
+                    donations = updatedDonations,
+                    successMessage = "Donation approved",
+                    isLoading = false
+                )
+            }
+        } catch (e: Exception) {
+            _uiState.update { it.copy(errorMessage = e.message, isLoading = false) }
+        }
+    }
+
     // DELETE
     fun deleteDonation(donationId: String) = viewModelScope.launch {
         try {
@@ -164,7 +188,7 @@ class DonationViewModel @Inject constructor(
     }
 
     // OBSERVE
-    private fun observePendingDonations() {
+    fun observePendingDonations() {
         viewModelScope.launch {
             donationUseCases.observePendingDonations()
                 .collect { donations ->
@@ -174,23 +198,40 @@ class DonationViewModel @Inject constructor(
     }
 
     fun observeDonationsByEvent(eventId: String) {
-        viewModelScope.launch {
+        observeJob?.cancel()
+
+        observeJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
 
             val startTime = System.currentTimeMillis()
 
-            donationUseCases.observeDonationsByEvent(eventId)
-                .collect { donations ->
-                    val elapsed = System.currentTimeMillis() - startTime
-                    if (elapsed < 500) kotlinx.coroutines.delay(500 - elapsed)
+            try {
+                donationUseCases.observeDonationsByEvent(eventId)
+                    .collect { donations ->
+                        val elapsed = System.currentTimeMillis() - startTime
+                        if (elapsed < 500) delay(500 - elapsed)
 
-                    _uiState.update {
-                        it.copy(
-                            donations = donations,
-                            isLoading = false
-                        )
+                        Log.d("DonationVM", "📡 Update Firestore | eventId=$eventId | total=${donations.size}")
+
+                        val filtered = donations.filter { it.eventId == eventId }
+                        Log.d("DonationVM", "-> After filter ${filtered.size} donations\n")
+
+                        _uiState.update {
+                            it.copy(
+                                donations = filtered,
+                                isLoading = false
+                            )
+                        }
                     }
+            } catch (e: Exception) {
+                Log.e("DonationVM", "observeDonationsByEvent error: ${e.message}")
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message ?: "Unknown error"
+                    )
                 }
+            }
         }
     }
 

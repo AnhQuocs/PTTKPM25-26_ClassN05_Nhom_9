@@ -1,14 +1,17 @@
 package com.example.heartbeat.presentation.features.event.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.usecase.event.EventUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +22,9 @@ class EventViewModel @Inject constructor(
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events
 
+    private val _filteredEvents = MutableStateFlow<List<Event>>(emptyList())
+    val filteredEvents: StateFlow<List<Event>> = _filteredEvents
+
     private val _selectedEvent = MutableStateFlow<Event?>(null)
     val selectedEvent: StateFlow<Event?> = _selectedEvent
 
@@ -27,6 +33,8 @@ class EventViewModel @Inject constructor(
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private var observeJob: Job? = null
 
     init {
         observeEvents()
@@ -38,6 +46,25 @@ class EventViewModel @Inject constructor(
                 .catch { e -> _error.value = e.message }
                 .collect { events ->
                     _events.value = events
+
+                    events.forEach { event ->
+                        observeDonorCount(event.id)
+                    }
+                }
+        }
+    }
+
+    fun observeEventsByDate(selectedDate: LocalDate = LocalDate.now()) {
+        observeJob?.cancel()
+        observeJob = viewModelScope.launch {
+            _isLoading.value = true
+            eventUseCase.observeEventsByDateUseCase(selectedDate)
+                .catch { e -> _error.value = e.message }
+                .collect { events ->
+                    _filteredEvents.value = events
+                    _isLoading.value = false
+
+                    Log.d("EventDebug", "Loaded ${events.size} events for $selectedDate")
 
                     events.forEach { event ->
                         observeDonorCount(event.id)
@@ -75,6 +102,19 @@ class EventViewModel @Inject constructor(
                 eventUseCase.updateEventUseCase(id, event)
             } catch (e: Exception) {
                 _error.value = e.message
+            }
+        }
+    }
+
+    fun updateDonorCount(eventId: String, delta: Int) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                eventUseCase.updateDonorCountUseCase(eventId, delta)
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
             }
         }
     }

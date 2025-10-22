@@ -93,6 +93,10 @@ fun PendingListSection(
 
     val eventCache = remember { mutableStateMapOf<String, Event>() }
 
+    LaunchedEffect(Unit) {
+        donationViewModel.observePendingDonations()
+    }
+
     if (uiState.isLoading) {
         Box(
             modifier = Modifier

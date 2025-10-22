@@ -16,6 +16,7 @@ import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByWeekUseC
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByDonorUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationsByEventUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObservePendingDonationsUseCase
+import com.example.heartbeat.domain.usecase.donation.update.ApproveDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateDonationVolumeUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateStatusUseCase
@@ -55,7 +56,8 @@ object DonationModule {
             getDonationsByWeekUseCase = GetDonationsByWeekUseCase(repository),
             getDonationsByMonthUseCase = GetDonationsByMonthUseCase(repository),
             getAllDonationsUseCase = GetAllDonationsUseCase(repository),
-            getAllDonationsListUseCase = GetAllDonationsListUseCase(repository)
+            getAllDonationsListUseCase = GetAllDonationsListUseCase(repository),
+            approveDonationUseCase = ApproveDonationUseCase(repository)
         )
     }
 }

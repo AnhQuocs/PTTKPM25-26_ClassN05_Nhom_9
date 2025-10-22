@@ -58,7 +58,6 @@ import java.time.format.DateTimeFormatter
 fun StaffHomeScreen(
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
-    eventViewModel: EventViewModel = hiltViewModel(),
     donationViewModel: DonationViewModel = hiltViewModel(),
     donorViewModel: DonorViewModel = hiltViewModel(),
     navController: NavController
@@ -66,49 +65,10 @@ fun StaffHomeScreen(
     val authState by authViewModel.authState.collectAsState()
     val user = authState?.getOrNull()
 
-    val events by eventViewModel.events.collectAsState(initial = emptyList())
-
-    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    val sortedEvents = events.sortedByDescending { event ->
-        LocalDate.parse(event.date, dateFormatter)
-    }
-
-    val gradients = listOf(
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFEAEFFF), Color(0xFFFAF9FF))
-        ),
-
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFEDFFFB), Color(0xFFFFEBF4))
-        ),
-
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFFFFAF3), Color(0xFFECEFFF))
-        ),
-
-        Brush.linearGradient(
-            colors = listOf(Color(0xFFEFFFF4), Color(0xFFFFFFEB))
-        )
-    )
-
-    val accentColors = listOf(
-        SunsetOrange,
-        AquaMint,
-        RoyalPurple,
-        GoldenGlow,
-        CoralRed
-    )
-
     val donorCache by donorViewModel.donorCache.collectAsState()
 
     val uiState by donationViewModel.uiState.collectAsState()
     val donatedList = uiState.donatedList
-
-    val allDonorsLoaded by remember(donatedList, donorCache) {
-        derivedStateOf {
-            donatedList.all { donorCache.containsKey(it.donorId) }
-        }
-    }
 
     LaunchedEffect(Unit) {
         donationViewModel.getAllDonatedDonations()

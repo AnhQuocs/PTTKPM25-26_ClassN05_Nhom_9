@@ -37,6 +37,7 @@ import com.example.heartbeat.presentation.components.AppButton
 import com.example.heartbeat.presentation.components.DatePickerFieldForEvent
 import com.example.heartbeat.presentation.features.donation.util.DonationValidator
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
+import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -49,7 +50,8 @@ fun DonationForm(
     modifier: Modifier = Modifier,
     eventId: String,
     donorId: String,
-    donationViewModel: DonationViewModel = hiltViewModel()
+    donationViewModel: DonationViewModel = hiltViewModel(),
+    eventViewModel: EventViewModel = hiltViewModel()
 ) {
     var citizenId by remember { mutableStateOf("") }
     var donatedAt by remember { mutableStateOf("") }
@@ -159,6 +161,7 @@ fun DonationForm(
                 )
 
                 donationViewModel.addDonation(donation)
+                eventViewModel.updateDonorCount(eventId, +1)
             },
             text = stringResource(id = R.string.submit)
         )

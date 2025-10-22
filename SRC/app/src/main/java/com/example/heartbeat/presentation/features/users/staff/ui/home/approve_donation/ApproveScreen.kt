@@ -290,22 +290,22 @@ fun EventInfoCard(event: Event, hospital: Hospital) {
 }
 
 @Composable
-fun EventInfoCardItem(icon: ImageVector, text: String) {
+fun EventInfoCardItem(icon: ImageVector, text: String, modifier: Modifier = Modifier, color: Color = Color(0xFF01579B)) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = Color(0xFF01579B),
+            tint = color,
             modifier = Modifier.size(Dimens.SizeSM)
         )
 
         Text(
             text = text,
-            color = Color(0xFF01579B),
+            color = color,
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium)
         )
     }

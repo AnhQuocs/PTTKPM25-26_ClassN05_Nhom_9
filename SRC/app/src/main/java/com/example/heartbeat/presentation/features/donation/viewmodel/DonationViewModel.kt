@@ -132,18 +132,28 @@ class DonationViewModel @Inject constructor(
     }
 
     fun updateDonationVolume(donationId: String, volume: String) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
         try {
             val updated = donationUseCases.updateDonationVolume(donationId, volume)
             updated?.let {
                 _uiState.update { state ->
                     state.copy(
-                        donations = state.donations.map { d -> if (d.donationId == it.donationId) it else d },
-                        successMessage = "Volume updated"
+                        donations = state.donations.map { d ->
+                            if (d.donationId == it.donationId) it else d
+                        },
+                        successMessage = "Volume updated",
+                        isLoading = false
                     )
                 }
             }
+            updateStatus(donationId = donationId, status = "DONATED")
         } catch (e: Exception) {
-            _uiState.update { it.copy(errorMessage = e.message) }
+            _uiState.update {
+                it.copy(
+                    errorMessage = e.message,
+                    isLoading = false
+                )
+            }
         }
     }
 

@@ -101,9 +101,6 @@
     <string name="save_a_life">Cứu người</string>
     <string name="give_blood">Hiến máu</string>
 
-    <string name="no_events_this_day">Không có sự kiện trong ngày này</string>
-    <string name="today">Hôm nay</string>
-
     <string name="box1_title">Mỗi Giọt</string>
     <string name="box1_subtitle">Đều Quý</string>
     <string name="box2_title">Trao Tặng</string>
@@ -160,6 +157,15 @@
     <string name="reject">Từ chối</string>
     <string name="donors_pending">đang chờ</string>
     <string name="donors_pending_approval">đang chờ duyệt</string>
+
+    <string name="no_events_this_day">Không có sự kiện trong ngày này</string>
+    <string name="today">Hôm nay</string>
+    <string name="confirm_donation">Xác nhận hiến máu</string>
+    <string name="unable">Thất bại</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="blood_volume_placeholder">Lượng máu</string>
+    <string name="confirm_remove_person">Bạn có chắc chắn muốn xóa người này khỏi sự kiện không?</string>
+    <string name="confirm_success">Xác nhận thành công</string>
 
     <!-- Staff/Home -->
     <string name="donation_stats_title">Tổng quan đăng ký</string>

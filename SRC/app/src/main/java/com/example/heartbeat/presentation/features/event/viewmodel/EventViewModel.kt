@@ -28,6 +28,9 @@ class EventViewModel @Inject constructor(
     private val _selectedEvent = MutableStateFlow<Event?>(null)
     val selectedEvent: StateFlow<Event?> = _selectedEvent
 
+    private val _observedEvent = MutableStateFlow<Event?>(null)
+    val observedEvent: StateFlow<Event?> = _observedEvent
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -35,6 +38,7 @@ class EventViewModel @Inject constructor(
     val error: StateFlow<String?> = _error
 
     private var observeJob: Job? = null
+    private var observeSingleEventJob: Job? = null
 
     init {
         observeEvents()
@@ -81,6 +85,17 @@ class EventViewModel @Inject constructor(
             } catch (e: Exception) {
                 _error.value = e.message
             }
+        }
+    }
+
+    fun observeEventById(eventId: String) {
+        observeSingleEventJob?.cancel()
+        observeSingleEventJob = viewModelScope.launch {
+            eventUseCase.observeEventByIdUseCase(eventId)
+                .catch { e -> _error.value = e.message }
+                .collect { event ->
+                    _observedEvent.value = event
+                }
         }
     }
 

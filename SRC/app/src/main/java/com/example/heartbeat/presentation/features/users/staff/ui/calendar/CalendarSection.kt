@@ -1,8 +1,10 @@
 package com.example.heartbeat.presentation.features.users.staff.ui.calendar
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,9 +49,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
-import com.example.heartbeat.presentation.features.event.ui.StaffEventCard
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
+import com.example.heartbeat.presentation.features.users.staff.ui.calendar.confirm.ConfirmDonationActivity
+import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.AquaMint
 import com.example.heartbeat.ui.theme.CoralRed
@@ -66,6 +70,8 @@ fun CalendarSection(
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     donationViewModel: DonationViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedMonth by remember { mutableStateOf(YearMonth.now()) }
 
@@ -95,8 +101,12 @@ fun CalendarSection(
     val accentColors = listOf(SunsetOrange, AquaMint, RoyalPurple, GoldenGlow, CoralRed)
 
     LaunchedEffect(Unit) {
-        donationViewModel.getAllDonatedDonations()
-        hospitalViewModel.loadHospitals()
+        if (hospitalViewModel.hospitals.isEmpty()) {
+            hospitalViewModel.loadHospitals()
+        }
+        if (donationViewModel.uiState.value.donations.isEmpty()) {
+            donationViewModel.getAllDonatedDonations()
+        }
     }
 
     Column {
@@ -131,7 +141,9 @@ fun CalendarSection(
         AppLineGrey(modifier = Modifier.padding(horizontal = 6.dp))
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(AppSpacing.Large)
+        ) {
             if(filteredEvents.isEmpty()) {
                 item {
                     Text(
@@ -158,7 +170,12 @@ fun CalendarSection(
                         gradient = gradient,
                         event = event,
                         accentColor = accentColor,
-                        location = location
+                        location = location,
+                        onClick = {
+                            val intent = Intent(context, ConfirmDonationActivity::class.java)
+                            intent.putExtra("eventId", event.id)
+                            context.startActivity(intent)
+                        }
                     )
                 }
             }

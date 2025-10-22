@@ -19,4 +19,5 @@ interface EventRepository {
     fun observeDonorCount(eventId: String, onUpdate: (Int) -> Unit)
     fun observeDonorList(eventId: String, onUpdate: (List<String>) -> Unit)
     fun observeEventsByDate(selectedDate: LocalDate = LocalDate.now()): Flow<List<Event>>
+    fun observeEventById(eventId: String): Flow<Event?>
 }

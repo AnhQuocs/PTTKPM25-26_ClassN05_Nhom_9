@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
@@ -36,9 +37,12 @@ import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.CompassionBlue
 import com.example.heartbeat.ui.theme.HopeGreen
 
-@Preview(showBackground = true)
 @Composable
-fun EventInfoCardShimmer() {
+fun EventInfoCardShimmer(
+    modifier: Modifier = Modifier,
+    height: Dp = Dimens.HeightXL3,
+    isSpacer: Boolean = false
+) {
     val shimmerColors = listOf(
         Color.LightGray.copy(alpha = 0.6f),
         Color.LightGray.copy(alpha = 0.2f),
@@ -64,9 +68,7 @@ fun EventInfoCardShimmer() {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(AppShape.MediumShape),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(Dimens.HeightXL3)
+        modifier = modifier.height(height)
     ) {
         Box(
             modifier = Modifier
@@ -156,6 +158,46 @@ fun EventInfoCardShimmer() {
                             modifier = Modifier
                                 .fillMaxWidth(0.5f)
                                 .height(10.dp)
+                                .background(brush, RoundedCornerShape(AppShape.SmallShape))
+                        )
+                    }
+                }
+
+                if (isSpacer) {
+                    Spacer(modifier = Modifier.height(AppSpacing.Medium))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(Dimens.SizeSM)
+                                .background(brush, CircleShape)
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.35f)
+                                .height(14.dp)
+                                .background(brush, RoundedCornerShape(AppShape.SmallShape))
+                        )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.PaddingS)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(Dimens.SizeSM)
+                                .background(brush, CircleShape)
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .height(14.dp)
                                 .background(brush, RoundedCornerShape(AppShape.SmallShape))
                         )
                     }

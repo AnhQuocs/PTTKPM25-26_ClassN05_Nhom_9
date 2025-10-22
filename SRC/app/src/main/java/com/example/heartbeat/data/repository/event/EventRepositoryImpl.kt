@@ -128,6 +128,22 @@ class EventRepositoryImpl(
         awaitClose { listener.remove() }
     }
 
+    override fun observeEventById(eventId: String): Flow<Event?> = callbackFlow {
+        val listener = firestore.collection("events")
+            .document(eventId)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    close(e)
+                    return@addSnapshotListener
+                }
+
+                val dto = snapshot?.toObject(EventDto::class.java)
+                trySend(dto?.toDomain(snapshot.id)).isSuccess
+            }
+
+        awaitClose { listener.remove() }
+    }
+
     override suspend fun updateDonorCount(eventId: String, delta: Int) {
         val eventRef = firestore.collection("events").document(eventId)
 

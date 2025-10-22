@@ -9,5 +9,6 @@ class EventUseCase (
     val observeDonorCountUseCase: ObserveDonorCountUseCase,
     val observeDonorListUseCase: ObserveDonorListUseCase,
     val observeEventsByDateUseCase: ObserveEventsByDateUseCase,
-    val updateDonorCountUseCase: UpdateDonorCountUseCase
+    val updateDonorCountUseCase: UpdateDonorCountUseCase,
+    val observeEventByIdUseCase: ObserveEventByIdUseCase
 )

@@ -101,9 +101,6 @@
     <string name="save_a_life">Save a life</string>
     <string name="give_blood">Give Blood</string>
 
-    <string name="no_events_this_day">No events on this day</string>
-    <string name="today">Today</string>
-
     <string name="box1_title">Every Drop</string>
     <string name="box1_subtitle">Matters</string>
     <string name="box2_title">Gift of</string>
@@ -160,6 +157,15 @@
     <string name="reject">Reject</string>
     <string name="donors_pending">donors pending</string>
     <string name="donors_pending_approval">donors pending approval</string>
+
+    <string name="no_events_this_day">No events on this day</string>
+    <string name="today">Today</string>
+    <string name="confirm_donation">Confirm Donation</string>
+    <string name="unable">Unable</string>
+    <string name="confirm">Confirm</string>
+    <string name="blood_volume_placeholder">Blood Volume</string>
+    <string name="confirm_remove_person">Are you sure you want to remove this person from the event?</string>
+    <string name="confirm_success">Confirmation successful</string>
 
     <!-- Staff/Home -->
     <string name="donation_stats_title">Registration Overview</string>

@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.hospital.Hospital
-import com.example.heartbeat.presentation.features.event.ui.CircularProgressBar
+import com.example.heartbeat.presentation.features.users.staff.ui.calendar.CircularProgressBar
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing

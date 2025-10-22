@@ -1,4 +1,4 @@
-package com.example.heartbeat.presentation.features.event.ui
+package com.example.heartbeat.presentation.features.users.staff.ui.calendar
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +70,7 @@ fun StaffEventCard(
     accentColor: Color,
     event: Event,
     location: String,
+    onClick: () -> Unit
 ) {
     val formattedDate = formatDate(event.date)
     val status = calculateEventStatus(event)
@@ -79,7 +81,8 @@ fun StaffEventCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.3.dp),
         modifier = modifier
             .fillMaxWidth()
-            .height(Dimens.HeightXL3),
+            .height(Dimens.HeightXL3)
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(AppShape.ExtraLargeShape),
     ) {

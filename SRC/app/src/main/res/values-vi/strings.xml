@@ -101,6 +101,9 @@
     <string name="save_a_life">Cứu người</string>
     <string name="give_blood">Hiến máu</string>
 
+    <string name="no_events_this_day">Không có sự kiện trong ngày này</string>
+    <string name="today">Hôm nay</string>
+
     <string name="box1_title">Mỗi Giọt</string>
     <string name="box1_subtitle">Đều Quý</string>
     <string name="box2_title">Trao Tặng</string>

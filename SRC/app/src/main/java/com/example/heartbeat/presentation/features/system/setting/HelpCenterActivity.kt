@@ -20,12 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -45,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.heartbeat.BaseComponentActivity
@@ -58,9 +53,6 @@ import com.example.heartbeat.ui.theme.GrayContainer
 import com.example.heartbeat.ui.theme.GrayOptionText
 import com.example.heartbeat.ui.theme.GrayPlaceholder
 import com.example.heartbeat.ui.theme.TealPrimary
-import com.example.heartbeat.ui.theme.TextPrimaryDark
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 class HelpCenterActivity : BaseComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

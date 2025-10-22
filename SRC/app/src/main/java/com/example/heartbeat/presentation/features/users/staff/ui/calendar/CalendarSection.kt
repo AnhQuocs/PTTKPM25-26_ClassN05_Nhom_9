@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,16 +36,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.ui.StaffEventCard
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
-import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.AquaMint
 import com.example.heartbeat.ui.theme.CoralRed
 import com.example.heartbeat.ui.theme.GoldenGlow
@@ -89,13 +92,7 @@ fun CalendarSection(
         Brush.linearGradient(colors = listOf(Color(0xFFEFFFF4), Color(0xFFFFFFEB)))
     )
 
-    val accentColors = listOf(
-        SunsetOrange,
-        AquaMint,
-        RoyalPurple,
-        GoldenGlow,
-        CoralRed
-    )
+    val accentColors = listOf(SunsetOrange, AquaMint, RoyalPurple, GoldenGlow, CoralRed)
 
     LaunchedEffect(Unit) {
         donationViewModel.getAllDonatedDonations()
@@ -135,23 +132,35 @@ fun CalendarSection(
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
-            itemsIndexed(filteredEvents) { index, event ->
-                LaunchedEffect(Unit) {
-                    hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
+            if(filteredEvents.isEmpty()) {
+                item {
+                    Text(
+                        text = stringResource(id = R.string.no_events_this_day),
+                        fontSize = 16.sp,
+                        color = Color(0xFF767E8C),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.PaddingM)
+                    )
                 }
+            } else {
+                itemsIndexed(filteredEvents) { index, event ->
+                    LaunchedEffect(Unit) {
+                        hospitalViewModel.loadHospitalById(hospitalId = event.locationId)
+                    }
 
-                val hospital = hospitalViewModel.hospitalDetails[event.locationId]
-                val location = "${hospital?.district}, ${hospital?.province}"
+                    val hospital = hospitalViewModel.hospitalDetails[event.locationId]
+                    val location = "${hospital?.district}, ${hospital?.province}"
 
-                val gradient = gradients[index % gradients.size]
-                val accentColor = accentColors[index % accentColors.size]
+                    val gradient = gradients[index % gradients.size]
+                    val accentColor = accentColors[index % accentColors.size]
 
-                StaffEventCard(
-                    gradient = gradient,
-                    event = event,
-                    accentColor = accentColor,
-                    location = location
-                )
+                    StaffEventCard(
+                        gradient = gradient,
+                        event = event,
+                        accentColor = accentColor,
+                        location = location
+                    )
+                }
             }
         }
     }
@@ -165,7 +174,7 @@ fun MonthSelector(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
+    val formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault())
     val currentYear = java.time.Year.now().value
     val months = (1..12).map { month ->
         YearMonth.of(currentYear, month)
@@ -183,7 +192,7 @@ fun MonthSelector(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = selectedDate.format(formatter),
+                text = selectedDate.format(formatter).capitalizeFirstChar(),
                 style = MaterialTheme.typography.titleMedium
             )
             Icon(
@@ -195,8 +204,8 @@ fun MonthSelector(
         }
 
         Text(
-            "Today",
-            color = Color.Blue,
+            text = stringResource(R.string.today),
+            color = Color(0xFF24A19C),
             fontSize = 16.sp,
             modifier = Modifier
                 .clickable(
@@ -209,7 +218,7 @@ fun MonthSelector(
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
         months.forEach { month ->
             DropdownMenuItem(
-                text = { Text(month.format(formatter)) },
+                text = { Text(month.format(formatter).capitalizeFirstChar()) },
                 onClick = {
                     expanded = false
                     onMonthSelected(month)
@@ -219,6 +228,10 @@ fun MonthSelector(
     }
 }
 
+fun String.capitalizeFirstChar(): String {
+    if (this.isEmpty()) return this
+    return this[0].uppercaseChar() + this.substring(1)
+}
 
 @Composable
 fun ScrollableCalendar(
@@ -269,15 +282,16 @@ fun ScrollableCalendar(
 @Composable
 fun DateLabel(selectedDate: LocalDate) {
     val today = LocalDate.now()
+    val configuration = LocalConfiguration.current
+    val locale = configuration.locales[0] ?: Locale.getDefault()
+
+    val dayFormatter = remember(locale) { DateTimeFormatter.ofPattern("EEEE", locale) }
+    val dateFormatter = remember(locale) { DateTimeFormatter.ofPattern("dd MMM yyyy", locale) }
 
     val label = if (selectedDate == today) {
-        "Today. ${selectedDate.dayOfWeek.name.lowercase().replaceFirstChar { it.uppercase() }}"
+        "${stringResource(R.string.today)}. ${selectedDate.format(dayFormatter).capitalizeFirstChar()}"
     } else {
-        "${selectedDate.dayOfWeek.name.lowercase().replaceFirstChar { it.uppercase() }}. ${
-            selectedDate.format(
-                DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
-            )
-        }"
+        "${selectedDate.format(dayFormatter).capitalizeFirstChar()}. ${selectedDate.format(dateFormatter)}"
     }
 
     Text(
@@ -287,14 +301,4 @@ fun DateLabel(selectedDate: LocalDate) {
         fontSize = 16.sp,
         color = Color(0xFF1B1C1F)
     )
-}
-
-fun String.toTimeOnly(): String {
-    return try {
-        val formatter = DateTimeFormatter.ofPattern("HH:mm[:ss]")
-        val time = java.time.LocalTime.parse(this, formatter)
-        time.format(DateTimeFormatter.ofPattern("HH:mm"))
-    } catch (e: Exception) {
-        this
-    }
 }

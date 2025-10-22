@@ -167,6 +167,7 @@
     <string name="blood_volume_placeholder">Blood Volume</string>
     <string name="confirm_remove_person">Are you sure you want to remove this person from the event?</string>
     <string name="confirm_success">Confirmation successful</string>
+    <string name="no_registration_message">No one has registered today\nThe chance to become the next hero is waiting for you</string>
 
     <!-- Staff/Home -->
     <string name="donation_stats_title">Registration Overview</string>

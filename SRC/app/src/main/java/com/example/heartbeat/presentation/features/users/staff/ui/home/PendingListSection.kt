@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -110,7 +111,16 @@ fun PendingListSection(
     }
 
     if (entries.isEmpty()) {
-        // EmptyPendingState()
+        Text(
+            text = stringResource(id = R.string.no_registration_message),
+            color = Color(0xFF757575),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            ),
+            modifier = Modifier.fillMaxWidth().padding(top = Dimens.PaddingM)
+        )
     } else {
         Column(modifier = Modifier.fillMaxSize()) {
             TitleSection(
@@ -319,7 +329,11 @@ fun EventPendingApprovalCard(
                         modifier = Modifier.size(Dimens.SizeS)
                     )
                     Spacer(modifier = Modifier.width(AppSpacing.Small))
-                    Text(event.date, style = MaterialTheme.typography.bodySmall, color = textColor.copy(alpha = 0.7f))
+                    Text(
+                        event.date,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = textColor.copy(alpha = 0.7f)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(AppSpacing.Small))

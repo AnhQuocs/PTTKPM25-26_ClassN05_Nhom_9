@@ -166,6 +166,7 @@
     <string name="blood_volume_placeholder">Lượng máu</string>
     <string name="confirm_remove_person">Bạn có chắc chắn muốn xóa người này khỏi sự kiện không?</string>
     <string name="confirm_success">Xác nhận thành công</string>
+    <string name="no_registration_message">Hôm nay chưa có ai đăng ký\nCơ hội cho bạn trở thành hero tiếp theo đang chờ</string>
 
     <!-- Staff/Home -->
     <string name="donation_stats_title">Tổng quan đăng ký</string>

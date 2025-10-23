@@ -14,7 +14,9 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -27,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.presentation.features.system.province.viewmodel.ProvinceViewModel
+import com.example.heartbeat.ui.dimens.Dimens
 
 @Composable
 fun StepOneScreen(
@@ -49,7 +52,7 @@ fun StepOneScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
-            .padding(bottom = 16.dp)
+            .padding(bottom = Dimens.PaddingM)
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -101,17 +104,24 @@ fun StepOneScreen(
             list = bloodList
         )
 
+        var selectedCityName by remember { mutableStateOf("") }
+
         ProfileSetupTextField(
             title = stringResource(id = R.string.city),
-            value = provinces.firstOrNull { it.id == formState.cityId }?.name ?: "",
-            onValueChange = { selectedName ->
-                val selectedId = provinces.firstOrNull { it.name == selectedName }?.id ?: ""
-                onUpdate(
-                    formState.name,
-                    formState.phoneNumber,
-                    formState.bloodGroup,
-                    selectedId
-                )
+            value = selectedCityName,
+            onValueChange = { input ->
+                selectedCityName = input
+
+                // Nếu người dùng gõ trùng tên trong list thì tự động cập nhật ID
+                val selectedId = provinces.firstOrNull { it.name.equals(input, ignoreCase = true) }?.id
+                if (selectedId != null) {
+                    onUpdate(
+                        formState.name,
+                        formState.phoneNumber,
+                        formState.bloodGroup,
+                        selectedId
+                    )
+                }
             },
             placeholder = stringResource(id = R.string.select_city),
             leadingIcon = Icons.Default.LocationOn,
@@ -120,5 +130,6 @@ fun StepOneScreen(
             imeAction = ImeAction.Done,
             list = provinceNames
         )
+
     }
 }

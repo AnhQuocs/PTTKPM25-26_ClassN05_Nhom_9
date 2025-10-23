@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.PagerSnapDistance
@@ -219,7 +220,7 @@ fun ProfileSetupScreen(
                                 ),
                                 shape = RoundedCornerShape(AppShape.MediumShape),
                                 modifier = Modifier
-                                    .fillMaxWidth(0.3f)
+                                    .wrapContentWidth()
                                     .height(Dimens.HeightDefault)
                             ) {
                                 Text(
@@ -237,7 +238,7 @@ fun ProfileSetupScreen(
                                 shape = RoundedCornerShape(AppShape.MediumShape),
                                 modifier = Modifier
                                     .height(Dimens.HeightDefault)
-                                    .fillMaxWidth(0.5f),
+                                    .wrapContentWidth(),
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.next),
@@ -256,7 +257,7 @@ fun ProfileSetupScreen(
                                 ),
                                 shape = RoundedCornerShape(AppShape.MediumShape),
                                 modifier = Modifier
-                                    .fillMaxWidth(0.3f)
+                                    .wrapContentWidth()
                                     .height(Dimens.HeightDefault)
                             ) {
                                 Text(
@@ -274,7 +275,7 @@ fun ProfileSetupScreen(
                                 shape = RoundedCornerShape(AppShape.MediumShape),
                                 modifier = Modifier
                                     .height(Dimens.HeightDefault)
-                                    .fillMaxWidth(0.5f),
+                                    .wrapContentWidth()
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.submit),

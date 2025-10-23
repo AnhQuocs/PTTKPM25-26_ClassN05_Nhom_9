@@ -52,6 +52,7 @@ import androidx.navigation.navArgument
 import com.example.heartbeat.BaseComponentActivity
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.features.donation.ui.register_detail.DonationDetailScreen
+import com.example.heartbeat.presentation.features.event.ui.event_detail.EventDetailScreen
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.main.home.ProgressBar
@@ -82,7 +83,6 @@ class AllEventsActivity : BaseComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            val slideDuration = 200
 
             AnimatedNavHost(navController = navController, startDestination = "all_event") {
                 composable("all_event") {
@@ -91,26 +91,6 @@ class AllEventsActivity : BaseComponentActivity() {
                         navController = navController,
                         onBackClick = { finish() }
                     )
-                }
-
-                composable(
-                    route = "event_detail/{eventId}",
-                    arguments = listOf(navArgument("eventId") { type = NavType.StringType }),
-                    enterTransition = {
-                        slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(slideDuration))
-                    },
-                    exitTransition = {
-                        slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth / 2 }, animationSpec = tween(slideDuration))
-                    },
-                    popEnterTransition = {
-                        slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(slideDuration))
-                    },
-                    popExitTransition = {
-                        slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(slideDuration))
-                    }
-                ) { backStackEntry ->
-                    val eventId = backStackEntry.arguments?.getString("eventId")
-                    EventDetailScreen(eventId = eventId ?: "", navController = navController)
                 }
 
                 composable(

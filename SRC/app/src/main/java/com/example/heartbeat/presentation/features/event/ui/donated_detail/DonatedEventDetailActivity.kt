@@ -31,8 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.heartbeat.BaseComponentActivity
 import com.example.heartbeat.R
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
-import com.example.heartbeat.presentation.features.event.ui.EventInfoCard
-import com.example.heartbeat.presentation.features.event.ui.HospitalInfoCard
+import com.example.heartbeat.presentation.features.event.ui.event_detail.EventInfoCard
+import com.example.heartbeat.presentation.features.event.ui.event_detail.HospitalInfoCard
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.system.province.viewmodel.ProvinceViewModel
 import com.example.heartbeat.presentation.features.system.setting.SettingTitle

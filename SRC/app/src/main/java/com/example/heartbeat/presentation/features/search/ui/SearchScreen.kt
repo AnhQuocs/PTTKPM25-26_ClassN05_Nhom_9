@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.search.ui
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.search.SearchSuggestionItem
+import com.example.heartbeat.presentation.features.event.ui.event_detail.EventDetailActivity
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.recent_search.ui.RecentSearchCard
 import com.example.heartbeat.presentation.features.recent_search.viewmodel.RecentSearchViewModel
@@ -65,6 +68,8 @@ fun SearchScreen(
     recentViewedViewModel: RecentViewedViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val context = LocalContext.current
+
     val query = unifiedSearchViewModel.query
     val recentSearchList = recentSearchViewModel.recentList
     val isRecentSearchLoading = recentSearchViewModel.isLoading
@@ -201,12 +206,9 @@ fun SearchScreen(
                                     subtitle = "${hospital?.hospitalName}"
                                 ) {
                                     unifiedSearchViewModel.onSuggestionClicked(suggestion)
-                                    navController.currentBackStackEntry
-                                        ?.savedStateHandle
-                                        ?.set("selectedTab", 1)
-                                    navController.navigate("event_detail/${suggestion.event.id}") {
-                                        launchSingleTop = true
-                                    }
+                                    val intent = Intent(context, EventDetailActivity::class.java)
+                                        .putExtra("eventId", suggestion.event.id)
+                                    context.startActivity(intent)
                                 }
                             }
                         }
@@ -224,12 +226,9 @@ fun SearchScreen(
                     hospitalViewModel = hospitalViewModel,
                     unifiedSearchViewModel = unifiedSearchViewModel,
                     onNavigateToDetail = { eventId ->
-                        navController.currentBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("selectedTab", 1)
-                        navController.navigate("event_detail/$eventId") {
-                            launchSingleTop = true
-                        }
+                        val intent = Intent(context, EventDetailActivity::class.java)
+                            .putExtra("eventId", eventId)
+                        context.startActivity(intent)
                     }
                 )
 
@@ -241,12 +240,9 @@ fun SearchScreen(
                     onClear = { recentViewedViewModel.clearRecentViewed() },
                     hospitalViewModel = hospitalViewModel,
                     onNavigateToDetail = { eventId ->
-                        navController.currentBackStackEntry
-                            ?.savedStateHandle
-                            ?.set("selectedTab", 1)
-                        navController.navigate("event_detail/$eventId") {
-                            launchSingleTop = true
-                        }
+                        val intent = Intent(context, EventDetailActivity::class.java)
+                            .putExtra("eventId", eventId)
+                        context.startActivity(intent)
                     }
                 )
             }

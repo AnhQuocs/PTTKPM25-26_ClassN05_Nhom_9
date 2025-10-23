@@ -5,9 +5,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -23,7 +20,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.heartbeat.BaseComponentActivity
 import com.example.heartbeat.presentation.features.donation.ui.register_detail.DonationDetailScreen
-import com.example.heartbeat.presentation.features.event.ui.EventDetailScreen
 import com.example.heartbeat.presentation.features.onboarding.OnboardingScreen
 import com.example.heartbeat.presentation.features.users.admin.AdminScreen
 import com.example.heartbeat.presentation.features.users.auth.ui.LoginScreen
@@ -69,10 +65,10 @@ class MainActivity : BaseComponentActivity() {
                         navArgument("donorId") { type = NavType.StringType }
                     )
                 ) { backStackEntry ->
-                    val eventId = backStackEntry.arguments?.getString("eventId")
+                    val eventId1 = backStackEntry.arguments?.getString("eventId")
                     val donorId = backStackEntry.arguments?.getString("donorId")
                     DonationDetailScreen(
-                        eventId = eventId ?: "",
+                        eventId = eventId1 ?: "",
                         donorId = donorId ?: "",
                         navController = navController
                     )
@@ -83,25 +79,6 @@ class MainActivity : BaseComponentActivity() {
                 ) { backStackEntry ->
                     val eventId = backStackEntry.arguments?.getString("eventId")
                     ApproveScreen(eventId = eventId ?: "", navController = navController)
-                }
-                composable(
-                    route = "event_detail/{eventId}",
-                    arguments = listOf(navArgument("eventId") { type = NavType.StringType }),
-                    enterTransition = {
-                        slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(slideDuration))
-                    },
-                    exitTransition = {
-                        slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth / 2 }, animationSpec = tween(slideDuration))
-                    },
-                    popEnterTransition = {
-                        slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }, animationSpec = tween(slideDuration))
-                    },
-                    popExitTransition = {
-                        slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }, animationSpec = tween(slideDuration))
-                    }
-                ) { backStackEntry ->
-                    val eventId = backStackEntry.arguments?.getString("eventId")
-                    EventDetailScreen(eventId = eventId ?: "", navController = navController)
                 }
             }
 

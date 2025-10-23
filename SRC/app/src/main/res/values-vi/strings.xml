@@ -117,6 +117,7 @@
     <string name="why_donate">Vì Sao Nên Hiến Máu?</string>
     <string name="upcoming_event">Sự kiện sắp tới</string>
     <string name="progress">Tiến độ</string>
+    <string name="loading">Đang tải\.\.\.</string>
 
     <!-- Event -->
     <string name="events">Sự kiện</string>
@@ -213,6 +214,9 @@
     <string name="event_detail">Chi tiết sự kiện</string>
     <string name="event_info">Thông tin sự kiện</string>
     <string name="register_now">Đăng ký ngay</string>
+    <string name="cancel_registration">Hủy đăng ký</string>
+    <string name="cancel_registration_message">Bạn có chắc chắn muốn hủy đăng ký sự kiện này không?</string>
+    <string name="cancelled_success">Hủy thành công</string>
     <string name="contact">Liên hệ</string>
     <string name="welcome_banner_title">Chào mừng bạn đến với sự kiện!</string>
     <string name="welcome_banner_subtitle">Hãy cùng sẻ chia sự sống – mỗi giọt máu của bạn có thể cứu một mạng người!</string>

@@ -103,7 +103,7 @@ fun MainApp(navController: NavController) {
         ) { tab ->
             when(tab) {
                 0 -> HomeScreen(navController = navController)
-                1 -> SearchScreen(navController = navController)
+                1 -> SearchScreen()
                 2 -> SettingScreen(navController = navController)
             }
         }

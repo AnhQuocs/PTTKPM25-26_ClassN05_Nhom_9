@@ -65,8 +65,7 @@ fun SearchScreen(
     unifiedSearchViewModel: UnifiedSearchViewModel = hiltViewModel(),
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
     recentSearchViewModel: RecentSearchViewModel = hiltViewModel(),
-    recentViewedViewModel: RecentViewedViewModel = hiltViewModel(),
-    navController: NavController
+    recentViewedViewModel: RecentViewedViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 

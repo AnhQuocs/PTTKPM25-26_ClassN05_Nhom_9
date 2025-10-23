@@ -14,11 +14,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.heartbeat.BaseComponentActivity
+import com.example.heartbeat.R
 import com.example.heartbeat.presentation.features.donation.ui.register_detail.DonationDetailScreen
 import com.example.heartbeat.presentation.features.onboarding.OnboardingScreen
 import com.example.heartbeat.presentation.features.users.admin.AdminScreen
@@ -115,6 +118,6 @@ fun SplashScreen() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Loading...")
+        Text(stringResource(id = R.string.loading), fontSize = 18.sp)
     }
 }

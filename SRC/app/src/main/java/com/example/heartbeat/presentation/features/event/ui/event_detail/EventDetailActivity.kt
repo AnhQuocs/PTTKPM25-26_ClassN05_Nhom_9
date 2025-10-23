@@ -3,6 +3,8 @@ package com.example.heartbeat.presentation.features.event.ui.event_detail
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -24,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,10 +36,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,6 +70,8 @@ import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalVi
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
+import com.example.heartbeat.ui.theme.BloodRed
+import com.example.heartbeat.ui.theme.FacebookBlue
 import com.example.heartbeat.ui.theme.Green500
 import com.example.heartbeat.ui.theme.PeachBackground
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -121,6 +130,7 @@ fun EventDetailScreen(
 
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
     val context = LocalContext.current
+    var isShowDialog by remember { mutableStateOf(false) }
 
     val uiState by donationViewModel.uiState.collectAsState()
     val selectedDonation = uiState.selectedDonation
@@ -140,6 +150,7 @@ fun EventDetailScreen(
     }
 
     val isButtonEnable = selectedDonation?.status == "REJECTED" || selectedDonation?.status == null
+    val isPending = selectedDonation?.status == "PENDING"
 
     selectedEvent?.let { event ->
         val hospital = hospitalViewModel.hospitalDetails[event.locationId]
@@ -221,14 +232,35 @@ fun EventDetailScreen(
                             }
                         }
 
-                        AppButton(
-                            text = stringResource(id = R.string.register_now),
-                            enabled = isValid && isButtonEnable,
-                            onClick = {
-                                navController.navigate("register_donation/$eventId/$userId")
-                            },
-                            modifier = Modifier.weight(0.5f)
-                        )
+                        if (isPending) {
+                            Button(
+                                onClick = {
+                                    isShowDialog = true
+                                },
+                                modifier = Modifier
+                                    .height(Dimens.HeightDefault)
+                                    .weight(0.5f),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = BloodRed,
+                                ),
+                                shape = RoundedCornerShape(AppShape.MediumShape)
+                            ) {
+                                Text(
+                                    stringResource(id = R.string.cancel_registration),
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                            }
+                        } else {
+                            AppButton(
+                                text = stringResource(id = R.string.register_now),
+                                enabled = isValid && isButtonEnable,
+                                onClick = {
+                                    navController.navigate("register_donation/$eventId/$userId")
+                                },
+                                color = FacebookBlue,
+                                modifier = Modifier.weight(0.5f)
+                            )
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxSize()
@@ -289,6 +321,16 @@ fun EventDetailScreen(
                         }
                     }
                 }
+
+                if(isShowDialog) {
+                    CancelRegistrationDialog(
+                        onDismiss = { isShowDialog = false },
+                        onConfirm = {
+                            userId?.let { selectedDonation?.let { it1 -> donationViewModel.deleteDonation(donationId = it1.donationId) } }
+                            isShowDialog = false
+                        }
+                    )
+                }
             }
         }
     }
@@ -339,4 +381,60 @@ fun isFutureTime(isoString: String): Boolean {
     val now = LocalDateTime.now()
 
     return dateTime.isAfter(now)
+}
+
+@Composable
+fun CancelRegistrationDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = stringResource(id = R.string.cancel_registration),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(id = R.string.cancel_registration_message),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirm()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.cancelled_success),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
+                modifier = Modifier
+                    .padding(horizontal = Dimens.PaddingS)
+                    .height(40.dp),
+                shape = RoundedCornerShape(AppShape.ExtraLargeShape)
+            ) {
+                Text(stringResource(id = R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.padding(horizontal = Dimens.PaddingS)
+            ) {
+                Text(
+                    stringResource(id = R.string.cancel),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        shape = RoundedCornerShape(20.dp)
+    )
 }

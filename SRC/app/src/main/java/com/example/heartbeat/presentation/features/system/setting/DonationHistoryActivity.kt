@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -64,9 +66,14 @@ import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
+import com.example.heartbeat.ui.theme.CompassionBlue
 import com.example.heartbeat.ui.theme.Green500
+import com.example.heartbeat.ui.theme.OceanBlue
+import com.example.heartbeat.ui.theme.WaitingGold
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class DonationHistoryActivity : BaseComponentActivity() {
@@ -191,6 +198,13 @@ fun HistoryEventCard(
     hospital: Hospital,
     onViewDetail: () -> Unit
 ) {
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    val (startStr, endStr) = event.time.split(" ")
+    val startTime = LocalTime.parse(startStr, timeFormatter)
+    val endTime = LocalTime.parse(endStr, timeFormatter)
+    val time = "$startTime - $endTime"
+
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(AppShape.ExtraLargeShape),
@@ -261,19 +275,69 @@ fun HistoryEventCard(
                 }
             }
 
-            Button(
-                onClick = onViewDetail,
-                shape = RoundedCornerShape(AppShape.ExtraLargeShape),
-                colors = ButtonDefaults.buttonColors(containerColor = Green500),
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .align(Alignment.End)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = stringResource(id = R.string.view_details),
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
+                Column(
+                    modifier = Modifier.weight(0.5f),
+                    verticalArrangement = Arrangement.spacedBy(AppSpacing.Small)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small)
+                    ) {
+                        Icon(
+                            Icons.Default.DateRange,
+                            contentDescription = null,
+                            tint = WaitingGold,
+                            modifier = Modifier.size(Dimens.SizeSM)
+                        )
+
+                        Text(
+                            text = event.date,
+                            color = WaitingGold,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small)
+                    ) {
+                        Icon(
+                            Icons.Default.AccessTime,
+                            contentDescription = null,
+                            tint = OceanBlue,
+                            modifier = Modifier.size(Dimens.SizeSM)
+                        )
+
+                        Text(
+                            text = time,
+                            color = OceanBlue,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(AppSpacing.Medium))
+
+                Button(
+                    onClick = onViewDetail,
+                    shape = RoundedCornerShape(AppShape.ExtraLargeShape),
+                    colors = ButtonDefaults.buttonColors(containerColor = Green500),
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.view_details),
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }

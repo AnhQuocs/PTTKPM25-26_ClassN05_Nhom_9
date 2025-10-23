@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -239,7 +240,10 @@ fun EventInfoCard(event: Event, hospital: Hospital) {
             ) {
                 Text(
                     text = event.name,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold, fontSize = 18.sp),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 18.sp
+                    ),
                     textAlign = TextAlign.Center,
                     color = Color(0xFF01579B),
                     modifier = Modifier.fillMaxWidth()
@@ -290,7 +294,12 @@ fun EventInfoCard(event: Event, hospital: Hospital) {
 }
 
 @Composable
-fun EventInfoCardItem(icon: ImageVector, text: String, modifier: Modifier = Modifier, color: Color = Color(0xFF01579B)) {
+fun EventInfoCardItem(
+    icon: ImageVector,
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFF01579B)
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -300,12 +309,16 @@ fun EventInfoCardItem(icon: ImageVector, text: String, modifier: Modifier = Modi
             imageVector = icon,
             contentDescription = null,
             tint = color,
-            modifier = Modifier.size(Dimens.SizeSM)
+            modifier = Modifier
+                .size(Dimens.SizeSM)
+                .align(Alignment.Top)
         )
 
         Text(
             text = text,
             color = color,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium)
         )
     }

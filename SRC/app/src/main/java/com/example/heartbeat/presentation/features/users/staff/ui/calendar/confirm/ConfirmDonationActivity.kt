@@ -84,6 +84,9 @@ import com.example.heartbeat.ui.theme.OceanBlue
 import com.example.heartbeat.ui.theme.UnityPeachText
 import com.example.heartbeat.ui.theme.WaitingGold
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -185,22 +188,33 @@ fun ConfirmDonationScreen(
                 ) {
                     hospital?.let { h ->
                         observedEvent?.let { event ->
+                            val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
+                            val isDeadlinePassed = event.deadline?.let { it < now } ?: false
+
                             ConfirmDonationCard(event, h, pendingCount = pendingList.size)
+
                             Spacer(modifier = Modifier.height(AppSpacing.Small))
+
                             Button(
                                 onClick = {
                                     val intent = Intent(context, EditEventActivity::class.java)
                                         .putExtra("eventId", eventId)
                                     context.startActivity(intent)
                                 },
+                                enabled = !isDeadlinePassed,
                                 shape = RoundedCornerShape(AppShape.SmallShape),
-                                colors = ButtonDefaults.buttonColors(containerColor = FacebookBlue),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (!isDeadlinePassed) FacebookBlue else Color.Gray
+                                ),
                                 modifier = Modifier
                                     .wrapContentWidth()
                                     .height(Dimens.HeightDefault - 8.dp)
                                     .align(Alignment.End)
                             ) {
-                                Text(stringResource(id = R.string.edit), color = Color.White)
+                                Text(
+                                    text = stringResource(id = R.string.edit),
+                                    color = Color.White
+                                )
                             }
                         }
                     }

@@ -158,6 +158,8 @@
     <string name="donors_pending">đang chờ</string>
     <string name="donors_pending_approval">đang chờ duyệt</string>
     <string name="edit">Chỉnh sửa</string>
+    <string name="edit_event">Chỉnh sửa sự kiện</string>
+    <string name="delete">Xóa</string>
 
     <string name="no_events_this_day">Không có sự kiện trong ngày này</string>
     <string name="today">Hôm nay</string>
@@ -167,6 +169,8 @@
     <string name="blood_volume_placeholder">Lượng máu</string>
     <string name="confirm_remove_person">Bạn có chắc chắn muốn xóa người này khỏi sự kiện không?</string>
     <string name="confirm_success">Xác nhận thành công</string>
+    <string name="confirm_delete_event">Bạn có chắc chắn muốn xóa sự kiện này không? Mọi dữ liệu liên quan sẽ bị xóa.</string>
+    <string name="delete_success">Xóa thành công</string>
     <string name="no_registration_message">Hôm nay chưa có ai đăng ký\nCơ hội cho bạn trở thành hero tiếp theo đang chờ</string>
 
     <!-- Staff/Home -->

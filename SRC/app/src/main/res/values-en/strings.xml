@@ -158,6 +158,7 @@
     <string name="donors_pending">donors pending</string>
     <string name="donors_pending_approval">donors pending approval</string>
     <string name="blood_stats_title">Blood Overview</string>
+    <string name="edit">Edit</string>
 
     <string name="no_events_this_day">No events on this day</string>
     <string name="today">Today</string>

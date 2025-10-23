@@ -81,7 +81,9 @@ fun SettingScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
     donorViewModel: DonorViewModel = hiltViewModel(),
     donationViewModel: DonationViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    isShowPersonalInfo: Boolean = true,
+    isShowDonationHistory: Boolean = true
 ) {
     val context = LocalContext.current
 
@@ -195,15 +197,17 @@ fun SettingScreen(
                 }
             )
 
-            OptionItem(
-                iconRes = R.drawable.ic_info,
-                text = stringResource(id = R.string.personal_info),
-                onClick = {
-                    val intent = Intent(context, PersonalInformationActivity::class.java)
-                    intent.putExtra("donorId", user?.uid)
-                    context.startActivity(intent)
-                }
-            )
+            if(isShowPersonalInfo) {
+                OptionItem(
+                    iconRes = R.drawable.ic_info,
+                    text = stringResource(id = R.string.personal_info),
+                    onClick = {
+                        val intent = Intent(context, PersonalInformationActivity::class.java)
+                        intent.putExtra("donorId", user?.uid)
+                        context.startActivity(intent)
+                    }
+                )
+            }
 
             OptionItem(
                 iconRes = R.drawable.ic_language,
@@ -213,15 +217,17 @@ fun SettingScreen(
                 }
             )
 
-            OptionItem(
-                iconRes = R.drawable.ic_history,
-                text = stringResource(id = R.string.history),
-                onClick = {
-                    val intent = Intent(context, DonationHistoryActivity::class.java)
-                    intent.putParcelableArrayListExtra("donated_list", ArrayList(donatedList))
-                    context.startActivity(intent)
-                }
-            )
+            if(isShowDonationHistory) {
+                OptionItem(
+                    iconRes = R.drawable.ic_history,
+                    text = stringResource(id = R.string.history),
+                    onClick = {
+                        val intent = Intent(context, DonationHistoryActivity::class.java)
+                        intent.putParcelableArrayListExtra("donated_list", ArrayList(donatedList))
+                        context.startActivity(intent)
+                    }
+                )
+            }
 
             AppLineGrey(modifier = Modifier.padding(Dimens.PaddingXS))
 

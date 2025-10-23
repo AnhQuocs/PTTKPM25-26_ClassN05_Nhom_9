@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.users.staff.ui.calendar.confirm
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -65,15 +68,19 @@ import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalVi
 import com.example.heartbeat.presentation.features.system.setting.SettingTitle
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.presentation.features.users.staff.ui.calendar.EditEventActivity
 import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.DonorInfoShimmer
 import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.EventInfoCardItem
 import com.example.heartbeat.presentation.features.users.staff.ui.home.approve_donation.EventInfoCardShimmer
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
+import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.CompassionBlue
+import com.example.heartbeat.ui.theme.FacebookBlue
 import com.example.heartbeat.ui.theme.Green500
 import com.example.heartbeat.ui.theme.HopeGreen
+import com.example.heartbeat.ui.theme.OceanBlue
 import com.example.heartbeat.ui.theme.UnityPeachText
 import com.example.heartbeat.ui.theme.WaitingGold
 import dagger.hilt.android.AndroidEntryPoint
@@ -179,6 +186,22 @@ fun ConfirmDonationScreen(
                     hospital?.let { h ->
                         observedEvent?.let { event ->
                             ConfirmDonationCard(event, h, pendingCount = pendingList.size)
+                            Spacer(modifier = Modifier.height(AppSpacing.Small))
+                            Button(
+                                onClick = {
+                                    val intent = Intent(context, EditEventActivity::class.java)
+                                        .putExtra("eventId", eventId)
+                                    context.startActivity(intent)
+                                },
+                                shape = RoundedCornerShape(AppShape.SmallShape),
+                                colors = ButtonDefaults.buttonColors(containerColor = FacebookBlue),
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .height(Dimens.HeightDefault - 8.dp)
+                                    .align(Alignment.End)
+                            ) {
+                                Text(stringResource(id = R.string.edit), color = Color.White)
+                            }
                         }
                     }
 

@@ -16,6 +16,9 @@
         android:theme="@style/Theme.HeartBeat"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.features.users.staff.ui.calendar.EditEventActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.features.users.staff.ui.calendar.confirm.ConfirmDonationActivity"
             android:exported="false" />
         <activity

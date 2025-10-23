@@ -157,6 +157,7 @@
     <string name="reject">Từ chối</string>
     <string name="donors_pending">đang chờ</string>
     <string name="donors_pending_approval">đang chờ duyệt</string>
+    <string name="edit">Chỉnh sửa</string>
 
     <string name="no_events_this_day">Không có sự kiện trong ngày này</string>
     <string name="today">Hôm nay</string>

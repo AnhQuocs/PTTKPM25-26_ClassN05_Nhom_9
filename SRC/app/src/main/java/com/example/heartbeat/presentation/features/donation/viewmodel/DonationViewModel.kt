@@ -58,29 +58,10 @@ class DonationViewModel @Inject constructor(
     }
 
     // READ
-    fun observeDonation(donationId: String) {
-        viewModelScope.launch {
-            donationUseCases.observeDonationById(donationId)
-                .collect { donation ->
-                    _uiState.update { it.copy(selectedDonation = donation) }
-                }
-        }
-    }
-
     fun getDonationsByDonor(donorId: String) = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
         try {
             val list = donationUseCases.getDonationsByDonor(donorId)
-            _uiState.update { it.copy(isLoading = false, donations = list) }
-        } catch (e: Exception) {
-            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
-        }
-    }
-
-    fun getDonationsByEvent(eventId: String) = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        try {
-            val list = donationUseCases.getDonationsByEvent(eventId)
             _uiState.update { it.copy(isLoading = false, donations = list) }
         } catch (e: Exception) {
             _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
@@ -99,22 +80,6 @@ class DonationViewModel @Inject constructor(
     }
 
     // UPDATE
-    fun updateDonation(donation: Donation) = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        try {
-            val updated = donationUseCases.updateDonation(donation)
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    successMessage = "Donation updated",
-                    donations = it.donations.map { d -> if (d.donationId == updated.donationId) updated else d }
-                )
-            }
-        } catch (e: Exception) {
-            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
-        }
-    }
-
     fun updateStatus(donationId: String, status: String) = viewModelScope.launch {
         try {
             val updated = donationUseCases.updateStatus(donationId, status)

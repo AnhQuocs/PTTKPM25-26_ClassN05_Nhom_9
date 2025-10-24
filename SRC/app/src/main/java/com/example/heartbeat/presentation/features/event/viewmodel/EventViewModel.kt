@@ -153,17 +153,6 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun observeDonorList(eventId: String) {
-        eventUseCase.observeDonorListUseCase(eventId) { donorList ->
-            _events.value = _events.value.map { event ->
-                if (event.id == eventId) event.copy(donorList = donorList)
-                else event
-            }
-
-            _selectedEvent.value = _selectedEvent.value?.copy(donorList = donorList)
-        }
-    }
-
     suspend fun getEventByIdDirect(id: String): Event {
         return eventUseCase.getEventByIdUseCase(id)!!
     }

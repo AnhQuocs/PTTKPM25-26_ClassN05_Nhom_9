@@ -6,24 +6,18 @@ import com.example.heartbeat.domain.usecase.donation.read.GetAllDonationsListUse
 import com.example.heartbeat.domain.usecase.donation.read.GetAllDonationsUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDayUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByDonorUseCase
-import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByEventUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByMonthUseCase
 import com.example.heartbeat.domain.usecase.donation.read.GetDonationsByWeekUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByDonorUseCase
-import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationByIdUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObserveDonationsByEventUseCase
 import com.example.heartbeat.domain.usecase.donation.read.ObservePendingDonationsUseCase
 import com.example.heartbeat.domain.usecase.donation.update.ApproveDonationUseCase
-import com.example.heartbeat.domain.usecase.donation.update.UpdateDonationUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateDonationVolumeUseCase
 import com.example.heartbeat.domain.usecase.donation.update.UpdateStatusUseCase
 
 data class DonationUseCases(
     val addDonation: AddDonationUseCase,
-    val observeDonationById: ObserveDonationByIdUseCase,
     val getDonationsByDonor: GetDonationsByDonorUseCase,
-    val getDonationsByEvent: GetDonationsByEventUseCase,
-    val updateDonation: UpdateDonationUseCase,
     val updateStatus: UpdateStatusUseCase,
     val updateDonationVolume: UpdateDonationVolumeUseCase,
     val deleteDonation: DeleteDonationUseCase,

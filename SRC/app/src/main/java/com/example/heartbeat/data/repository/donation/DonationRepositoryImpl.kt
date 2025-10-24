@@ -55,13 +55,6 @@ class DonationRepositoryImpl(
         return snapshot.toObjects(DonationDto::class.java).mapNotNull { it.toDomain() }
     }
 
-    override suspend fun getDonationsByEvent(eventId: String): List<Donation> {
-        val snapshot = collection
-            .whereEqualTo("eventId", eventId)
-            .get().await()
-        return snapshot.toObjects(DonationDto::class.java).mapNotNull { it.toDomain() }
-    }
-
     override suspend fun getDonationsByDay(day: LocalDate): Int {
         val startOfDay = day.atStartOfDay()
         val endOfDay = day.plusDays(1).atStartOfDay()
@@ -112,11 +105,6 @@ class DonationRepositoryImpl(
     override suspend fun getAllDonationsList(): List<Donation> {
         val snapshot = collection.get().await()
         return snapshot.toObjects(DonationDto::class.java).mapNotNull { it.toDomain() }
-    }
-
-    override suspend fun updateDonation(donation: Donation): Donation {
-        collection.document(donation.donationId).set(donation.toDto()).await()
-        return donation
     }
 
     override suspend fun updateStatus(donationId: String, status: String): Donation? {

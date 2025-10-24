@@ -153,6 +153,7 @@
 
     <!-- Staff -->
     <string name="create_event">Tạo sự kiện mới</string>
+    <string name="event_created_success">Tạo sự kiện thành công</string>
     <string name="pending_requests">Đang chờ duyệt</string>
     <string name="approve">Duyệt</string>
     <string name="reject">Từ chối</string>

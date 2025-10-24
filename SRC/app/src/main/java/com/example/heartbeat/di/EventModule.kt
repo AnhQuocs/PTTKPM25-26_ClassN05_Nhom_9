@@ -9,7 +9,6 @@ import com.example.heartbeat.domain.usecase.event.EventUseCase
 import com.example.heartbeat.domain.usecase.event.GetEventByIdUseCase
 import com.example.heartbeat.domain.usecase.event.ObserveAllEventsUseCase
 import com.example.heartbeat.domain.usecase.event.ObserveDonorCountUseCase
-import com.example.heartbeat.domain.usecase.event.ObserveDonorListUseCase
 import com.example.heartbeat.domain.usecase.event.ObserveEventByIdUseCase
 import com.example.heartbeat.domain.usecase.event.ObserveEventsByDateUseCase
 import com.example.heartbeat.domain.usecase.event.UpdateDonorCountUseCase
@@ -47,7 +46,6 @@ object EventModule {
         updateEventUseCase = UpdateEventUseCase(repository),
         deleteEventUseCase = DeleteEventUseCase(repository),
         observeDonorCountUseCase = ObserveDonorCountUseCase(repository),
-        observeDonorListUseCase = ObserveDonorListUseCase(repository),
         observeEventsByDateUseCase = ObserveEventsByDateUseCase(repository),
         updateDonorCountUseCase = UpdateDonorCountUseCase(repository),
         observeEventByIdUseCase = ObserveEventByIdUseCase(repository)

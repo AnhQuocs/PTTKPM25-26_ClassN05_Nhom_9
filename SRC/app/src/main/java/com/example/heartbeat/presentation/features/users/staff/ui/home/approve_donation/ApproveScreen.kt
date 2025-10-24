@@ -65,6 +65,7 @@ import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
+import com.example.heartbeat.presentation.features.system.province.viewmodel.ProvinceViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorFormState
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
 import com.example.heartbeat.presentation.features.users.staff.component.SubScreenTopBar
@@ -82,6 +83,7 @@ fun ApproveScreen(
     donorViewModel: DonorViewModel = hiltViewModel(),
     eventViewModel: EventViewModel = hiltViewModel(),
     hospitalViewModel: HospitalViewModel = hiltViewModel(),
+    provinceViewModel: ProvinceViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val uiState by donationViewModel.uiState.collectAsState()
@@ -89,6 +91,8 @@ fun ApproveScreen(
 
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
     val donorCache by donorViewModel.donorCache.collectAsState()
+
+    val selectedProvinces by provinceViewModel.selectedProvince.collectAsState()
 
     LaunchedEffect(eventId) {
         donationViewModel.observeDonationsByEvent(eventId)
@@ -176,29 +180,36 @@ fun ApproveScreen(
                                         gender = it.gender
                                     )
 
-                                    DonorInfo(
-                                        donation = donation,
-                                        formState = formState,
-                                        onApprove = {
-                                            donationViewModel.updateStatus(
-                                                donationId = donation.donationId,
-                                                status = "APPROVED"
-                                            )
+                                    LaunchedEffect(donor) {
+                                        provinceViewModel.loadProvinceById(formState.cityId)
+                                    }
 
-                                            donationViewModel.approveDonation(
-                                                donationId = donation.donationId,
-                                                donorId = donation.donorId
-                                            )
-                                        },
-                                        onReject = {
-                                            donationViewModel.updateStatus(
-                                                donationId = donation.donationId,
-                                                status = "REJECTED"
-                                            )
+                                    selectedProvinces?.let { it1 ->
+                                        DonorInfo(
+                                            donation = donation,
+                                            formState = formState,
+                                            province = it1.name,
+                                            onApprove = {
+                                                donationViewModel.updateStatus(
+                                                    donationId = donation.donationId,
+                                                    status = "APPROVED"
+                                                )
 
-                                            eventViewModel.updateDonorCount(event.id, -1)
-                                        }
-                                    )
+                                                donationViewModel.approveDonation(
+                                                    donationId = donation.donationId,
+                                                    donorId = donation.donorId
+                                                )
+                                            },
+                                            onReject = {
+                                                donationViewModel.updateStatus(
+                                                    donationId = donation.donationId,
+                                                    status = "REJECTED"
+                                                )
+
+                                                eventViewModel.updateDonorCount(event.id, -1)
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -328,6 +339,7 @@ fun EventInfoCardItem(
 fun DonorInfo(
     donation: Donation,
     formState: DonorFormState,
+    province: String,
     onApprove: () -> Unit,
     onReject: () -> Unit
 ) {
@@ -402,7 +414,7 @@ fun DonorInfo(
                     verticalArrangement = Arrangement.spacedBy(Dimens.PaddingXS)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.city) + ": ${formState.cityId}",
+                        text = stringResource(id = R.string.city) + ": $province",
                         style = detailStyle
                     )
                     Text(

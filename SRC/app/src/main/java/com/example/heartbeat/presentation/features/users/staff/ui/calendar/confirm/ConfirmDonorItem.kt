@@ -4,12 +4,9 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,7 +29,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.heartbeat.R
@@ -55,8 +50,6 @@ import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
-import com.example.heartbeat.ui.theme.CompassionBlue
-import com.example.heartbeat.ui.theme.GoldenGlow
 
 @Composable
 fun ConfirmDonorItem(
@@ -65,7 +58,8 @@ fun ConfirmDonorItem(
     donation: Donation,
     formState: DonorFormState,
     onConfirm: () -> Unit,
-    onUnable: () -> Unit
+    onUnable: () -> Unit,
+    isConfirmDonation: Boolean
 ) {
     var expanded by remember { mutableStateOf(false) }
     val rowHeight = Dimens.HeightLarge - 4.dp
@@ -212,7 +206,7 @@ fun ConfirmDonorItem(
                 ) {
                     OutlinedButton(
                         onClick = onUnable,
-                        enabled = !isButtonEnabled,
+                        enabled = !isButtonEnabled && isConfirmDonation,
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(AppShape.ExtraLargeShape),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red)
@@ -222,7 +216,7 @@ fun ConfirmDonorItem(
 
                     Button(
                         onClick = onConfirm,
-                        enabled = isButtonEnabled,
+                        enabled = isButtonEnabled && isConfirmDonation,
                         shape = RoundedCornerShape(AppShape.ExtraLargeShape),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                         modifier = Modifier.weight(1f)

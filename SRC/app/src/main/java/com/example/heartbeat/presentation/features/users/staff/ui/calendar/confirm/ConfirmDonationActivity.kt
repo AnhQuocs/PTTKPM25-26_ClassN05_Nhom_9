@@ -80,13 +80,14 @@ import com.example.heartbeat.ui.theme.CompassionBlue
 import com.example.heartbeat.ui.theme.FacebookBlue
 import com.example.heartbeat.ui.theme.Green500
 import com.example.heartbeat.ui.theme.HopeGreen
-import com.example.heartbeat.ui.theme.OceanBlue
 import com.example.heartbeat.ui.theme.UnityPeachText
 import com.example.heartbeat.ui.theme.WaitingGold
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -191,6 +192,8 @@ fun ConfirmDonationScreen(
                             val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
                             val isDeadlinePassed = event.deadline?.let { it < now } ?: false
 
+                            val isConfirmDonation = isEventOngoing(event.date, event.time)
+
                             ConfirmDonationCard(event, h, pendingCount = pendingList.size)
 
                             Spacer(modifier = Modifier.height(AppSpacing.Small))
@@ -216,57 +219,82 @@ fun ConfirmDonationScreen(
                                     color = Color.White
                                 )
                             }
-                        }
-                    }
 
-                    Spacer(modifier = Modifier.height(AppSpacing.Large))
+                            Spacer(modifier = Modifier.height(AppSpacing.Large))
 
-                    LazyColumn {
-                        items(
-                            approvedList,
-                            key = { it.donationId }
-                        ) { donation ->
-                            val donor = donorCache[donation.donorId]
+                            if(!isConfirmDonation && approvedList.isNotEmpty()) {
+                                Text(
+                                    text = stringResource(id = R.string.confirm_donation_unavailable),
+                                    color = BloodRed,
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
 
-                            LaunchedEffect(donation.donationId) {
-                                if (donor == null) {
-                                    donorViewModel.fetchDonorAndCache(donation.donorId)
-                                }
+                                Spacer(modifier = Modifier.height(AppSpacing.Medium))
                             }
 
-                            donor?.let {
-                                val formState = DonorFormState(
-                                    name = it.name,
-                                    phoneNumber = it.phoneNumber,
-                                    bloodGroup = it.bloodGroup,
-                                    cityId = it.cityId,
-                                    dateOfBirth = it.dateOfBirth,
-                                    age = it.age,
-                                    gender = it.gender
-                                )
-
-                                ConfirmDonorItem(
-                                    bloodVolume = bloodVolume,
-                                    onBloodVolumeChange = { newValue -> bloodVolume = newValue },
-                                    donation = donation,
-                                    formState = formState,
-                                    onUnable = {
-                                        selectedDonation = donation
-                                        showDialog = true
-                                    },
-                                    onConfirm = {
-                                        donationViewModel.updateDonationVolume(
-                                            donationId = donation.donationId,
-                                            volume = bloodVolume
+                            LazyColumn {
+                                if(approvedList.isEmpty()) {
+                                    item {
+                                        Text(
+                                            text = stringResource(id = R.string.no_new_approved_donors),
+                                            color = Color(0xFF757575),
+                                            style = MaterialTheme.typography.titleSmall.copy(fontSize = 16.sp),
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.PaddingL)
                                         )
-
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.confirm_success),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
                                     }
-                                )
+                                } else {
+                                    items(
+                                        approvedList,
+                                        key = { it.donationId }
+                                    ) { donation ->
+                                        val donor = donorCache[donation.donorId]
+
+                                        LaunchedEffect(donation.donationId) {
+                                            if (donor == null) {
+                                                donorViewModel.fetchDonorAndCache(donation.donorId)
+                                            }
+                                        }
+
+                                        donor?.let {
+                                            val formState = DonorFormState(
+                                                name = it.name,
+                                                phoneNumber = it.phoneNumber,
+                                                bloodGroup = it.bloodGroup,
+                                                cityId = it.cityId,
+                                                dateOfBirth = it.dateOfBirth,
+                                                age = it.age,
+                                                gender = it.gender
+                                            )
+
+                                            ConfirmDonorItem(
+                                                bloodVolume = bloodVolume,
+                                                onBloodVolumeChange = { newValue -> bloodVolume = newValue },
+                                                donation = donation,
+                                                formState = formState,
+                                                onUnable = {
+                                                    selectedDonation = donation
+                                                    showDialog = true
+                                                },
+                                                onConfirm = {
+                                                    donationViewModel.updateDonationVolume(
+                                                        donationId = donation.donationId,
+                                                        volume = bloodVolume
+                                                    )
+
+                                                    Toast.makeText(
+                                                        context,
+                                                        context.getString(R.string.confirm_success),
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                },
+                                                isConfirmDonation = isConfirmDonation
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -463,4 +491,22 @@ fun ConfirmDonationCard(
             }
         }
     }
+}
+
+fun isEventOngoing(date: String, time: String): Boolean {
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val localDate = LocalDate.parse(date, dateFormatter)
+
+    val (startStr, endStr) = time.split(" ")
+
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    val startTime = LocalTime.parse(startStr, timeFormatter)
+    val endTime = LocalTime.parse(endStr, timeFormatter)
+
+    val startDateTime = LocalDateTime.of(localDate, startTime)
+    val endDateTime = LocalDateTime.of(localDate, endTime)
+
+    val now = LocalDateTime.now()
+
+    return now.isAfter(startDateTime) && now.isBefore(endDateTime)
 }

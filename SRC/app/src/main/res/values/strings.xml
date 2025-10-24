@@ -173,6 +173,8 @@
     <string name="confirm_delete_event">Are you sure you want to delete this event? All related data will be removed.</string>
     <string name="delete_success">Delete successful</string>
     <string name="no_registration_message">No one has registered today\nThe chance to become the next hero is waiting for you</string>
+    <string name="confirm_donation_unavailable">You can only confirm donations during the event time</string>
+    <string name="no_new_approved_donors">No new approved donors for this event yet</string>
 
     <!-- Staff/Home -->
     <string name="donation_stats_title">Registration Overview</string>

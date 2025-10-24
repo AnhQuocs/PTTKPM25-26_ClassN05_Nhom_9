@@ -1,7 +1,6 @@
 package com.example.heartbeat.presentation.features.users.staff.ui.home
 
 import android.content.Intent
-import android.os.Parcelable
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
@@ -58,7 +57,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.heartbeat.R
-import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.presentation.components.TitleSection
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
@@ -74,10 +72,8 @@ import com.example.heartbeat.ui.theme.HopeGreenLight
 import com.example.heartbeat.ui.theme.HopeGreenText
 import com.example.heartbeat.ui.theme.SunshineYellowLight
 import com.example.heartbeat.ui.theme.SunshineYellowText
-import kotlinx.parcelize.Parcelize
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.ArrayList
 
 @Composable
 fun PendingListSection(

@@ -112,7 +112,6 @@ fun StepOneScreen(
             onValueChange = { input ->
                 selectedCityName = input
 
-                // Nếu người dùng gõ trùng tên trong list thì tự động cập nhật ID
                 val selectedId = provinces.firstOrNull { it.name.equals(input, ignoreCase = true) }?.id
                 if (selectedId != null) {
                     onUpdate(
@@ -130,6 +129,5 @@ fun StepOneScreen(
             imeAction = ImeAction.Done,
             list = provinceNames
         )
-
     }
 }

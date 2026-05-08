@@ -1,5 +1,6 @@
 package com.example.heartbeat.presentation.features.donation.ui.register_detail
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,7 @@ import com.example.heartbeat.R
 import com.example.heartbeat.presentation.components.AppLineGrey
 import com.example.heartbeat.presentation.features.donation.ui.RegisterDonationScreen
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
+import com.example.heartbeat.presentation.features.event.ui.event_detail.EventDetailActivity
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
@@ -56,6 +59,8 @@ fun DonationDetailScreen(
     donorViewModel: DonorViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val context = LocalContext.current
+
     val events by eventViewModel.events.collectAsState()
     val formState by donorViewModel.formState.collectAsState()
     val uiState by donationViewModel.uiState.collectAsState()
@@ -161,7 +166,9 @@ fun DonationDetailScreen(
                                     navController.popBackStack()
                                 })
                                 "APPROVED" -> ApprovedScreen(onViewDetail = {
-                                    navController.navigate("event_detail/$eventId")
+                                    val intent = Intent(context, EventDetailActivity::class.java)
+                                        .putExtra("eventId", eventId)
+                                    context.startActivity(intent)
                                 })
 
                                 "REJECTED" -> RejectedScreen(onRegisterAgain = {

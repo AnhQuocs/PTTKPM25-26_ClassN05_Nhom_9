@@ -62,6 +62,7 @@ import com.example.heartbeat.R
 import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.hospital.Hospital
+import com.example.heartbeat.domain.entity.system.Province
 import com.example.heartbeat.presentation.features.donation.viewmodel.DonationViewModel
 import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
 import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
@@ -91,8 +92,6 @@ fun ApproveScreen(
 
     val selectedEvent by eventViewModel.selectedEvent.collectAsState()
     val donorCache by donorViewModel.donorCache.collectAsState()
-
-    val selectedProvinces by provinceViewModel.selectedProvince.collectAsState()
 
     LaunchedEffect(eventId) {
         donationViewModel.observeDonationsByEvent(eventId)
@@ -180,15 +179,18 @@ fun ApproveScreen(
                                         gender = it.gender
                                     )
 
-                                    LaunchedEffect(donor) {
-                                        provinceViewModel.loadProvinceById(formState.cityId)
+                                    val provinceState = remember { mutableStateOf<Province?>(null) }
+
+                                    LaunchedEffect(donor.cityId) {
+                                        val province = provinceViewModel.getProvinceById(donor.cityId)
+                                        provinceState.value = province
                                     }
 
-                                    selectedProvinces?.let { it1 ->
+                                    provinceState.value?.let { province ->
                                         DonorInfo(
                                             donation = donation,
                                             formState = formState,
-                                            province = it1.name,
+                                            province = province.name,
                                             onApprove = {
                                                 donationViewModel.updateStatus(
                                                     donationId = donation.donationId,

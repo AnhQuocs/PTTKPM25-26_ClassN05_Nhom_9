@@ -20,6 +20,8 @@ class ProvinceViewModel @Inject constructor(
     private val _provinces = MutableStateFlow<List<Province>>(emptyList())
     val provinces: StateFlow<List<Province>> = _provinces
 
+    private val provinceCache = mutableMapOf<String, Province>()
+
     private val _selectedProvince = MutableStateFlow<Province?>(null)
     val selectedProvince: StateFlow<Province?> = _selectedProvince
 
@@ -32,6 +34,14 @@ class ProvinceViewModel @Inject constructor(
     fun loadProvinceById(id: String) {
         viewModelScope.launch {
             _selectedProvince.value = getProvinceByIdUseCase(id)
+        }
+    }
+
+    suspend fun getProvinceById(id: String): Province? {
+        provinceCache[id]?.let { return it }
+
+        return getProvinceByIdUseCase(id)?.also { province ->
+            provinceCache[id] = province
         }
     }
 }

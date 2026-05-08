@@ -1,3 +1,5 @@
+import com.android.build.gradle.ProguardFiles.getDefaultProguardFile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -14,8 +16,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.heartbeat"
-        minSdk = 34
-        targetSdk = 34
+        minSdk = 33
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -48,12 +50,10 @@ android {
         generateLocaleConfig = false
     }
 
-    android {
-        lint {
-            checkReleaseBuilds = false
-            abortOnError = false
-            disable += "RememberInComposition"
-        }
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+        disable += "RememberInComposition"
     }
 
     hilt {
@@ -85,9 +85,12 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation(platform(libs.androidx.compose.bom))
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Testing
     testImplementation(libs.junit)
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
@@ -125,4 +128,38 @@ dependencies {
 
     // Loading network image
     implementation("io.coil-kt:coil-compose:2.7.0")
+
+    // TESTING
+    // Framework chính để chạy Test
+    testImplementation("junit:junit:4.13.2")
+
+    // MockK: Thư viện Mock dữ liệu tốt nhất cho Kotlin (Dùng để giả lập Firebase, Repository)
+    testImplementation("io.mockk:mockk:1.13.8")
+
+    // Kiểm thử Coroutines (vì project của bạn dùng suspend functions trong UseCase)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // Turbine: Thư viện cực hay để test Flow (nếu bạn có dùng StateFlow/SharedFlow)
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+
+    // Google Truth: Giúp các câu lệnh assert (khẳng định) đọc giống ngôn ngữ tự nhiên hơn
+    testImplementation("com.google.truth:truth:1.1.5")
+
+    // BOM cho Compose testing
+    val composeBom = platform("androidx.compose:compose-bom:2024.09.01")
+    androidTestImplementation(composeBom)
+
+    // Thư viện chính để tìm kiếm component và tương tác (click, type) trên UI
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+
+    // Cần thiết để chạy được UI Test trên máy ảo/máy thật
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Test Navigation: Kiểm tra xem nhấn nút có chuyển màn hình đúng không
+    androidTestImplementation("androidx.navigation:navigation-test:2.7.7")
+
+    // Hilt Testing: Để Inject các thành phần giả lập vào UI Test
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.48")
+
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.12")
 }

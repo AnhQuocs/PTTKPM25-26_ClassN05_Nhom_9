@@ -4,18 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.heartbeat.domain.entity.donation.Donation
-import com.example.heartbeat.domain.entity.event.Event
-import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.domain.usecase.donation.DonationUseCases
-import com.example.heartbeat.presentation.features.event.viewmodel.EventViewModel
-import com.example.heartbeat.presentation.features.hospital.viewmodel.HospitalViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,16 +36,15 @@ class DonationViewModel @Inject constructor(
     fun addDonation(donation: Donation) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
-            try {
-                val result = donationUseCases.addDonation(donation)
+            donationUseCases.addDonation(donation).onSuccess { result ->
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        successMessage = "Text Success",
-                        donations = it.donations + listOfNotNull(result)
+                        successMessage = "Donation added successfully",
+                        donations = it.donations + result
                     )
                 }
-            } catch (e: Exception) {
+            }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
@@ -81,38 +74,32 @@ class DonationViewModel @Inject constructor(
 
     // UPDATE
     fun updateStatus(donationId: String, status: String) = viewModelScope.launch {
-        try {
-            val updated = donationUseCases.updateStatus(donationId, status)
-            updated?.let {
-                _uiState.update { state ->
-                    state.copy(
-                        donations = state.donations.map { d -> if (d.donationId == it.donationId) it else d },
-                        successMessage = "Status updated"
-                    )
-                }
+        donationUseCases.updateStatus(donationId, status).onSuccess { updated ->
+            _uiState.update { state ->
+                state.copy(
+                    donations = state.donations.map { d -> if (d.donationId == updated.donationId) updated else d },
+                    successMessage = "Status updated"
+                )
             }
-        } catch (e: Exception) {
+        }.onFailure { e ->
             _uiState.update { it.copy(errorMessage = e.message) }
         }
     }
 
     fun updateDonationVolume(donationId: String, volume: String) = viewModelScope.launch {
         _uiState.update { it.copy(isLoading = true) }
-        try {
-            val updated = donationUseCases.updateDonationVolume(donationId, volume)
-            updated?.let {
-                _uiState.update { state ->
-                    state.copy(
-                        donations = state.donations.map { d ->
-                            if (d.donationId == it.donationId) it else d
-                        },
-                        successMessage = "Volume updated",
-                        isLoading = false
-                    )
-                }
+        donationUseCases.updateDonationVolume(donationId, volume).onSuccess { updated ->
+            _uiState.update { state ->
+                state.copy(
+                    donations = state.donations.map { d ->
+                        if (d.donationId == updated.donationId) updated else d
+                    },
+                    successMessage = "Volume updated",
+                    isLoading = false
+                )
             }
             updateStatus(donationId = donationId, status = "DONATED")
-        } catch (e: Exception) {
+        }.onFailure { e ->
             _uiState.update {
                 it.copy(
                     errorMessage = e.message,
@@ -147,17 +134,14 @@ class DonationViewModel @Inject constructor(
 
     // DELETE
     fun deleteDonation(donationId: String) = viewModelScope.launch {
-        try {
-            val success = donationUseCases.deleteDonation(donationId)
-            if (success) {
-                _uiState.update { state ->
-                    state.copy(
-                        donations = state.donations.filterNot { it.donationId == donationId },
-                        successMessage = "Donation deleted"
-                    )
-                }
+        donationUseCases.deleteDonation(donationId).onSuccess {
+            _uiState.update { state ->
+                state.copy(
+                    donations = state.donations.filterNot { it.donationId == donationId },
+                    successMessage = "Donation deleted"
+                )
             }
-        } catch (e: Exception) {
+        }.onFailure { e ->
             _uiState.update { it.copy(errorMessage = e.message) }
         }
     }

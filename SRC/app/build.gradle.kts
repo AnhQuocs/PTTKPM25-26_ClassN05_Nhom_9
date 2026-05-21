@@ -8,6 +8,7 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.48"
     id("com.google.devtools.ksp") version "2.0.0-1.0.21"
     id("kotlin-parcelize")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 android {
@@ -63,6 +64,17 @@ android {
     bundle {
         language {
             enableSplit = false
+        }
+    }
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                // Loại bỏ tất cả các file do Hilt/Dagger sinh ra
+                classes("*_Factory*", "*_HiltModules*", "*Hilt_*", "*_MembersInjector*")
+            }
         }
     }
 }

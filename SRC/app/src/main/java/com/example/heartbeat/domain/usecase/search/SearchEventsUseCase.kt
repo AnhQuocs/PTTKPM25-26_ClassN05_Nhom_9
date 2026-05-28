@@ -10,23 +10,34 @@ class SearchEventsUseCase @Inject constructor(
     private val hospitalRepository: HospitalRepository
 ) {
     suspend operator fun invoke(query: String): List<Event> {
-        val keyword = query.trim().lowercase()
-        val tokens = keyword.split(" ")
+        val allEvents = eventRepository.getAllEvents()
+        val hospitalMap = hospitalRepository.getAllHospitals().associateBy { it.hospitalId }
+        
+        // Tách các từ khóa tìm kiếm. 
+        // Nếu query trống, tokens sẽ trống và all {} trả về true cho mọi event.
+        val tokens = query.trim().split(" ").filter { it.isNotBlank() }
 
-        val hospitals = hospitalRepository.getAllHospitals()
-        val hospitalMap = hospitals.associateBy { it.hospitalId }
-        val events = eventRepository.getAllEvents()
-
-        return events.filter { event ->
+        return allEvents.filter { event ->
             val hospital = hospitalMap[event.locationId]
-            val eventName = event.name.lowercase()
-            val hospitalName = hospital?.hospitalName?.lowercase() ?: ""
-            val province = hospital?.province?.lowercase() ?: ""
-
+            
             tokens.all { token ->
-                eventName.contains(token) ||
-                        hospitalName.contains(token) ||
-                        province.contains(token)
+                // Nhánh 1: Khớp với tên Event
+                if (event.name.contains(token, ignoreCase = true)) {
+                    return@all true
+                }
+                
+                // Nhánh 2: Nếu có thông tin bệnh viện, kiểm tra tên và tỉnh thành
+                if (hospital != null) {
+                    if (hospital.hospitalName.contains(token, ignoreCase = true)) {
+                        return@all true
+                    }
+                    if (hospital.province.contains(token, ignoreCase = true)) {
+                        return@all true
+                    }
+                }
+                
+                // Nhánh 3: Không khớp bất kỳ tiêu chí nào
+                false
             }
         }
     }

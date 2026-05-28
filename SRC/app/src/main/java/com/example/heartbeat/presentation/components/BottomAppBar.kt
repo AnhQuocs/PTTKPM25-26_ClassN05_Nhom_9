@@ -24,10 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.heartbeat.R
-import com.example.heartbeat.testing.UiTestTags
 import com.example.heartbeat.ui.dimens.Dimens
 import com.example.heartbeat.ui.theme.BloodRed
 import com.example.heartbeat.ui.theme.GraySecondary
@@ -71,7 +69,6 @@ fun <T> BottomAppBar(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .testTag(tabTestTag(tab))
                             .padding(bottom = Dimens.PaddingSM, top = Dimens.PaddingS)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -99,14 +96,5 @@ fun <T> BottomAppBar(
                 }
             }
         }
-    }
-}
-
-private fun <T> tabTestTag(tab: T): String where T : Enum<T>, T : TabEnum {
-    return when (tab.name) {
-        TabItem.Home.name -> UiTestTags.BottomTabHome
-        TabItem.Search.name -> UiTestTags.BottomTabSearch
-        TabItem.Setting.name -> UiTestTags.BottomTabSetting
-        else -> "bottom_tab_${tab.name.lowercase()}"
     }
 }

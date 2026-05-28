@@ -48,7 +48,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,7 +68,6 @@ import com.example.heartbeat.presentation.features.main.home.base64ToImageBitmap
 import com.example.heartbeat.presentation.features.system.setting.account.AccountActivity
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
-import com.example.heartbeat.testing.UiTestTags
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -252,7 +250,6 @@ fun SettingScreen(
             OptionItem(
                 iconRes = R.drawable.ic_logout,
                 text = stringResource(id = R.string.logout),
-                modifier = Modifier.testTag(UiTestTags.SettingLogout),
                 onClick = { showLogoutDialog = true }
             )
 
@@ -337,14 +334,12 @@ fun UserInfo(user: AuthUser, avatar: DonorAvatar?) {
 fun OptionItem(
     @DrawableRes iconRes: Int,
     text: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     val color = Color(0xFF767E8C)
 
     Row(
         modifier = Modifier
-            .then(modifier)
             .fillMaxWidth()
             .padding(vertical = Dimens.PaddingXXS),
         verticalAlignment = Alignment.CenterVertically
@@ -390,7 +385,6 @@ fun LogoutDialog(
     val context = LocalContext.current
 
     AlertDialog(
-        modifier = Modifier.testTag(UiTestTags.LogoutDialog),
         onDismissRequest = onDismiss,
         title = {
             Text(
@@ -417,7 +411,6 @@ fun LogoutDialog(
                     ).show()
                 },
                 modifier = Modifier
-                    .testTag(UiTestTags.LogoutConfirmButton)
                     .padding(horizontal = 8.dp)
                     .height(40.dp),
                 shape = RoundedCornerShape(12.dp)
@@ -428,9 +421,7 @@ fun LogoutDialog(
         dismissButton = {
             TextButton(
                 onClick = onDismiss,
-                modifier = Modifier
-                    .testTag(UiTestTags.LogoutCancelButton)
-                    .padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             ) {
                 Text(
                     stringResource(id = R.string.logout_cancel),

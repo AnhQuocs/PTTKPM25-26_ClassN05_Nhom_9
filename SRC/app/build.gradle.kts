@@ -168,7 +168,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Test Navigation: Kiểm tra xem nhấn nút có chuyển màn hình đúng không
-    androidTestImplementation("androidx.navigation:navigation-test:2.7.7")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.7.7")
 
     // Hilt Testing: Để Inject các thành phần giả lập vào UI Test
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48")

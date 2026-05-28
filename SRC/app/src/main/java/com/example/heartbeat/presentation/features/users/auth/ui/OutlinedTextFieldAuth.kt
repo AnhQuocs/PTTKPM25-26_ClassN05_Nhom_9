@@ -40,6 +40,7 @@ fun OutlinedTextFieldAuth(
     onValueChange: (String) -> Unit,
     label: String,
     placeholder: String,
+    modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
@@ -75,6 +76,7 @@ fun OutlinedTextFieldAuth(
                 }
             ),
             modifier = Modifier
+                .then(modifier)
                 .fillMaxWidth()
                 .focusRequester(focusRequester)
         )
@@ -99,6 +101,7 @@ fun PasswordOutlinedTextField(
     onValueChange: (String) -> Unit,
     label: String,
     placeholder: String,
+    modifier: Modifier = Modifier,
     leadingIcon: ImageVector? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
@@ -148,6 +151,7 @@ fun PasswordOutlinedTextField(
             isError = isError,
             shape = RoundedCornerShape(AppShape.MediumShape),
             modifier = Modifier
+                .then(modifier)
                 .fillMaxWidth()
                 .focusRequester(focusRequester)
         )

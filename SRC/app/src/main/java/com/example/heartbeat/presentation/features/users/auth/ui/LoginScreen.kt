@@ -1,6 +1,7 @@
 package com.example.heartbeat.presentation.features.users.auth.ui
 
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +54,7 @@ import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthActi
 import com.example.heartbeat.presentation.features.users.auth.viewmodel.AuthViewModel
 import com.example.heartbeat.presentation.features.users.donor.ui.profile_setup.ProfileSetupActivity
 import com.example.heartbeat.presentation.features.users.donor.viewmodel.DonorViewModel
+import com.example.heartbeat.testing.UiTestTags
 import com.example.heartbeat.ui.dimens.AppShape
 import com.example.heartbeat.ui.dimens.AppSpacing
 import com.example.heartbeat.ui.dimens.Dimens
@@ -167,6 +170,7 @@ fun LoginScreen(
                 onValueChange = { email = it },
                 label = stringResource(id = R.string.email),
                 placeholder = stringResource(id = R.string.email_placeholder),
+                modifier = Modifier.testTag(UiTestTags.LoginEmailInput),
                 icon = Icons.Default.Email,
                 focusRequester = emailFocusRequester,
                 isError = emailError != null,
@@ -189,6 +193,7 @@ fun LoginScreen(
                 onValueChange = { password = it },
                 label = stringResource(id = R.string.password),
                 placeholder = stringResource(id = R.string.password_placeholder),
+                modifier = Modifier.testTag(UiTestTags.LoginPasswordInput),
                 leadingIcon = Icons.Default.Lock,
                 isError = passwordError != null,
                 errorMessage = passwordError,
@@ -217,8 +222,17 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             AppButton(
+                modifier = Modifier.testTag(UiTestTags.LoginButton),
                 onClick = {
-                    authViewModel.login(email, password)
+                    if (isLocalUiTestLogin(context.applicationInfo, email, password)) {
+                        navController.navigate("ui_test_main") {
+                            popUpTo("login") { inclusive = true }
+                            launchSingleTop = true
+                            restoreState = false
+                        }
+                    } else {
+                        authViewModel.login(email, password)
+                    }
                 },
                 text = stringResource(id = R.string.login)
             )
@@ -374,4 +388,15 @@ fun LoginScreen(
             }
         }
     }
+}
+
+private fun isLocalUiTestLogin(
+    applicationInfo: ApplicationInfo,
+    email: String,
+    password: String
+): Boolean {
+    val isDebuggable = applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+    return isDebuggable &&
+        email == "ui.test@heartbeat.local" &&
+        password == "UITest@123456"
 }

@@ -1,0 +1,61 @@
+BAO CAO TOM TAT LOG KIEM THU
+Ngay tong hop: 31/05/2026
+Du an: Heartbeat Android App
+
+1. Nguon log da su dung
+- UI Automation Report:
+  app/build/reports/androidTests/connected/debug/index.html
+  app/build/reports/androidTests/connected/debug/com.example.heartbeat.UserFlowAutomationTest.html
+- Monkey Test Log:
+  build/reports/monkey/monkey.log
+
+2. Ket qua UI Automation Test
+- Thiet bi/emulator: Pixel_6a(AVD) - Android 13
+- Test class: com.example.heartbeat.UserFlowAutomationTest
+- Tong so test: 2
+- Thanh cong: 2
+- That bai: 0
+- Bi bo qua: 0
+- Thoi gian chay: 25.129s
+- Ti le thanh cong: 100%
+- Thoi diem sinh report: May 31, 2026, 2:24:11 PM
+
+Chi tiet tung test case:
+- loginFlow_entersCredentialsAndOpensHome: PASSED - 5.967s
+  Mo ta: Kiem tra luong dang nhap, nhap thong tin tai khoan va mo man hinh Home.
+- settingFlow_opensLogoutDialogAndConfirmsLogout: PASSED - 19.162s
+  Mo ta: Kiem tra luong vao Setting, mo hop thoai dang xuat va xac nhan dang xuat.
+
+Nhan xet:
+- Tat ca test case UI Automation deu chay thanh cong.
+- Khong ghi nhan failure hoac skipped test trong report.
+- Cac luong chinh duoc kiem thu gom dang nhap va dang xuat tu man hinh cai dat.
+
+3. Ket qua Monkey Test
+- Package duoc kiem thu: com.example.heartbeat
+- Seed: 1780335998073
+- So luong event cau hinh: 5000
+- So luong event da inject: 5000
+- Throttle: 50ms
+- Ty le system keys: 0
+- Trang thai ket thuc: Monkey finished
+- Network stats: elapsed time = 80497ms, mobile = 0ms, wifi = 0ms, not connected = 80497ms
+- Dropped events: keys = 0, pointers = 0, trackballs = 0, flips = 14, rotations = 0
+
+Loi/canh bao ghi nhan trong Monkey log:
+- Co nhieu dong "Got IOException performing flipjava.io.FileNotFoundException: /dev/input/event0: open failed: EACCES (Permission denied)".
+- Cac dong tren lien quan den thao tac flip keyboard cua Monkey bi tu choi quyen truy cap /dev/input/event0.
+- Log ghi nhan "Injection Failed" cho cac thao tac flip keyboard, va tong ket cuoi log cho thay flips bi dropped la 14.
+- Khong thay log CRASH, ANR, Exception nghiem trong cua ung dung, hoac loi lam dung chay Monkey test.
+
+Nhan xet:
+- Monkey test da chay du 5000 event va ket thuc binh thuong.
+- Ung dung khong bi crash/ANR trong qua trinh Monkey test theo log hien co.
+- Cac loi injection failed la loi moi truong/quyen truy cap input device cua emulator/test runner, khong phai loi logic truc tiep cua ung dung.
+
+4. Ket luan chung
+- UI Automation: PASS, 2/2 test case thanh cong, ti le thanh cong 100%.
+- Monkey Test: PASS ve mat on dinh, chay du 5000 event va ket thuc bang "Monkey finished".
+- Khong phat hien crash, ANR hoac failure cua test case trong cac log da kiem tra.
+- Can luu y cac canh bao "Injection Failed" trong Monkey log do thao tac flip keyboard khong co quyen truy cap thiet bi input.
+

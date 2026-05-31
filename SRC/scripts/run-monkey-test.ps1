@@ -2,6 +2,8 @@ param(
     [int]$Events = 5000,
     [int]$ThrottleMs = 50,
     [string]$PackageName = "com.example.heartbeat",
+    [string]$JavaHome = "C:\Program Files\Android\Android Studio\jbr",
+    [string]$AdbPath = "$env:LOCALAPPDATA\Android\Sdk\platform-tools",
     [switch]$SkipInstall
 )
 
@@ -11,7 +13,11 @@ $reportDir = Join-Path $projectRoot "build\reports\monkey"
 $logFile = Join-Path $reportDir "monkey.log"
 $gradlew = Join-Path $projectRoot "gradlew.bat"
 
+$env:JAVA_HOME = $JavaHome
+$env:Path = "$JavaHome\bin;$AdbPath;$env:Path"
+
 New-Item -ItemType Directory -Force -Path $reportDir | Out-Null
+adb devices
 
 if (-not $SkipInstall) {
     if (-not (Test-Path $gradlew)) {
@@ -23,7 +29,7 @@ if (-not $SkipInstall) {
 
 $installedPackage = adb shell pm path $PackageName 2>&1
 if ($LASTEXITCODE -ne 0 -or ($installedPackage -match "not found|Unknown package|Failure")) {
-    Write-Error "Package $PackageName is not installed on the connected device. Check the installDebug output above."
+    Write-Error "Package $PackageName is not installed on the connected device. Check installDebug output above."
 }
 
 try {
@@ -34,10 +40,6 @@ try {
         -p $PackageName `
         --throttle $ThrottleMs `
         --pct-syskeys 0 `
-        --pct-trackball 0 `
-        --pct-flip 0 `
-        --pct-appswitch 0 `
-        --pct-anyevent 0 `
         --ignore-crashes `
         --ignore-timeouts `
         --ignore-security-exceptions `
@@ -53,22 +55,15 @@ finally {
 $monkeyOutput | Tee-Object -FilePath $logFile
 
 $log = Get-Content $logFile -Raw
-if ($log -match "No activities found to run") {
-    Write-Error "Monkey could not find a launchable activity for $PackageName. Reinstall the debug app and check that MainActivity is enabled/exported in AndroidManifest.xml."
-}
-
 $targetPackagePattern = [regex]::Escape($PackageName)
 $targetCrashPattern = "// CRASH:\s+$targetPackagePattern\b|Process:\s+$targetPackagePattern\b|// NOT RESPONDING:\s+$targetPackagePattern\b"
+
+if ($log -match "No activities found to run") {
+    Write-Error "Monkey could not find a launchable activity for $PackageName."
+}
+
 if ($log -cmatch $targetCrashPattern -or $log -cmatch "FATAL EXCEPTION") {
     Write-Error "Monkey test found a crash or ANR in $PackageName. See $logFile"
-}
-
-if ($log -cmatch "// CRASH:\s+(?!$targetPackagePattern\b)(\S+)") {
-    Write-Warning "Monkey observed a crash outside $PackageName. Treating this run as inconclusive for the app. See $logFile"
-}
-
-if ($log -match "Monkey aborted due to error") {
-    Write-Error "Monkey aborted before completing $Events events. Check the lines above the abort in $logFile for the device-side error."
 }
 
 if ($monkeyExitCode -ne 0) {

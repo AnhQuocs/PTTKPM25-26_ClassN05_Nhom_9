@@ -1,5 +1,5 @@
 BAO CAO TOM TAT LOG KIEM THU
-Ngay tong hop: 31/05/2026
+Ngay cap nhat: 01/06/2026
 Du an: Heartbeat Android App
 
 1. Nguon log da su dung
@@ -12,24 +12,63 @@ Du an: Heartbeat Android App
 2. Ket qua UI Automation Test
 - Thiet bi/emulator: Pixel_6a(AVD) - Android 13
 - Test class: com.example.heartbeat.UserFlowAutomationTest
-- Tong so test: 2
-- Thanh cong: 2
-- That bai: 0
-- Bi bo qua: 0
-- Thoi gian chay: 25.129s
-- Ti le thanh cong: 100%
-- Thoi diem sinh report: May 31, 2026, 2:24:11 PM
+- Script chay test: scripts/run-ui-automation.ps1
+- Script record video: scripts/record-ui-test.ps1
 
-Chi tiet tung test case:
-- loginFlow_entersCredentialsAndOpensHome: PASSED - 5.967s
-  Mo ta: Kiem tra luong dang nhap, nhap thong tin tai khoan va mo man hinh Home.
-- settingFlow_opensLogoutDialogAndConfirmsLogout: PASSED - 19.162s
-  Mo ta: Kiem tra luong vao Setting, mo hop thoai dang xuat va xac nhan dang xuat.
+Phan bo test theo tai khoan:
+- Tai khoan user:
+  - Chay bang lenh: .\scripts\run-ui-automation.ps1 -User
+  - Tong so test: 2
+  - Cac test duoc chay:
+    + loginFlow_entersCredentialsAndOpensHome
+      Mo ta: Kiem tra luong dang nhap user, nhap email/password va mo man hinh Home.
+    + settingFlow_opensLogoutDialogAndConfirmsLogout
+      Mo ta: Kiem tra luong vao Setting, mo hop thoai dang xuat va xac nhan dang xuat.
+- Tai khoan admin:
+  - Chay bang lenh: .\scripts\run-ui-automation.ps1 -Admin
+  - Tong so test: 1
+  - Test duoc chay:
+    + loginFlow_entersCredentialsAndOpensHome
+      Mo ta: Kiem tra luong admin bam LOGIN AS AN EMPLOYEE, nhap email/password/code va vao man hinh sau dang nhap.
+  - Khong chay settingFlow_opensLogoutDialogAndConfirmsLogout cho admin vi test nay danh cho user flow va co the gap loi quyen Firestore voi tai khoan admin/employee.
+- Chay tat ca:
+  - Chay bang lenh: .\scripts\run-ui-automation.ps1 -AllAccounts
+  - Thu tu chay: user truoc, admin sau.
+  - Truoc moi luot tai khoan, script clear app data bang adb shell pm clear com.example.heartbeat de tranh dung lai session cu.
 
 Nhan xet:
-- Tat ca test case UI Automation deu chay thanh cong.
-- Khong ghi nhan failure hoac skipped test trong report.
-- Cac luong chinh duoc kiem thu gom dang nhap va dang xuat tu man hinh cai dat.
+- User flow kiem thu dang nhap va dang xuat tu man hinh cai dat.
+- Admin flow chi kiem thu dang nhap qua duong LOGIN AS AN EMPLOYEE nam ben duoi nut Login cua form user.
+- Khi chay admin, test phai chuyen sang man hinh employee login truoc roi moi nhap email, password va code HBST001.
+
+Huong dan chay UI Automation hien tai:
+- Chay test tai khoan user:
+  .\scripts\run-ui-automation.ps1 -User
+- Chay test tai khoan admin:
+  .\scripts\run-ui-automation.ps1 -Admin
+- Chay lan luot user va admin:
+  .\scripts\run-ui-automation.ps1 -AllAccounts
+- Record video tai khoan user:
+  .\scripts\record-ui-test.ps1 -User
+- Record video tai khoan admin:
+  .\scripts\record-ui-test.ps1 -Admin
+- Record video lan luot user va admin:
+  .\scripts\record-ui-test.ps1 -AllAccounts
+
+Tai khoan kiem thu:
+- User:
+  Email: anhquocs@gmail.com
+  Password: 12345678
+- Admin:
+  Email: staff@gmail.com
+  Password: 12345678
+  Code: HBST001
+
+Luu y luong admin:
+- Tai khoan admin khong dang nhap bang nut Login cua form user.
+- Test admin phai bam dong LOGIN AS AN EMPLOYEE nam ben duoi nut Login truoc.
+- Sau khi vao man hinh employee login, test moi nhap email, password va code HBST001.
+- Script -Admin chi chay test login admin de tranh chay test logout cua user flow gay loi Firestore permission.
 
 3. Ket qua Monkey Test
 - Package duoc kiem thu: com.example.heartbeat
@@ -54,8 +93,9 @@ Nhan xet:
 - Cac loi injection failed la loi moi truong/quyen truy cap input device cua emulator/test runner, khong phai loi logic truc tiep cua ung dung.
 
 4. Ket luan chung
-- UI Automation: PASS, 2/2 test case thanh cong, ti le thanh cong 100%.
+- UI Automation user flow: chay 2 test case cho tai khoan user.
+- UI Automation admin flow: chay rieng test login admin qua LOGIN AS AN EMPLOYEE.
+- Lenh -AllAccounts dung de chay lan luot user flow va admin login flow.
 - Monkey Test: PASS ve mat on dinh, chay du 5000 event va ket thuc bang "Monkey finished".
-- Khong phat hien crash, ANR hoac failure cua test case trong cac log da kiem tra.
+- Khong phat hien crash hoac ANR trong cac log da kiem tra.
 - Can luu y cac canh bao "Injection Failed" trong Monkey log do thao tac flip keyboard khong co quyen truy cap thiet bi input.
-

@@ -1,6 +1,11 @@
 param(
     [string]$Email = "anhquocs@gmail.com",
     [string]$Password = "12345678",
+    [string]$Code = "",
+    [switch]$LoginAsEmployee,
+    [switch]$User,
+    [switch]$Admin,
+    [switch]$AllAccounts,
     [string]$Output = "heartbeat-ui-automation.mp4",
     [string]$JavaHome = "C:\Program Files\Android\Android Studio\jbr",
     [string]$AdbPath = "$env:LOCALAPPDATA\Android\Sdk\platform-tools"
@@ -19,7 +24,7 @@ adb shell rm -f $deviceVideo
 $recordProcess = Start-Process -FilePath "adb" -ArgumentList @("shell", "screenrecord", $deviceVideo) -PassThru -WindowStyle Hidden
 
 try {
-    & (Join-Path $PSScriptRoot "run-ui-automation.ps1") -Email $Email -Password $Password -JavaHome $JavaHome -AdbPath $AdbPath
+    & (Join-Path $PSScriptRoot "run-ui-automation.ps1") -Email $Email -Password $Password -Code $Code -LoginAsEmployee:$LoginAsEmployee.IsPresent -User:$User.IsPresent -Admin:$Admin.IsPresent -AllAccounts:$AllAccounts.IsPresent -JavaHome $JavaHome -AdbPath $AdbPath
 }
 finally {
     if (!$recordProcess.HasExited) {

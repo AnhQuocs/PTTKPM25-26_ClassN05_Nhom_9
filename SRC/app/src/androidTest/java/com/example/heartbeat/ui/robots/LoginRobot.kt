@@ -1,6 +1,7 @@
 package com.example.heartbeat.ui.robots
 
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -55,7 +56,45 @@ class LoginRobot(
         composeRule.onNodeWithTag(UiTestTags.LoginPasswordInput).performTextInput(credentials.password)
     }
 
+    fun openEmployeeLoginScreen() {
+        clickFirstText(
+            "LOGIN AS AN EMPLOYEE",
+            "\u0110\u0102NG NH\u1eacP V\u1edaI T\u01af C\u00c1CH NH\u00c2N VI\u00caN"
+        )
+        composeRule.waitUntil(15_000) {
+            composeRule.onAllNodes(hasSetTextAction()).fetchSemanticsNodes().size >= 3
+        }
+    }
+
+    fun enterEmployeeCredentials(credentials: TestCredentials) {
+        val inputs = composeRule.onAllNodes(hasSetTextAction())
+
+        inputs[0].performTextClearance()
+        inputs[0].performTextInput(credentials.email)
+
+        inputs[1].performTextClearance()
+        inputs[1].performTextInput(credentials.password)
+
+        inputs[2].performTextClearance()
+        inputs[2].performTextInput(credentials.code)
+    }
+
     fun submit() {
         composeRule.onNodeWithTag(UiTestTags.LoginButton).performClick()
+    }
+
+    fun submitEmployee() {
+        clickFirstText("Login", "\u0110\u0103ng nh\u1eadp")
+    }
+
+    private fun clickFirstText(vararg texts: String) {
+        val node = texts.firstNotNullOfOrNull { text ->
+            composeRule.onAllNodesWithText(text, useUnmergedTree = true)
+                .fetchSemanticsNodes()
+                .firstOrNull()
+                ?.let { composeRule.onAllNodesWithText(text, useUnmergedTree = true)[0] }
+        } ?: error("Could not find any of these texts: ${texts.joinToString()}")
+
+        node.performClick()
     }
 }

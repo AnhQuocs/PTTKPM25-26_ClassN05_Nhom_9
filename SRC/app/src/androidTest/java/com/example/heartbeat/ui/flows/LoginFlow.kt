@@ -19,8 +19,17 @@ class LoginFlow(
         loginRobot.openLoginScreen()
         if (composeRule.hasTag(UiTestTags.BottomTabHome)) return
 
-        loginRobot.enterCredentials(credentials)
-        loginRobot.submit()
-        mainRobot.waitForHome()
+        if (credentials.loginAsEmployee) {
+            println("UI automation login path: employee/admin")
+            loginRobot.openEmployeeLoginScreen()
+            loginRobot.enterEmployeeCredentials(credentials)
+            loginRobot.submitEmployee()
+        } else {
+            println("UI automation login path: user")
+            loginRobot.enterCredentials(credentials)
+            loginRobot.submit()
+        }
+
+        mainRobot.waitForSignedInDestination()
     }
 }

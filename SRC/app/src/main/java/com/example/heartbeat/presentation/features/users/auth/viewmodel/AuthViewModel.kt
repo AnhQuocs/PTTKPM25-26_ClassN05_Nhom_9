@@ -1,6 +1,5 @@
 package com.example.heartbeat.presentation.features.users.auth.viewmodel
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,6 +23,8 @@ enum class AuthActionType {
 class AuthViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ): ViewModel() {
+    private val TAG = "AuthViewModel"
+
     private val _authState = MutableStateFlow<Result<AuthUser>?>(null)
     val authState: StateFlow<Result<AuthUser>?> = _authState
 
@@ -57,38 +58,26 @@ class AuthViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
 
+    init {
+        loadCurrentUser()
+    }
+
     fun signUp(email: String, password: String, username: String) {
-        var isValid = true
         _lastAuthAction.value = AuthActionType.SIGN_UP
+        val emailValid = AuthValidator.isValidEmail(email)
+        val passwordValid = AuthValidator.isValidPassword(password)
+        val usernameValid = AuthValidator.isValidUsername(username)
 
-        if(!AuthValidator.isValidEmail(email)) {
-            _emailError.value = "Invalid email format"
-            isValid = false
-        } else {
-            _emailError.value = null
-        }
+        _emailError.value = if (emailValid) null else "Invalid email format"
+        _passwordError.value = if (passwordValid) null else "Password must be at least 8 characters long"
+        _usernameError.value = if (usernameValid) null else "Username cannot be empty"
 
-        if(!AuthValidator.isValidPassword(password)) {
-            _passwordError.value = "Password must be at least 8 characters long"
-            isValid = false
-        } else {
-            _passwordError.value = null
-        }
-
-        if(!AuthValidator.isValidUsername(username)) {
-            _usernameError.value = "Username cannot be empty"
-            isValid = false
-        } else {
-            _usernameError.value = null
-        }
-
-        if (!isValid) return
+        if (!emailValid || !passwordValid || !usernameValid) return
 
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
-                val result = authUseCases.signUp(email, password, username)
-                _authState.value = result
+                _authState.value = authUseCases.signUp(email, password, username)
             } catch (e: Exception) {
                 _authState.value = Result.failure(e)
             } finally {
@@ -98,42 +87,23 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signUpWithStaffCode(email: String, password: String, username: String, code: String) {
-        var isValid = true
         _lastAuthAction.value = AuthActionType.SIGN_UP
+        val emailValid = AuthValidator.isValidEmail(email)
+        val passwordValid = AuthValidator.isValidPassword(password)
+        val usernameValid = AuthValidator.isValidUsername(username)
+        val codeValid = code.isNotBlank()
 
-        if (!AuthValidator.isValidEmail(email)) {
-            _emailError.value = "Invalid email format"
-            isValid = false
-        } else {
-            _emailError.value = null
-        }
+        _emailError.value = if (emailValid) null else "Invalid email format"
+        _passwordError.value = if (passwordValid) null else "Password must be at least 8 characters long"
+        _usernameError.value = if (usernameValid) null else "Username cannot be empty"
+        _codeError.value = if (codeValid) null else "Staff code cannot be empty"
 
-        if (!AuthValidator.isValidPassword(password)) {
-            _passwordError.value = "Password must be at least 8 characters long"
-            isValid = false
-        } else {
-            _passwordError.value = null
-        }
-
-        if (!AuthValidator.isValidUsername(username)) {
-            _usernameError.value = "Username cannot be empty"
-            isValid = false
-        } else {
-            _usernameError.value = null
-        }
-
-        if (code.isBlank()) {
-            _codeError.value = "Staff code cannot be empty"
-            isValid = false
-        }
-
-        if (!isValid) return
+        if (!emailValid || !passwordValid || !usernameValid || !codeValid) return
 
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
-                val result = authUseCases.signUpWithCode(email, password, username, code)
-                _authState.value = result
+                _authState.value = authUseCases.signUpWithCode(email, password, username, code)
             } catch (e: Exception) {
                 _authState.value = Result.failure(e)
             } finally {
@@ -143,65 +113,47 @@ class AuthViewModel @Inject constructor(
     }
 
     fun login(email: String, password: String) {
-        var isValid = true
         _lastAuthAction.value = AuthActionType.LOGIN
+        val emailValid = AuthValidator.isValidEmail(email)
+        val passwordValid = AuthValidator.isValidPassword(password)
 
-        if(!AuthValidator.isValidEmail(email)) {
-            _emailError.value = "Invalid email format"
-            isValid = false
-        } else {
-            _emailError.value = null
-        }
+        _emailError.value = if (emailValid) null else "Invalid email format"
+        _passwordError.value = if (passwordValid) null else "Password must be at least 8 characters long"
 
-        if(!AuthValidator.isValidPassword(password)) {
-            _passwordError.value = "Password must be at least 8 characters long"
-            isValid = false
-        } else {
-            _passwordError.value = null
-        }
-
-        if (!isValid) return
+        if (!emailValid || !passwordValid) return
 
         viewModelScope.launch {
             _isLoading.value = true
-            _authState.value = authUseCases.login(email, password)
-            _isLoading.value = false
+            try {
+                _authState.value = authUseCases.login(email, password)
+            } catch (e: Exception) {
+                _authState.value = Result.failure(e)
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
     fun loginWithCode(email: String, password: String, code: String) {
-        var isValid = true
         _lastAuthAction.value = AuthActionType.LOGIN
+        val emailValid = AuthValidator.isValidEmail(email)
+        val passwordValid = AuthValidator.isValidPassword(password)
+        val codeValid = code.isNotBlank()
 
-        if (!AuthValidator.isValidEmail(email)) {
-            _emailError.value = "Invalid email format"
-            isValid = false
-        } else {
-            _emailError.value = null
-        }
+        _emailError.value = if (emailValid) null else "Invalid email format"
+        _passwordError.value = if (passwordValid) null else "Password must be at least 8 characters long"
+        _codeError.value = if (codeValid) null else "Staff code cannot be empty"
 
-        if (!AuthValidator.isValidPassword(password)) {
-            _passwordError.value = "Password must be at least 8 characters long"
-            isValid = false
-        } else {
-            _passwordError.value = null
-        }
-
-        if (code.isBlank()) {
-            _codeError.value = "Staff code cannot be empty"
-            isValid = false
-        }
-
-        if (!isValid) return
+        if (!emailValid || !passwordValid || !codeValid) return
 
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 val result = authUseCases.loginWithCode(email, password, code)
-                if (result.getOrNull() == null) {
-                    _authState.value = Result.failure(Exception("Login failed"))
+                _authState.value = if (result.getOrNull() == null) {
+                    Result.failure(Exception("Login failed"))
                 } else {
-                    _authState.value = result
+                    result
                 }
             } catch (e: Exception) {
                 _authState.value = Result.failure(e)
@@ -214,38 +166,39 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             _isLoading.value = true
-            authUseCases.logout()
-            _isLoading.value = false
-        }
-    }
-
-    fun resetPassword(email: String) {
-        var isValid = true
-        if(!AuthValidator.isValidEmail(email)) {
-            _emailError.value = "Invalid email format"
-            isValid = false
-        } else {
-            _emailError.value = null
-        }
-
-        if (!isValid) return
-
-        viewModelScope.launch {
-            _isSendEmail.value = false
-            _isSendLoading.value = true
-            val result = authUseCases.resetPassword(email)
-            result.onSuccess {
-                _isSendEmail.value = true
-                _isSendLoading.value = false
-            }.onFailure {
-                _isSendEmail.value = false
-                _errorMessage.value = it.message ?: "Failed to send email"
+            try {
+                authUseCases.logout()
+            } catch (e: Exception) {
+                Log.e(TAG, "logout failed", e)
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
-    init {
-        loadCurrentUser()
+    fun resetPassword(email: String) {
+        if (!AuthValidator.isValidEmail(email)) {
+            _emailError.value = "Invalid email format"
+            return
+        }
+        _emailError.value = null
+
+        viewModelScope.launch {
+            _isSendEmail.value = false
+            _isSendLoading.value = true
+            try {
+                val result = authUseCases.resetPassword(email)
+                result.onSuccess {
+                    _isSendEmail.value = true
+                }.onFailure {
+                    _errorMessage.value = it.message ?: "Failed to send email"
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "An error occurred"
+            } finally {
+                _isSendLoading.value = false
+            }
+        }
     }
 
     fun loadCurrentUser() {
@@ -253,7 +206,7 @@ class AuthViewModel @Inject constructor(
             _isUserLoading.value = true
             try {
                 val user = authUseCases.getCurrentUser()
-                if (user != null) _authState.value = Result.success(user) else _authState.value = null
+                _authState.value = if (user != null) Result.success(user) else null
             } catch (e: Exception) {
                 Log.e(TAG, "failed to load current user", e)
                 _authState.value = Result.failure(e)
@@ -271,12 +224,13 @@ class AuthViewModel @Inject constructor(
     fun clearEmailError() { _emailError.value = null }
     fun clearPasswordError() { _passwordError.value = null }
     fun clearUsernameError() { _usernameError.value = null }
-    fun clearErrorMessage() {
-        _errorMessage.value = null
-    }
+    fun clearErrorMessage() { _errorMessage.value = null }
 
     val isLoggedIn: StateFlow<Boolean> = authState
-        .map { result -> result?.isSuccess == true && result.getOrNull() != null }
+        .map { result -> 
+            if (result == null) return@map false
+            result.isSuccess && result.getOrNull() != null
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -288,6 +242,7 @@ class AuthViewModel @Inject constructor(
             _usernameError.value = "Username cannot be empty"
             return
         }
+        _usernameError.value = null
 
         viewModelScope.launch {
             _isLoading.value = true
@@ -299,6 +254,8 @@ class AuthViewModel @Inject constructor(
                 }.onFailure {
                     _errorMessage.value = it.message ?: "Failed to update username"
                 }
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "An error occurred"
             } finally {
                 _isLoading.value = false
             }
@@ -310,6 +267,7 @@ class AuthViewModel @Inject constructor(
             _passwordError.value = "Password must be at least 8 characters long"
             return
         }
+        _passwordError.value = null
 
         viewModelScope.launch {
             _isLoading.value = true
@@ -320,6 +278,8 @@ class AuthViewModel @Inject constructor(
                 }.onFailure {
                     _errorMessage.value = it.message ?: "Failed to update password"
                 }
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "An error occurred"
             } finally {
                 _isLoading.value = false
             }

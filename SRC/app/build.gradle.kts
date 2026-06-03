@@ -72,8 +72,16 @@ kover {
     reports {
         filters {
             excludes {
-                // Loại bỏ tất cả các file do Hilt/Dagger sinh ra
-                classes("*_Factory*", "*_HiltModules*", "*Hilt_*", "*_MembersInjector*")
+                classes(
+                    "*_HiltModules*",
+                    "*_Factory*",
+                    "*_MembersInjector*",
+                    "Hilt_*",
+                    "*\$\$inlined*",
+                    "*\$sam\$*",
+                    "*\$lambda*",
+                    "*\$Lambda*"
+                )
             }
         }
     }

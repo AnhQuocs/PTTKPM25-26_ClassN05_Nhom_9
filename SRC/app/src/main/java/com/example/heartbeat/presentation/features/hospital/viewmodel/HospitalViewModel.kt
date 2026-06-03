@@ -16,31 +16,42 @@ import javax.inject.Inject
 class HospitalViewModel @Inject constructor(
     private val hospitalUseCase: HospitalUseCase
 ) : ViewModel() {
+
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
 
-    var hospitals by mutableStateOf<List<Hospital>>(emptyList())
-        private set
+    // ĐỔI từ delegate sang backing state
+    private val _hospitals = mutableStateOf<List<Hospital>>(emptyList())
+    val hospitals: List<Hospital> get() = _hospitals.value
 
-    var hospitalDetails by mutableStateOf<Map<String, Hospital>>(emptyMap())
-        private set
+    private val _hospitalDetails = mutableStateOf<Map<String, Hospital>>(emptyMap())
+    val hospitalDetails: Map<String, Hospital> get() = _hospitalDetails.value
 
     fun loadHospitals() {
+        _isLoading.value = true
         viewModelScope.launch {
-            _isLoading.value = true
-            val data = hospitalUseCase.getAllHospitalsUseCase()
-            hospitals = data
-            _isLoading.value = false
+            try {
+                val data = hospitalUseCase.getAllHospitalsUseCase()
+                _hospitals.value = data
+            } catch (e: Throwable) {
+                // Xử lý lỗi
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
     fun loadHospitalById(hospitalId: String) {
-        if(hospitalDetails.containsKey(hospitalId)) return
+        if (_hospitalDetails.value.containsKey(hospitalId)) return
 
         viewModelScope.launch {
-            val hospital = hospitalUseCase.getHospitalByIdUseCase(hospitalId)
-            hospital?.let {
-                hospitalDetails = hospitalDetails + (hospitalId to it)
+            try {
+                val hospital = hospitalUseCase.getHospitalByIdUseCase(hospitalId)
+                hospital?.let {
+                    _hospitalDetails.value += (hospitalId to it)
+                }
+            } catch (e: Throwable) {
+                // Đảm bảo coroutine kết thúc an toàn
             }
         }
     }

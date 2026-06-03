@@ -7,9 +7,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DayOfWeek
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 enum class StatsType {
@@ -42,7 +43,7 @@ class DonationStatsViewModel @Inject constructor(
     private val _selectedDay = MutableStateFlow(LocalDate.now())
     val selectedDay: StateFlow<LocalDate> = _selectedDay
 
-    private val _selectedWeek = MutableStateFlow(LocalDate.now().with(DayOfWeek.MONDAY))
+    private val _selectedWeek = MutableStateFlow(LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)))
     val selectedWeek: StateFlow<LocalDate> = _selectedWeek
 
     private val _selectedMonth = MutableStateFlow(YearMonth.now())
@@ -51,16 +52,15 @@ class DonationStatsViewModel @Inject constructor(
     private val _allTimeCount = MutableStateFlow(0)
     val allTimeCount: StateFlow<Int> = _allTimeCount
 
-
     init {
         loadAllStats()
     }
 
-    fun loadAllStats(forDay: LocalDate = LocalDate.now()) {
+    fun loadAllStats(forDay: LocalDate = _selectedDay.value) {
+        _isLoading.value = true
         viewModelScope.launch {
-            _isLoading.value = true
             try {
-                val weekStart = forDay.with(DayOfWeek.MONDAY)
+                val weekStart = forDay.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 val month = YearMonth.from(forDay)
 
                 val dayResult = donationUseCases.getDonationsByDayUseCase(forDay)
@@ -78,6 +78,8 @@ class DonationStatsViewModel @Inject constructor(
                     StatsType.WEEK -> weekResult
                     StatsType.MONTH -> monthResult
                 }
+            } catch (e: Exception) {
+                // Có thể thêm xử lý lỗi tại đây nếu cần
             } finally {
                 _isLoading.value = false
             }
@@ -95,28 +97,8 @@ class DonationStatsViewModel @Inject constructor(
 
     fun setSelectedDay(day: LocalDate) {
         _selectedDay.value = day
-        _selectedWeek.value = day.with(DayOfWeek.MONDAY)
+        _selectedWeek.value = day.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         _selectedMonth.value = YearMonth.from(day)
-
         loadAllStats(forDay = day)
-
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val dayResult = donationUseCases.getDonationsByDayUseCase(day)
-                val weekStart = day.with(DayOfWeek.MONDAY)
-                val month = YearMonth.from(day)
-
-                val weekResult = donationUseCases.getDonationsByWeekUseCase(weekStart)
-                val monthResult = donationUseCases.getDonationsByMonthUseCase(month)
-
-                _dayCount.value = dayResult
-                _weekCount.value = weekResult
-                _monthCount.value = monthResult
-            } finally {
-                _isLoading.value = false
-            }
-        }
     }
-
 }

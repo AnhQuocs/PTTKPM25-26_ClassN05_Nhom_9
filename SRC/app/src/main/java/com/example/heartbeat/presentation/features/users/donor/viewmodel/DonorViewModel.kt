@@ -125,7 +125,7 @@ class DonorViewModel @Inject constructor(
 
                 _formState.update { it.copy(isLoading = false, isSubmitSuccess = true) }
             } catch (e: Exception) {
-                _formState.update { it.copy(isLoading = false, error = e.message, isSubmitSuccess = false) }
+                _formState.update { it.copy(isLoading = false, error = e.message ?: "An error occurred", isSubmitSuccess = false) }
             }
         }
     }
@@ -146,7 +146,8 @@ class DonorViewModel @Inject constructor(
                 val exists = donorUseCase.isDonorProfileExistUseCase(userId)
 
                 if (exists) {
-                    val donor = donorUseCase.getCurrentDonorUseCase(userId)!!
+                    val donor = donorUseCase.getCurrentDonorUseCase(userId)
+                        ?: throw Exception("Donor profile data not found")
 
                     _formState.update { current ->
                         current.copy(
@@ -166,7 +167,7 @@ class DonorViewModel @Inject constructor(
                 onProfileExists(exists)
 
             } catch (e: Exception) {
-                _formState.update { it.copy(error = e.message) }
+                _formState.update { it.copy(error = e.message ?: "Unknown error") }
                 onProfileExists(false)
             } finally {
                 _isLoading.value = false
@@ -201,7 +202,7 @@ class DonorViewModel @Inject constructor(
                     _formState.update { it.copy(error = "Donor not found") }
                 }
             } catch (e: Exception) {
-                _formState.update { it.copy(error = e.message) }
+                _formState.update { it.copy(error = e.message ?: "Unknown error") }
             } finally {
                 _isLoading.value = false
             }
@@ -223,7 +224,7 @@ class DonorViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 _formState.update {
-                    it.copy(isLoading = false, error = e.message, isSubmitSuccess = false)
+                    it.copy(isLoading = false, error = e.message ?: "Update failed", isSubmitSuccess = false)
                 }
                 Log.e("DonorViewModel", "Error updating donor", e)
             }
@@ -251,7 +252,7 @@ class DonorViewModel @Inject constructor(
                 val avatar = donorUseCase.getAvatarUseCase(userId)
                 _donorAvatar.value = avatar
             } catch (e: Exception) {
-                _formState.update { it.copy(error = e.message) }
+                _formState.update { it.copy(error = e.message ?: "Failed to get avatar") }
             }
         }
     }

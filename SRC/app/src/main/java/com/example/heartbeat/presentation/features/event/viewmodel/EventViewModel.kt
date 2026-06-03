@@ -60,10 +60,13 @@ class EventViewModel @Inject constructor(
 
     fun observeEventsByDate(selectedDate: LocalDate = LocalDate.now()) {
         observeJob?.cancel()
+        _isLoading.value = true
         observeJob = viewModelScope.launch {
-            _isLoading.value = true
             eventUseCase.observeEventsByDateUseCase(selectedDate)
-                .catch { e -> _error.value = e.message }
+                .catch { e -> 
+                    _error.value = e.message
+                    _isLoading.value = false
+                }
                 .collect { events ->
                     _filteredEvents.value = events
                     _isLoading.value = false
@@ -100,13 +103,14 @@ class EventViewModel @Inject constructor(
     }
 
     fun addEvent(event: Event) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
-                _isLoading.value = true
                 eventUseCase.addEventUseCase(event)
-                _isLoading.value = false
             } catch (e: Exception) {
                 _error.value = e.message
+            } finally {
+                _isLoading.value = false
             }
         }
     }
@@ -122,9 +126,9 @@ class EventViewModel @Inject constructor(
     }
 
     fun updateDonorCount(eventId: String, delta: Int) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
-                _isLoading.value = true
                 eventUseCase.updateDonorCountUseCase(eventId, delta)
             } catch (e: Exception) {
                 _error.value = e.message

@@ -34,8 +34,8 @@ class DonationViewModel @Inject constructor(
 
     // CREATE
     fun addDonation(donation: Donation) {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
             donationUseCases.addDonation(donation).onSuccess { result ->
                 _uiState.update {
                     it.copy(
@@ -51,24 +51,28 @@ class DonationViewModel @Inject constructor(
     }
 
     // READ
-    fun getDonationsByDonor(donorId: String) = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        try {
-            val list = donationUseCases.getDonationsByDonor(donorId)
-            _uiState.update { it.copy(isLoading = false, donations = list) }
-        } catch (e: Exception) {
-            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+    fun getDonationsByDonor(donorId: String) {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        viewModelScope.launch {
+            try {
+                val list = donationUseCases.getDonationsByDonor(donorId)
+                _uiState.update { it.copy(isLoading = false, donations = list) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+            }
         }
     }
 
-    fun getDonatedDonations(donorId: String) = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        try {
-            val allDonations = donationUseCases.getDonationsByDonor(donorId)
-            val donated = allDonations.filter { it.status == "DONATED" }
-            _uiState.update { it.copy(isLoading = false, donatedList = donated) }
-        } catch (e: Exception) {
-            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+    fun getDonatedDonations(donorId: String) {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        viewModelScope.launch {
+            try {
+                val allDonations = donationUseCases.getDonationsByDonor(donorId)
+                val donated = allDonations.filter { it.status == "DONATED" }
+                _uiState.update { it.copy(isLoading = false, donatedList = donated) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+            }
         }
     }
 
@@ -86,49 +90,67 @@ class DonationViewModel @Inject constructor(
         }
     }
 
-    fun updateDonationVolume(donationId: String, volume: String) = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        donationUseCases.updateDonationVolume(donationId, volume).onSuccess { updated ->
-            _uiState.update { state ->
-                state.copy(
-                    donations = state.donations.map { d ->
-                        if (d.donationId == updated.donationId) updated else d
-                    },
-                    successMessage = "Volume updated",
-                    isLoading = false
-                )
-            }
-            updateStatus(donationId = donationId, status = "DONATED")
-        }.onFailure { e ->
-            _uiState.update {
-                it.copy(
-                    errorMessage = e.message,
-                    isLoading = false
-                )
+    fun updateDonationVolume(donationId: String, volume: String) {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
+        viewModelScope.launch {
+            donationUseCases.updateDonationVolume(donationId, volume).onSuccess { updated ->
+                // First update the volume in state
+                _uiState.update { state ->
+                    state.copy(
+                        donations = state.donations.map { d ->
+                            if (d.donationId == updated.donationId) updated else d
+                        }
+                    )
+                }
+                
+                // Then update status to DONATED using use case directly to avoid overwriting successMessage
+                donationUseCases.updateStatus(donationId, "DONATED").onSuccess { updatedWithStatus ->
+                    _uiState.update { state ->
+                        state.copy(
+                            donations = state.donations.map { d ->
+                                if (d.donationId == updatedWithStatus.donationId) updatedWithStatus else d
+                            },
+                            successMessage = "Volume updated",
+                            isLoading = false
+                        )
+                    }
+                }.onFailure { e ->
+                    _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                }
+                
+            }.onFailure { e ->
+                _uiState.update {
+                    it.copy(
+                        errorMessage = e.message,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
 
-    fun approveDonation(donationId: String, donorId: String) = viewModelScope.launch {
+    fun approveDonation(donationId: String, donorId: String) {
         _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
-        try {
-            donationUseCases.approveDonationUseCase(donationId, donorId)
+        viewModelScope.launch {
+            try {
+                donationUseCases.approveDonationUseCase(donationId, donorId)
 
-            _uiState.update { state ->
-                val updatedDonations = state.donations.map { donation ->
-                    if (donation.donationId == donationId) {
-                        donation.copy(status = "APPROVED")
-                    } else donation
+                _uiState.update { state ->
+                    val updatedDonations = state.donations.map { donation ->
+                        if (donation.donationId == donationId) {
+                            donation.copy(status = "APPROVED")
+                        } else donation
+                    }
+
+                    state.copy(
+                        donations = updatedDonations,
+                        successMessage = "Donation approved",
+                        isLoading = false
+                    )
                 }
-
-                state.copy(
-                    donations = updatedDonations,
-                    successMessage = "Donation approved",
-                    isLoading = false
-                )
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = e.message, isLoading = false) }
             }
-        } catch (e: Exception) {
-            _uiState.update { it.copy(errorMessage = e.message, isLoading = false) }
         }
     }
 
@@ -160,7 +182,7 @@ class DonationViewModel @Inject constructor(
         observeJob?.cancel()
 
         observeJob = viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             val startTime = System.currentTimeMillis()
 
@@ -194,14 +216,16 @@ class DonationViewModel @Inject constructor(
         }
     }
 
-    fun getAllDonatedDonations() = viewModelScope.launch {
-        _uiState.update { it.copy(isLoading = true) }
-        try {
-            val allDonations = donationUseCases.getAllDonationsListUseCase()
-            val donated = allDonations.filter { it.status == "DONATED" }
-            _uiState.update { it.copy(isLoading = false, donatedList = donated) }
-        } catch (e: Exception) {
-            _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+    fun getAllDonatedDonations() {
+        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        viewModelScope.launch {
+            try {
+                val allDonations = donationUseCases.getAllDonationsListUseCase()
+                val donated = allDonations.filter { it.status == "DONATED" }
+                _uiState.update { it.copy(isLoading = false, donatedList = donated) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+            }
         }
     }
 

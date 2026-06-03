@@ -91,19 +91,33 @@ class DonationViewModel @Inject constructor(
     }
 
     fun updateDonationVolume(donationId: String, volume: String) {
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
         viewModelScope.launch {
             donationUseCases.updateDonationVolume(donationId, volume).onSuccess { updated ->
+                // First update the volume in state
                 _uiState.update { state ->
                     state.copy(
                         donations = state.donations.map { d ->
                             if (d.donationId == updated.donationId) updated else d
-                        },
-                        successMessage = "Volume updated",
-                        isLoading = false
+                        }
                     )
                 }
-                updateStatus(donationId = donationId, status = "DONATED")
+                
+                // Then update status to DONATED using use case directly to avoid overwriting successMessage
+                donationUseCases.updateStatus(donationId, "DONATED").onSuccess { updatedWithStatus ->
+                    _uiState.update { state ->
+                        state.copy(
+                            donations = state.donations.map { d ->
+                                if (d.donationId == updatedWithStatus.donationId) updatedWithStatus else d
+                            },
+                            successMessage = "Volume updated",
+                            isLoading = false
+                        )
+                    }
+                }.onFailure { e ->
+                    _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                }
+                
             }.onFailure { e ->
                 _uiState.update {
                     it.copy(

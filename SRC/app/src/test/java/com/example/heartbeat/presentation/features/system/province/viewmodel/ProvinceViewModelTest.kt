@@ -40,7 +40,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_01 initial state is correct before init completes`() = runTest {
+    fun `initial state is correct before init completes`() = runTest {
         viewModel = ProvinceViewModel(getAllProvincesUseCase, getProvinceByIdUseCase)
         
         assertTrue(viewModel.provinces.value.isEmpty())
@@ -48,7 +48,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_02 init block loads provinces successfully`() = runTest {
+    fun `init block loads provinces successfully`() = runTest {
         coEvery { getAllProvincesUseCase() } returns testProvinces
         
         viewModel = ProvinceViewModel(getAllProvincesUseCase, getProvinceByIdUseCase)
@@ -58,7 +58,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_03 init block handles empty list from repository`() = runTest {
+    fun `init block handles empty list from repository`() = runTest {
         coEvery { getAllProvincesUseCase() } returns emptyList()
         
         viewModel = ProvinceViewModel(getAllProvincesUseCase, getProvinceByIdUseCase)
@@ -68,7 +68,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_04 loadProvinceById updates selectedProvince on success`() = runTest {
+    fun `loadProvinceById updates selectedProvince on success`() = runTest {
         val province = testProvinces[0]
         coEvery { getProvinceByIdUseCase("P1") } returns province
         
@@ -80,7 +80,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_05 loadProvinceById sets selectedProvince to null if not found`() = runTest {
+    fun `loadProvinceById sets selectedProvince to null if not found`() = runTest {
         coEvery { getProvinceByIdUseCase("UNKNOWN") } returns null
         
         viewModel = ProvinceViewModel(getAllProvincesUseCase, getProvinceByIdUseCase)
@@ -91,7 +91,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_06 getProvinceById direct call cache miss calls usecase`() = runTest {
+    fun `getProvinceById direct call cache miss calls usecase`() = runTest {
         val province = testProvinces[1]
         coEvery { getProvinceByIdUseCase("P2") } returns province
         
@@ -104,7 +104,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_07 getProvinceById direct call cache hit does not call usecase`() = runTest {
+    fun `getProvinceById direct call cache hit does not call usecase`() = runTest {
         val province = testProvinces[1]
         coEvery { getProvinceByIdUseCase("P2") } returns province
         
@@ -121,7 +121,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_08 getProvinceById returns null if usecase returns null`() = runTest {
+    fun `getProvinceById returns null if usecase returns null`() = runTest {
         coEvery { getProvinceByIdUseCase("P3") } returns null
         
         viewModel = ProvinceViewModel(getAllProvincesUseCase, getProvinceByIdUseCase)
@@ -133,7 +133,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_09 getProvinceById caches multiple different provinces correctly`() = runTest {
+    fun `getProvinceById caches multiple different provinces correctly`() = runTest {
         val p1 = testProvinces[0]
         val p2 = testProvinces[1]
         coEvery { getProvinceByIdUseCase("P1") } returns p1
@@ -156,7 +156,7 @@ class ProvinceViewModelTest {
     }
 
     @Test
-    fun `VM_PR_10 loadProvinceById handles sequential updates to same state`() = runTest {
+    fun `loadProvinceById handles sequential updates to same state`() = runTest {
         val p1 = testProvinces[0]
         val p2 = testProvinces[1]
         coEvery { getProvinceByIdUseCase("P1") } returns p1

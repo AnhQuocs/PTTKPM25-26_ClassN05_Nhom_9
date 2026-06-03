@@ -8,10 +8,7 @@ import com.example.heartbeat.domain.usecase.users.auth.AuthUseCases
 import com.example.heartbeat.presentation.features.users.auth.util.AuthValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +24,9 @@ class AuthViewModel @Inject constructor(
 
     private val _authState = MutableStateFlow<Result<AuthUser>?>(null)
     val authState: StateFlow<Result<AuthUser>?> = _authState
+
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
     private val _lastAuthAction = MutableStateFlow<AuthActionType?>(null)
     val lastAuthAction: StateFlow<AuthActionType?> = _lastAuthAction
@@ -59,6 +59,13 @@ class AuthViewModel @Inject constructor(
     val errorMessage: StateFlow<String?> = _errorMessage
 
     init {
+        // Reactively update isLoggedIn when authState changes
+        // Using manual collection in init is more robust for Unit Testing and reactive state consistency
+        viewModelScope.launch {
+            _authState.collect { result ->
+                _isLoggedIn.value = result?.getOrNull() != null
+            }
+        }
         loadCurrentUser()
     }
 
@@ -171,6 +178,7 @@ class AuthViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e(TAG, "logout failed", e)
             } finally {
+                clearAuthState()
                 _isLoading.value = false
             }
         }
@@ -225,17 +233,6 @@ class AuthViewModel @Inject constructor(
     fun clearPasswordError() { _passwordError.value = null }
     fun clearUsernameError() { _usernameError.value = null }
     fun clearErrorMessage() { _errorMessage.value = null }
-
-    val isLoggedIn: StateFlow<Boolean> = authState
-        .map { result -> 
-            if (result == null) return@map false
-            result.isSuccess && result.getOrNull() != null
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false
-        )
 
     fun updateUsername(newUsername: String) {
         if (!AuthValidator.isValidUsername(newUsername)) {

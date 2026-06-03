@@ -48,7 +48,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_01 initial state is correct`() {
+    fun `initial state is correct`() {
         // Phủ getter mặc định của isLoading, hospitals và hospitalDetails
         assertNotNull(viewModel.isLoading)
         assertFalse(viewModel.isLoading.value)
@@ -57,7 +57,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_02 loadHospitals loading state lifecycle`() = runTest {
+    fun `loadHospitals loading state lifecycle`() = runTest {
         coEvery { getAllHospitalsUseCase() } coAnswers {
             delay(100)
             emptyList()
@@ -73,7 +73,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_03 loadHospitals success updates hospitals list`() = runTest {
+    fun `loadHospitals success updates hospitals list`() = runTest {
         val list = listOf(testHospital)
         coEvery { getAllHospitalsUseCase() } returns list
         
@@ -85,7 +85,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_04 loadHospitals handles empty list result`() = runTest {
+    fun `loadHospitals handles empty list result`() = runTest {
         coEvery { getAllHospitalsUseCase() } returns emptyList()
         
         viewModel.loadHospitals()
@@ -95,7 +95,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_05 loadHospitalById updates details map for new ID`() = runTest {
+    fun `loadHospitalById updates details map for new ID`() = runTest {
         coEvery { getHospitalByIdUseCase("H1") } returns testHospital
         
         viewModel.loadHospitalById("H1")
@@ -106,7 +106,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_06 loadHospitalById cache logic`() = runTest {
+    fun `loadHospitalById cache logic`() = runTest {
         coEvery { getHospitalByIdUseCase("H1") } returns testHospital
         
         viewModel.loadHospitalById("H1")
@@ -120,7 +120,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_07 loadHospitalById handles null result correctly`() = runTest {
+    fun `loadHospitalById handles null result correctly`() = runTest {
         coEvery { getHospitalByIdUseCase("NOT_FOUND") } returns null
         
         viewModel.loadHospitalById("NOT_FOUND")
@@ -130,7 +130,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_08 loadHospitalById handles blank ID correctly`() = runTest {
+    fun `loadHospitalById handles blank ID correctly`() = runTest {
         coEvery { getHospitalByIdUseCase("") } returns null
         
         viewModel.loadHospitalById("")
@@ -140,7 +140,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_09 loadHospitalById adds multiple hospitals cumulatively`() = runTest {
+    fun `loadHospitalById adds multiple hospitals cumulatively`() = runTest {
         val h1 = testHospital.copy(hospitalId = "H1")
         val h2 = testHospital.copy(hospitalId = "H2")
         coEvery { getHospitalByIdUseCase("H1") } returns h1
@@ -154,7 +154,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_10 loadHospitalById null safety check`() = runTest {
+    fun `loadHospitalById null safety check`() = runTest {
         coEvery { getHospitalByIdUseCase(any()) } returns null
         
         viewModel.loadHospitalById("ANY")
@@ -165,7 +165,7 @@ class HospitalViewModelTest {
     }
 
     @Test
-    fun `VM_HS_11 loadHospitals should set loading state synchronously`() = runTest {
+    fun `loadHospitals should set loading state synchronously`() = runTest {
         coEvery { getAllHospitalsUseCase() } returns emptyList()
         
         viewModel.loadHospitals()

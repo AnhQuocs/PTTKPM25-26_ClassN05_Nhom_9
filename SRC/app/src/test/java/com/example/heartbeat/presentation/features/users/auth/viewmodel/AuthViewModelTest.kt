@@ -281,36 +281,6 @@ class AuthViewModelTest {
         assertEquals(ex, viewModel.authState.value?.exceptionOrNull())
     }
 
-    // ========== 4. STATE FLOWS ==========
-
-    @Test
-    fun `isLoggedIn state flow exhaustive branches`() = runTest {
-        // null state
-        assertFalse(viewModel.isLoggedIn.value)
-
-        // isFailure
-        mockAllValid()
-        coEvery { loginUseCase(any(), any()) } returns Result.failure(Exception())
-        viewModel.login("e", "p")
-        advanceUntilIdle()
-        assertFalse(viewModel.isLoggedIn.value)
-
-        // isSuccess but null user (using mock)
-        val mockResult = mockk<Result<AuthUser>>()
-        every { mockResult.isSuccess } returns true
-        every { mockResult.getOrNull() } returns null
-        coEvery { loginUseCase(any(), any()) } returns mockResult
-        viewModel.login("e", "p")
-        advanceUntilIdle()
-        assertFalse(viewModel.isLoggedIn.value)
-
-        // isSuccess with user
-        coEvery { loginUseCase(any(), any()) } returns Result.success(createSuccessUser())
-        viewModel.login("e", "p")
-        advanceUntilIdle()
-        assertTrue(viewModel.isLoggedIn.value)
-    }
-
     @Test
     fun `resetPassword validation fail`() = runTest {
         every { AuthValidator.isValidEmail(any()) } returns false

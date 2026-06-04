@@ -9,6 +9,9 @@ sealed class AuthException : Exception() {
     object PasswordTooShort : AuthException()
     object EmptyField : AuthException()
     object InvalidStaffCode : AuthException()
+    object InvalidCredentials : AuthException()
+    object UserAlreadyExists : AuthException()
+    object UserNotFound : AuthException()
 }
 
 data class AuthUseCases(
@@ -39,7 +42,11 @@ class SignUpUseCase(private val repository: AuthRepository) {
         if (username.isBlank()) {
             return Result.failure(AuthException.EmptyField)
         }
-        return repository.signUp(email, password, username)
+        return try {
+            repository.signUp(email, password, username)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
 
@@ -59,7 +66,11 @@ class SignUpWithCodeUseCase(private val repository: AuthRepository) {
         if (staffCode.isBlank()) {
             return Result.failure(AuthException.InvalidStaffCode)
         }
-        return repository.signUpWithCode(email, password, username, staffCode)
+        return try {
+            repository.signUpWithCode(email, password, username, staffCode)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
 
@@ -68,7 +79,11 @@ class LoginUseCase(private val repository: AuthRepository) {
         if (email.isBlank() || password.isBlank()) {
             return Result.failure(AuthException.EmptyField)
         }
-        return repository.login(email, password)
+        return try {
+            repository.login(email, password)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
 
@@ -81,7 +96,11 @@ class LoginWithCodeUseCase(private val repository: AuthRepository) {
         if (email.isBlank() || password.isBlank() || staffCode.isBlank()) {
             return Result.failure(AuthException.EmptyField)
         }
-        return repository.loginWithCode(email, password, staffCode)
+        return try {
+            repository.loginWithCode(email, password, staffCode)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
 
@@ -94,7 +113,11 @@ class ResetPasswordUseCase(private val repository: AuthRepository) {
         if (email.isBlank() || !email.contains("@")) {
             return Result.failure(AuthException.InvalidEmail)
         }
-        return repository.resetPassword(email)
+        return try {
+            repository.resetPassword(email)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
 
@@ -117,7 +140,11 @@ class UpdateUserNameUseCase(private val repository: AuthRepository) {
         if (newUserName.isBlank()) {
             return Result.failure(AuthException.EmptyField)
         }
-        return repository.updateUsername(newUserName)
+        return try {
+            repository.updateUsername(newUserName)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
 
@@ -126,6 +153,10 @@ class UpdatePasswordUseCase(private val repository: AuthRepository) {
         if (newPassword.length < 6) {
             return Result.failure(AuthException.PasswordTooShort)
         }
-        return repository.updatePassword(newPassword)
+        return try {
+            repository.updatePassword(newPassword)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

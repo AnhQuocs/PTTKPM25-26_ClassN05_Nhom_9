@@ -3,8 +3,10 @@ package com.example.heartbeat.domain.usecase.users.auth
 import com.example.heartbeat.domain.entity.users.AuthUser
 import com.example.heartbeat.domain.repository.users.auth.AuthRepository
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -23,58 +25,113 @@ class LoginUseCaseTest {
         loginWithCodeUseCase = LoginWithCodeUseCase(repository)
     }
 
+    // --- 1. Boundary Value Testing (Kiểm thử giá trị biên) ---
+
     @Test
-    fun `Login with empty email should return EmptyField`() = runBlocking {
-        val result = loginUseCase("", "password")
+    fun `Login with blank email (only spaces) should return EmptyField`() = runTest {
+        val result = loginUseCase("   ", "password")
         assertTrue(result.isFailure)
         assertEquals(AuthException.EmptyField, result.exceptionOrNull())
+        
+        // Behavior Verification: Đảm bảo repository không được gọi khi dữ liệu đầu vào không hợp lệ
+        coVerify(exactly = 0) { repository.login(any(), any()) }
     }
 
     @Test
-    fun `Login with empty password should return EmptyField`() = runBlocking {
+    fun `Login with empty password should return EmptyField`() = runTest {
         val result = loginUseCase("test@gmail.com", "")
         assertTrue(result.isFailure)
         assertEquals(AuthException.EmptyField, result.exceptionOrNull())
     }
 
-    @Test
-    fun `Login with valid data should return success`() = runBlocking {
-        val mockUser = mockk<AuthUser>()
-        coEvery { repository.login(any(), any()) } returns Result.success(mockUser)
+    // --- 2. Behavior Verification Testing (Xác minh hành vi) ---
 
-        val result = loginUseCase("test@gmail.com", "password123")
+    @Test
+    fun `Login with valid data should call repository exactly once and return success`() = runTest {
+        val email = "test@gmail.com"
+        val password = "password123"
+        val mockUser = mockk<AuthUser>()
+        coEvery { repository.login(email, password) } returns Result.success(mockUser)
+
+        val result = loginUseCase(email, password)
+
         assertTrue(result.isSuccess)
         assertEquals(mockUser, result.getOrNull())
+
+        // Xác minh UseCase đã gọi đúng phương thức của repository với tham số chính xác
+        coVerify(exactly = 1) { repository.login(email, password) }
+        confirmVerified(repository)
     }
 
+    // --- 3. Exception & Error Injection Testing (Tiêm lỗi) ---
+
     @Test
-    fun `LoginWithCode with empty email should return EmptyField`() = runBlocking {
-        val result = loginWithCodeUseCase("", "pass", "code")
+    fun `Login should return failure when repository throws unexpected exception`() = runTest {
+        val email = "test@gmail.com"
+        val password = "password123"
+        val errorMessage = "Network Connection Error"
+        
+        // Giả lập Repository ném ra một ngoại lệ (ví dụ lỗi mạng)
+        coEvery { repository.login(email, password) } throws Exception(errorMessage)
+
+        val result = loginUseCase(email, password)
+
+        assertTrue(result.isFailure)
+        assertEquals(errorMessage, result.exceptionOrNull()?.message)
+    }
+
+    // --- 4. Negative Testing (Kiểm thử trường hợp thất bại từ nghiệp vụ) ---
+
+    @Test
+    fun `Login with incorrect credentials should return repository failure result`() = runTest {
+        val email = "wrong@gmail.com"
+        val password = "wrongpassword"
+        
+        // Giả lập Repository trả về kết quả thất bại theo nghiệp vụ (ví dụ: Sai mật khẩu)
+        coEvery { repository.login(email, password) } returns Result.failure(AuthException.InvalidCredentials)
+
+        val result = loginUseCase(email, password)
+
+        assertTrue(result.isFailure)
+        assertEquals(AuthException.InvalidCredentials, result.exceptionOrNull())
+        
+        coVerify(exactly = 1) { repository.login(email, password) }
+    }
+
+    // --- Bổ sung cho LoginWithCode để tăng độ bao phủ ---
+
+    @Test
+    fun `LoginWithCode with blank email should return EmptyField`() = runTest {
+        val result = loginWithCodeUseCase("   ", "password", "ST123")
         assertTrue(result.isFailure)
         assertEquals(AuthException.EmptyField, result.exceptionOrNull())
     }
 
     @Test
-    fun `LoginWithCode with email not empty but empty password should return EmptyField`() = runBlocking {
-        val result = loginWithCodeUseCase("test@gmail.com", "", "code")
+    fun `LoginWithCode with blank password should return EmptyField`() = runTest {
+        val result = loginWithCodeUseCase("test@gmail.com", "   ", "ST123")
         assertTrue(result.isFailure)
         assertEquals(AuthException.EmptyField, result.exceptionOrNull())
     }
 
     @Test
-    fun `LoginWithCode with valid email and password but empty staffCode should return EmptyField`() = runBlocking {
-        val result = loginWithCodeUseCase("test@gmail.com", "pass", "")
+    fun `LoginWithCode with blank staffCode should return EmptyField`() = runTest {
+        val result = loginWithCodeUseCase("test@gmail.com", "pass", "   ")
         assertTrue(result.isFailure)
         assertEquals(AuthException.EmptyField, result.exceptionOrNull())
     }
 
     @Test
-    fun `LoginWithCode with valid data should return success`() = runBlocking {
+    fun `LoginWithCode with valid data should verify repository interaction`() = runTest {
+        val email = "test@gmail.com"
+        val pass = "pass"
+        val code = "ST123"
         val mockUser = mockk<AuthUser>()
-        coEvery { repository.loginWithCode(any(), any(), any()) } returns Result.success(mockUser)
+        coEvery { repository.loginWithCode(email, pass, code) } returns Result.success(mockUser)
 
-        val result = loginWithCodeUseCase("test@gmail.com", "pass", "code")
+        val result = loginWithCodeUseCase(email, pass, code)
+
         assertTrue(result.isSuccess)
-        assertEquals(mockUser, result.getOrNull())
+        coVerify(exactly = 1) { repository.loginWithCode(email, pass, code) }
     }
 }

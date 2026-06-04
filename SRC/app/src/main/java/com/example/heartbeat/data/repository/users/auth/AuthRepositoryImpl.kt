@@ -151,17 +151,6 @@ class AuthRepositoryImpl(
         return snapshot.toObject(AuthUserDto::class.java)?.toDomain()
     }
 
-    private suspend fun validateStaffCode(staffCode: String) {
-        val staffDoc = firestore.collection("staffCodes").document(staffCode).get().await()
-        if (!staffDoc.exists() || staffDoc.getString("usedBy") != null) {
-            throw Exception("Invalid or already used staff code")
-        }
-    }
-
-    private suspend fun markStaffCodeAsUsed(staffCode: String, uid: String) {
-        firestore.collection("staffCodes").document(staffCode).update("usedBy", uid).await()
-    }
-
     private suspend fun deleteCurrentUserIfExists() {
         auth.currentUser?.delete()?.await()
     }

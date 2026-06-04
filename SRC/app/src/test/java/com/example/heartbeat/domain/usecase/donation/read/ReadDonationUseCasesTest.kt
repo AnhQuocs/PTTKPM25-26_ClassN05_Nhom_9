@@ -2,12 +2,11 @@ package com.example.heartbeat.domain.usecase.donation.read
 
 import com.example.heartbeat.domain.entity.donation.Donation
 import com.example.heartbeat.domain.repository.donation.DonationRepository
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
@@ -21,92 +20,93 @@ class ReadDonationUseCasesTest {
         repository = mockk()
     }
 
+    // --- 1. GET ALL DONATIONS ---
     @Test
-    fun `GetAllDonationsUseCase should return count`() = runBlocking {
+    fun `GetAllDonationsUseCase coverage`() = runTest {
         coEvery { repository.getAllDonations() } returns 100
-        Assert.assertEquals(100, GetAllDonationsUseCase(repository).invoke())
+        assertEquals(100, GetAllDonationsUseCase(repository).invoke().getOrNull())
+
+        coEvery { repository.getAllDonations() } throws Exception("Error")
+        assertTrue(GetAllDonationsUseCase(repository).invoke().isFailure)
     }
 
+    // --- 2. GET BY DAY ---
     @Test
-    fun `GetDonationsByDayUseCase with parameter should return count`() = runBlocking {
+    fun `GetDonationsByDayUseCase coverage`() = runTest {
         val date = LocalDate.now()
-        coEvery { repository.getDonationsByDay(date) } returns 5
-        Assert.assertEquals(5, GetDonationsByDayUseCase(repository).invoke(date))
-    }
-
-    @Test
-    fun `GetDonationsByDayUseCase without parameter should use default date`() = runBlocking {
         coEvery { repository.getDonationsByDay(any()) } returns 5
-        Assert.assertEquals(5, GetDonationsByDayUseCase(repository).invoke())
+        
+        // Test with param
+        assertEquals(5, GetDonationsByDayUseCase(repository).invoke(date).getOrNull())
+        // Test default param
+        assertEquals(5, GetDonationsByDayUseCase(repository).invoke().getOrNull())
+
+        coEvery { repository.getDonationsByDay(any()) } throws Exception("Error")
+        assertTrue(GetDonationsByDayUseCase(repository).invoke().isFailure)
     }
 
+    // --- 3. GET BY WEEK ---
     @Test
-    fun `GetDonationsByWeekUseCase with parameter should return count`() = runBlocking {
-        val date = LocalDate.now()
+    fun `GetDonationsByWeekUseCase coverage`() = runTest {
         coEvery { repository.getDonationsByWeek(any()) } returns 20
-        Assert.assertEquals(20, GetDonationsByWeekUseCase(repository).invoke(date))
+        
+        // Test with param
+        assertEquals(20, GetDonationsByWeekUseCase(repository).invoke(LocalDate.now()).getOrNull())
+        // Test default param
+        assertEquals(20, GetDonationsByWeekUseCase(repository).invoke().getOrNull())
+
+        coEvery { repository.getDonationsByWeek(any()) } throws Exception("Error")
+        assertTrue(GetDonationsByWeekUseCase(repository).invoke().isFailure)
     }
 
+    // --- 4. GET BY MONTH ---
     @Test
-    fun `GetDonationsByWeekUseCase without parameter should use default week`() = runBlocking {
-        coEvery { repository.getDonationsByWeek(any()) } returns 20
-        Assert.assertEquals(20, GetDonationsByWeekUseCase(repository).invoke())
-    }
-
-    @Test
-    fun `GetDonationsByMonthUseCase with parameter should return count`() = runBlocking {
-        val month = YearMonth.now()
-        coEvery { repository.getDonationsByMonth(month) } returns 80
-        Assert.assertEquals(80, GetDonationsByMonthUseCase(repository).invoke(month))
-    }
-
-    @Test
-    fun `GetDonationsByMonthUseCase without parameter should use default month`() = runBlocking {
+    fun `GetDonationsByMonthUseCase coverage`() = runTest {
         coEvery { repository.getDonationsByMonth(any()) } returns 80
-        Assert.assertEquals(80, GetDonationsByMonthUseCase(repository).invoke())
+        
+        // Test with param
+        assertEquals(80, GetDonationsByMonthUseCase(repository).invoke(YearMonth.now()).getOrNull())
+        // Test default param
+        assertEquals(80, GetDonationsByMonthUseCase(repository).invoke().getOrNull())
+
+        coEvery { repository.getDonationsByMonth(any()) } throws Exception("Error")
+        assertTrue(GetDonationsByMonthUseCase(repository).invoke().isFailure)
     }
 
+    // --- 5. GET BY DONOR ---
     @Test
-    fun `GetDonationsByDonorUseCase should return list`() = runBlocking {
-        val mockList = listOf(mockk<Donation>())
-        coEvery { repository.getDonationsByDonor("donor123") } returns mockList
-        Assert.assertEquals(mockList, GetDonationsByDonorUseCase(repository).invoke("donor123"))
+    fun `GetDonationsByDonorUseCase coverage`() = runTest {
+        val list = listOf(mockk<Donation>())
+        coEvery { repository.getDonationsByDonor(any()) } returns list
+        assertEquals(list, GetDonationsByDonorUseCase(repository).invoke("d1").getOrNull())
+
+        coEvery { repository.getDonationsByDonor(any()) } throws Exception("Error")
+        assertTrue(GetDonationsByDonorUseCase(repository).invoke("d1").isFailure)
     }
 
+    // --- 6. GET ALL LIST ---
     @Test
-    fun `ObserveDonationByDonorUseCase should return flow`() = runBlocking {
-        val mockDonation = mockk<Donation>()
-        every { repository.observeDonationByDonor("event123", "donor123") } returns flowOf(
-            mockDonation
-        )
+    fun `GetAllDonationsListUseCase coverage`() = runTest {
+        val list = listOf(mockk<Donation>())
+        coEvery { repository.getAllDonationsList() } returns list
+        assertEquals(list, GetAllDonationsListUseCase(repository).invoke().getOrNull())
 
-        ObserveDonationByDonorUseCase(repository).invoke("event123", "donor123").collect {
-            Assert.assertEquals(mockDonation, it)
-        }
+        coEvery { repository.getAllDonationsList() } throws Exception("Error")
+        assertTrue(GetAllDonationsListUseCase(repository).invoke().isFailure)
     }
 
+    // --- 7. OBSERVABLE FLOWS ---
     @Test
-    fun `ObserveDonationsByEventUseCase should return flow`() = runBlocking {
-        val mockList = listOf(mockk<Donation>())
-        every { repository.observeDonationsByEvent("event123") } returns flowOf(mockList)
-        ObserveDonationsByEventUseCase(repository).invoke("event123").collect {
-            Assert.assertEquals(mockList, it)
-        }
-    }
+    fun `Observable flows coverage`() = runTest {
+        val donation = mockk<Donation>()
+        val list = listOf(donation)
+        
+        every { repository.observeDonationByDonor(any(), any()) } returns flowOf(donation)
+        every { repository.observeDonationsByEvent(any()) } returns flowOf(list)
+        every { repository.observePendingDonations() } returns flowOf(list)
 
-    @Test
-    fun `ObservePendingDonationsUseCase should return flow`() = runBlocking {
-        val mockList = listOf(mockk<Donation>())
-        every { repository.observePendingDonations() } returns flowOf(mockList)
-        ObservePendingDonationsUseCase(repository).invoke().collect {
-            Assert.assertEquals(mockList, it)
-        }
-    }
-
-    @Test
-    fun `GetAllDonationsListUseCase should return list`() = runBlocking {
-        val mockList = listOf(mockk<Donation>())
-        coEvery { repository.getAllDonationsList() } returns mockList
-        Assert.assertEquals(mockList, GetAllDonationsListUseCase(repository).invoke())
+        ObserveDonationByDonorUseCase(repository).invoke("e1", "d1").collect { assertEquals(donation, it) }
+        ObserveDonationsByEventUseCase(repository).invoke("e1").collect { assertEquals(list, it) }
+        ObservePendingDonationsUseCase(repository).invoke().collect { assertEquals(list, it) }
     }
 }

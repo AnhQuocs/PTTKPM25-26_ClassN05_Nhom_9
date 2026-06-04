@@ -54,10 +54,9 @@ class DonationViewModel @Inject constructor(
     fun getDonationsByDonor(donorId: String) {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch {
-            try {
-                val list = donationUseCases.getDonationsByDonor(donorId)
+            donationUseCases.getDonationsByDonor(donorId).onSuccess { list ->
                 _uiState.update { it.copy(isLoading = false, donations = list) }
-            } catch (e: Exception) {
+            }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
@@ -66,11 +65,10 @@ class DonationViewModel @Inject constructor(
     fun getDonatedDonations(donorId: String) {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch {
-            try {
-                val allDonations = donationUseCases.getDonationsByDonor(donorId)
+            donationUseCases.getDonationsByDonor(donorId).onSuccess { allDonations ->
                 val donated = allDonations.filter { it.status == "DONATED" }
                 _uiState.update { it.copy(isLoading = false, donatedList = donated) }
-            } catch (e: Exception) {
+            }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
@@ -94,7 +92,6 @@ class DonationViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
         viewModelScope.launch {
             donationUseCases.updateDonationVolume(donationId, volume).onSuccess { updated ->
-                // First update the volume in state
                 _uiState.update { state ->
                     state.copy(
                         donations = state.donations.map { d ->
@@ -103,7 +100,6 @@ class DonationViewModel @Inject constructor(
                     )
                 }
                 
-                // Then update status to DONATED using use case directly to avoid overwriting successMessage
                 donationUseCases.updateStatus(donationId, "DONATED").onSuccess { updatedWithStatus ->
                     _uiState.update { state ->
                         state.copy(
@@ -119,12 +115,7 @@ class DonationViewModel @Inject constructor(
                 }
                 
             }.onFailure { e ->
-                _uiState.update {
-                    it.copy(
-                        errorMessage = e.message,
-                        isLoading = false
-                    )
-                }
+                _uiState.update { it.copy(errorMessage = e.message, isLoading = false) }
             }
         }
     }
@@ -132,9 +123,7 @@ class DonationViewModel @Inject constructor(
     fun approveDonation(donationId: String, donorId: String) {
         _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
         viewModelScope.launch {
-            try {
-                donationUseCases.approveDonationUseCase(donationId, donorId)
-
+            donationUseCases.approveDonationUseCase(donationId, donorId).onSuccess {
                 _uiState.update { state ->
                     val updatedDonations = state.donations.map { donation ->
                         if (donation.donationId == donationId) {
@@ -148,7 +137,7 @@ class DonationViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-            } catch (e: Exception) {
+            }.onFailure { e ->
                 _uiState.update { it.copy(errorMessage = e.message, isLoading = false) }
             }
         }
@@ -180,23 +169,15 @@ class DonationViewModel @Inject constructor(
 
     fun observeDonationsByEvent(eventId: String) {
         observeJob?.cancel()
-
         observeJob = viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
             val startTime = System.currentTimeMillis()
-
             try {
                 donationUseCases.observeDonationsByEvent(eventId)
                     .collect { donations ->
                         val elapsed = System.currentTimeMillis() - startTime
                         if (elapsed < 500) delay(500 - elapsed)
-
-                        Log.d("DonationVM", "📡 Update Firestore | eventId=$eventId | total=${donations.size}")
-
                         val filtered = donations.filter { it.eventId == eventId }
-                        Log.d("DonationVM", "-> After filter ${filtered.size} donations\n")
-
                         _uiState.update {
                             it.copy(
                                 donations = filtered,
@@ -205,7 +186,6 @@ class DonationViewModel @Inject constructor(
                         }
                     }
             } catch (e: Exception) {
-                Log.e("DonationVM", "observeDonationsByEvent error: ${e.message}")
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -219,11 +199,10 @@ class DonationViewModel @Inject constructor(
     fun getAllDonatedDonations() {
         _uiState.update { it.copy(isLoading = true, errorMessage = null) }
         viewModelScope.launch {
-            try {
-                val allDonations = donationUseCases.getAllDonationsListUseCase()
+            donationUseCases.getAllDonationsListUseCase().onSuccess { allDonations ->
                 val donated = allDonations.filter { it.status == "DONATED" }
                 _uiState.update { it.copy(isLoading = false, donatedList = donated) }
-            } catch (e: Exception) {
+            }.onFailure { e ->
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
@@ -240,7 +219,6 @@ class DonationViewModel @Inject constructor(
         }
     }
 
-    // reset state
     fun clearMessages() {
         _uiState.update { it.copy(errorMessage = null, successMessage = null) }
     }

@@ -35,12 +35,17 @@ class HospitalViewModel @Inject constructor(
     }
 
     fun loadHospitalById(hospitalId: String) {
-        if(hospitalDetails.containsKey(hospitalId)) return
+        val normalizedHospitalId = hospitalId.trim()
+        if (
+            normalizedHospitalId.isEmpty() ||
+            normalizedHospitalId == "hospitals" ||
+            hospitalDetails.containsKey(normalizedHospitalId)
+        ) return
 
         viewModelScope.launch {
-            val hospital = hospitalUseCase.getHospitalByIdUseCase(hospitalId)
+            val hospital = hospitalUseCase.getHospitalByIdUseCase(normalizedHospitalId)
             hospital?.let {
-                hospitalDetails = hospitalDetails + (hospitalId to it)
+                hospitalDetails = hospitalDetails + (normalizedHospitalId to it)
             }
         }
     }

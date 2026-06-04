@@ -3,8 +3,10 @@ package com.example.heartbeat.domain.usecase.search
 import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.search.SearchResultItem
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -24,29 +26,55 @@ class UnifiedSearchUseCaseTest {
     }
 
     @Test
-    fun `UnifiedSearch map Event to Item`() = runBlocking {
-        coEvery { searchEventsUseCase("q") } returns listOf(event1)
+    fun `UnifiedSearch map Event to Item - runTest & Behavior Verification`() = runTest {
+        // 1. Coroutine Testing with runTest
+        coEvery { searchEventsUseCase("q") } returns Result.success(listOf(event1))
+        
         val result = unifiedSearchUseCase("q")
-        assertTrue(result[0] is SearchResultItem.EventItem)
+        
+        // 2. Behavior Verification
+        coVerify(exactly = 1) { searchEventsUseCase("q") }
+        confirmVerified(searchEventsUseCase)
+
+        assertTrue(result.isSuccess)
+        assertTrue(result.getOrNull()?.get(0) is SearchResultItem.EventItem)
     }
 
     @Test
-    fun `UnifiedSearch handle multiple items`() = runBlocking {
-        coEvery { searchEventsUseCase(any()) } returns listOf(event1, event1)
-        assertEquals(2, unifiedSearchUseCase("any").size)
+    fun `UnifiedSearch handle multiple items`() = runTest {
+        coEvery { searchEventsUseCase(any()) } returns Result.success(listOf(event1, event1))
+        val result = unifiedSearchUseCase("any")
+        assertEquals(2, result.getOrNull()?.size)
     }
 
     @Test
-    fun `UnifiedSearch handle empty results`() = runBlocking {
-        coEvery { searchEventsUseCase(any()) } returns emptyList()
-        assertTrue(unifiedSearchUseCase("none").isEmpty())
+    fun `UnifiedSearch handle empty results - Boundary Value`() = runTest {
+        // 4. Boundary Value Testing
+        coEvery { searchEventsUseCase(any()) } returns Result.success(emptyList())
+        val result = unifiedSearchUseCase("none")
+        assertTrue(result.getOrNull()?.isEmpty() == true)
     }
 
-    @Test(expected = Exception::class)
-    fun `UnifiedSearch propagate error`() {
-        runBlocking {
-            coEvery { searchEventsUseCase(any()) } throws Exception("Fail")
-            unifiedSearchUseCase("error")
-        }
+    @Test
+    fun `UnifiedSearch handle error - Exception Injection`() = runTest {
+        // 3. Exception & Error Injection
+        val exception = RuntimeException("Search Failed")
+        coEvery { searchEventsUseCase(any()) } throws exception
+        
+        val result = unifiedSearchUseCase("error")
+        
+        assertTrue(result.isFailure)
+        assertEquals(exception, result.exceptionOrNull())
+    }
+    
+    @Test
+    fun `UnifiedSearch return failure result from child usecase`() = runTest {
+        val exception = Exception("Domain Error")
+        coEvery { searchEventsUseCase(any()) } returns Result.failure(exception)
+        
+        val result = unifiedSearchUseCase("fail")
+        
+        assertTrue(result.isFailure)
+        assertEquals(exception, result.exceptionOrNull())
     }
 }

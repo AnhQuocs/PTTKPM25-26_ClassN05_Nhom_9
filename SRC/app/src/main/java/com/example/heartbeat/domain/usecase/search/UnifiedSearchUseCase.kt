@@ -6,8 +6,11 @@ import javax.inject.Inject
 class UnifiedSearchUseCase @Inject constructor(
     private val searchEventsUseCase: SearchEventsUseCase
 ) {
-    suspend operator fun invoke(query: String): List<SearchResultItem> {
-        val events = searchEventsUseCase(query).map { SearchResultItem.EventItem(it) }
-        return events
+    suspend operator fun invoke(query: String): Result<List<SearchResultItem>> = try {
+        searchEventsUseCase(query).map { events ->
+            events.map { SearchResultItem.EventItem(it) }
+        }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

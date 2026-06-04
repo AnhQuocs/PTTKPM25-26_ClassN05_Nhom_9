@@ -1,7 +1,6 @@
 package com.example.heartbeat.presentation.features.search.viewmodel
 
 import com.example.heartbeat.domain.entity.event.Event
-import com.example.heartbeat.domain.entity.recent_search.RecentSearch
 import com.example.heartbeat.domain.entity.search.SearchResultItem
 import com.example.heartbeat.domain.entity.search.SearchSuggestionItem
 import com.example.heartbeat.domain.usecase.recent_search.AddRecentSearchUseCase
@@ -86,14 +85,14 @@ class UnifiedSearchViewModelTest {
     @Test
     fun `onQueryChanged with valid text updates suggestions and covers normalize`() = runTest {
         val mockSuggestions = listOf(SearchSuggestionItem.EventSuggestion(testEvent))
-        coEvery { unifiedSuggestionUseCase(any()) } returns mockSuggestions
+        coEvery { unifiedSuggestionUseCase(any()) } returns Result.success(mockSuggestions)
 
         // Input with multiple spaces to verify normalize() regex
         viewModel.onQueryChanged("  Blood    Drive  ")
-        
+
         assertEquals("  Blood    Drive  ", viewModel.query)
         assertTrue(viewModel.showSuggestions)
-        
+
         advanceUntilIdle()
         assertEquals(mockSuggestions, viewModel.suggestions)
         coVerify { unifiedSuggestionUseCase("blood drive") }
@@ -117,17 +116,17 @@ class UnifiedSearchViewModelTest {
     @Test
     fun `onQueryChanged handles throwable during fetch and covers catch block`() = runTest {
         coEvery { unifiedSuggestionUseCase(any()) } throws Throwable("Fetch Error")
-        
+
         viewModel.onQueryChanged("error")
         advanceUntilIdle()
-        
+
         assertTrue(viewModel.suggestions.isEmpty())
     }
 
     @Test
     fun `onSearch success updates results and covers finally block`() = runTest {
         val mockResults = listOf(SearchResultItem.EventItem(testEvent))
-        coEvery { unifiedSearchUseCase(any()) } returns mockResults
+        coEvery { unifiedSearchUseCase(any()) } returns Result.success(mockResults)
 
         viewModel.onQueryChanged("blood")
         viewModel.onSearch()
@@ -142,11 +141,11 @@ class UnifiedSearchViewModelTest {
     @Test
     fun `onSearch handles throwable and covers finally block on error`() = runTest {
         coEvery { unifiedSearchUseCase(any()) } throws Throwable("Search Error")
-        
+
         viewModel.onSearch()
         assertTrue(viewModel.isLoading)
         advanceUntilIdle()
-        
+
         assertTrue(viewModel.searchResults.isEmpty())
         assertFalse(viewModel.isLoading) // Finally block hit on error
     }
@@ -173,6 +172,7 @@ class UnifiedSearchViewModelTest {
 
         // Branch 3: Success path
         every { user.uid } returns "user_123"
+        coEvery { addRecentSearchUseCase(any(), any()) } returns Result.success(Unit)
         viewModel.onSuggestionClicked(suggestion)
         advanceUntilIdle()
         coVerify(exactly = 1) { addRecentSearchUseCase("user_123", any()) }
@@ -186,12 +186,12 @@ class UnifiedSearchViewModelTest {
         every { FirebaseAuth.getInstance() } returns auth
         every { auth.currentUser } returns user
         every { user.uid } returns "user_123"
-        
+
         coEvery { addRecentSearchUseCase(any(), any()) } throws Throwable("Save error")
 
         viewModel.onSuggestionClicked(suggestion)
         advanceUntilIdle()
-        
+
         // Ensure state is updated even if history fails
         assertEquals(testEvent.name, viewModel.query)
     }
@@ -200,19 +200,19 @@ class UnifiedSearchViewModelTest {
     fun `clearQuery resets state properties to defaults`() {
         viewModel.onQueryChanged("Blood")
         viewModel.clearQuery()
-        
+
         assertEquals("", viewModel.query)
         assertTrue(viewModel.suggestions.isEmpty())
     }
 
     @Test
     fun `normalize handling through search actions`() = runTest {
-        coEvery { unifiedSearchUseCase(any()) } returns emptyList()
-        
+        coEvery { unifiedSearchUseCase(any()) } returns Result.success(emptyList<SearchResultItem>())
+
         viewModel.onQueryChanged("   Mixed   CASE   Spaces   ")
         viewModel.onSearch()
         advanceUntilIdle()
-        
+
         coVerify { unifiedSearchUseCase("mixed case spaces") }
     }
 }

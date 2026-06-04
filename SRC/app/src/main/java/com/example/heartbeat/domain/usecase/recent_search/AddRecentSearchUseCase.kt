@@ -6,7 +6,10 @@ import com.example.heartbeat.domain.repository.recent_search.RecentSearchReposit
 class AddRecentSearchUseCase(
     private val repository: RecentSearchRepository
 ) {
-    suspend operator fun invoke(userId: String, recent: RecentSearch) {
-        return repository.addRecentSearch(userId, recent)
+    suspend operator fun invoke(userId: String, recent: RecentSearch): Result<Unit> = try {
+        repository.addRecentSearch(userId, recent)
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

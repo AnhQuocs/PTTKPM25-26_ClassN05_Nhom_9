@@ -5,7 +5,10 @@ import com.example.heartbeat.domain.repository.donation.DonationRepository
 class ApproveDonationUseCase(
     private val repository: DonationRepository
 ) {
-    suspend operator fun invoke(donationId: String, donorId: String) {
-        return repository.approveDonation(donationId, donorId)
+    suspend operator fun invoke(donationId: String, donorId: String): Result<Unit> = try {
+        repository.approveDonation(donationId, donorId)
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

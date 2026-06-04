@@ -7,19 +7,20 @@ import com.example.heartbeat.domain.usecase.donation.DonationException
 class AddDonationUseCase (
     private val repository: DonationRepository
 ) {
-    suspend operator fun invoke(donation: Donation): Result<Donation> {
+    suspend operator fun invoke(donation: Donation): Result<Donation> = try {
         if (donation.donorId.isBlank()) {
-            return Result.failure(DonationException.EmptyDonorId)
-        }
-        if (donation.eventId.isBlank()) {
-            return Result.failure(DonationException.EmptyEventId)
-        }
-        
-        val result = repository.addDonation(donation)
-        return if (result != null) {
-            Result.success(result)
+            Result.failure(DonationException.EmptyDonorId)
+        } else if (donation.eventId.isBlank()) {
+            Result.failure(DonationException.EmptyEventId)
         } else {
-            Result.failure(Exception("Failed to add donation"))
+            val result = repository.addDonation(donation)
+            if (result != null) {
+                Result.success(result)
+            } else {
+                Result.failure(Exception("Failed to add donation"))
+            }
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

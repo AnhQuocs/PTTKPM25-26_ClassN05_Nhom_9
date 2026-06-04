@@ -7,19 +7,20 @@ import com.example.heartbeat.domain.usecase.donation.DonationException
 class UpdateStatusUseCase (
     private val repository: DonationRepository
 ) {
-    suspend operator fun invoke(donationId: String, status: String): Result<Donation> {
+    suspend operator fun invoke(donationId: String, status: String): Result<Donation> = try {
         if (donationId.isBlank()) {
-            return Result.failure(DonationException.EmptyDonationId)
-        }
-        if (status.isBlank()) {
-            return Result.failure(DonationException.InvalidStatus)
-        }
-
-        val result = repository.updateStatus(donationId, status)
-        return if (result != null) {
-            Result.success(result)
+            Result.failure(DonationException.EmptyDonationId)
+        } else if (status.isBlank()) {
+            Result.failure(DonationException.InvalidStatus)
         } else {
-            Result.failure(Exception("Failed to update status"))
+            val result = repository.updateStatus(donationId, status)
+            if (result != null) {
+                Result.success(result)
+            } else {
+                Result.failure(Exception("Failed to update status"))
+            }
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

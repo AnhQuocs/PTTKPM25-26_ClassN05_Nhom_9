@@ -63,10 +63,11 @@ class DonationStatsViewModel @Inject constructor(
                 val weekStart = forDay.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 val month = YearMonth.from(forDay)
 
-                val dayResult = donationUseCases.getDonationsByDayUseCase(forDay)
-                val weekResult = donationUseCases.getDonationsByWeekUseCase(weekStart)
-                val monthResult = donationUseCases.getDonationsByMonthUseCase(month)
-                val allResult = donationUseCases.getAllDonationsUseCase()
+                // Các UseCase giờ trả về Result<Int>, cần dùng .getOrNull() hoặc .getOrDefault()
+                val dayResult = donationUseCases.getDonationsByDayUseCase(forDay).getOrNull()
+                val weekResult = donationUseCases.getDonationsByWeekUseCase(weekStart).getOrNull()
+                val monthResult = donationUseCases.getDonationsByMonthUseCase(month).getOrNull()
+                val allResult = donationUseCases.getAllDonationsUseCase().getOrDefault(0)
 
                 _dayCount.value = dayResult
                 _weekCount.value = weekResult
@@ -79,7 +80,7 @@ class DonationStatsViewModel @Inject constructor(
                     StatsType.MONTH -> monthResult
                 }
             } catch (e: Exception) {
-                // Có thể thêm xử lý lỗi tại đây nếu cần
+                // Xử lý ngoại lệ nếu cần
             } finally {
                 _isLoading.value = false
             }

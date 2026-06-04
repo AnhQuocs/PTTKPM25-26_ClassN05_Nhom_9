@@ -6,15 +6,17 @@ import com.example.heartbeat.domain.usecase.donation.DonationException
 class DeleteDonationUseCase(
     private val repository: DonationRepository
 ) {
-    suspend operator fun invoke(donationId: String): Result<Unit> {
+    suspend operator fun invoke(donationId: String): Result<Unit> = try {
         if (donationId.isBlank()) {
-            return Result.failure(DonationException.EmptyDonationId)
-        }
-        
-        return if (repository.deleteDonation(donationId)) {
-            Result.success(Unit)
+            Result.failure(DonationException.EmptyDonationId)
         } else {
-            Result.failure(Exception("Failed to delete donation"))
+            if (repository.deleteDonation(donationId)) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Failed to delete donation"))
+            }
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

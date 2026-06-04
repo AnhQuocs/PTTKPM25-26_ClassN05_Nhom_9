@@ -23,10 +23,11 @@ class DonationStatsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         donationUseCases = mockk(relaxed = true)
         
-        coEvery { donationUseCases.getDonationsByDayUseCase(any()) } returns 10
-        coEvery { donationUseCases.getDonationsByWeekUseCase(any()) } returns 50
-        coEvery { donationUseCases.getDonationsByMonthUseCase(any()) } returns 200
-        coEvery { donationUseCases.getAllDonationsUseCase() } returns 1000
+        // Cập nhật để trả về Result.success thay vì Int trực tiếp
+        coEvery { donationUseCases.getDonationsByDayUseCase(any()) } returns Result.success(10)
+        coEvery { donationUseCases.getDonationsByWeekUseCase(any()) } returns Result.success(50)
+        coEvery { donationUseCases.getDonationsByMonthUseCase(any()) } returns Result.success(200)
+        coEvery { donationUseCases.getAllDonationsUseCase() } returns Result.success(1000)
 
         viewModel = DonationStatsViewModel(donationUseCases)
     }
@@ -89,21 +90,25 @@ class DonationStatsViewModelTest {
 
     @Test
     fun `test load all stats error management`() = runTest {
-        coEvery { donationUseCases.getDonationsByDayUseCase(any()) } throws Exception("Error")
+        // Cập nhật: Giả lập trả về Result.failure thay vì ném Exception
+        coEvery { donationUseCases.getDonationsByDayUseCase(any()) } returns Result.failure(Exception("Error"))
         
         viewModel.loadAllStats()
         assertTrue(viewModel.isLoading.value)
         advanceUntilIdle()
         assertFalse(viewModel.isLoading.value)
+        // Khi lỗi, count sẽ là null do dùng .getOrNull() trong ViewModel
+        assertNull(viewModel.dayCount.value)
     }
 
     @Test
     fun `test set selected day error management`() = runTest {
         val date = LocalDate.now()
-        coEvery { donationUseCases.getDonationsByDayUseCase(date) } throws Exception("Error")
+        coEvery { donationUseCases.getDonationsByDayUseCase(date) } returns Result.failure(Exception("Error"))
         
         viewModel.setSelectedDay(date)
         advanceUntilIdle()
         assertFalse(viewModel.isLoading.value)
+        assertNull(viewModel.dayCount.value)
     }
 }

@@ -100,12 +100,12 @@ class DonationViewModelTest {
     @Test
     fun `test getDonationsByDonor success and failure`() = runTest {
         val donations = listOf(testDonation)
-        coEvery { mockGetDonationsByDonorUseCase("donor1") } returns donations
+        coEvery { mockGetDonationsByDonorUseCase("donor1") } returns Result.success(donations)
         viewModel.getDonationsByDonor("donor1")
         advanceUntilIdle()
         assertEquals(donations, viewModel.uiState.value.donations)
 
-        coEvery { mockGetDonationsByDonorUseCase("donor1") } throws Exception("Fetch Fail")
+        coEvery { mockGetDonationsByDonorUseCase("donor1") } returns Result.failure(Exception("Fetch Fail"))
         viewModel.getDonationsByDonor("donor1")
         advanceUntilIdle()
         assertEquals("Fetch Fail", viewModel.uiState.value.errorMessage)
@@ -115,14 +115,14 @@ class DonationViewModelTest {
     fun `test getDonatedDonations success and failure`() = runTest {
         val d1 = testDonation.copy(status = "DONATED")
         val d2 = testDonation.copy(status = "PENDING")
-        coEvery { mockGetDonationsByDonorUseCase("donor1") } returns listOf(d1, d2)
+        coEvery { mockGetDonationsByDonorUseCase("donor1") } returns Result.success(listOf(d1, d2))
         
         viewModel.getDonatedDonations("donor1")
         advanceUntilIdle()
         assertEquals(1, viewModel.uiState.value.donatedList.size)
         assertEquals(d1, viewModel.uiState.value.donatedList[0])
 
-        coEvery { mockGetDonationsByDonorUseCase("donor1") } throws Exception("Donated Fetch Fail")
+        coEvery { mockGetDonationsByDonorUseCase("donor1") } returns Result.failure(Exception("Donated Fetch Fail"))
         viewModel.getDonatedDonations("donor1")
         advanceUntilIdle()
         assertEquals("Donated Fetch Fail", viewModel.uiState.value.errorMessage)
@@ -130,10 +130,9 @@ class DonationViewModelTest {
 
     @Test
     fun `test updateStatus success and failure`() = runTest {
-        // Setup initial state with two donations
         val d1 = testDonation.copy(donationId = "D1")
         val d2 = testDonation.copy(donationId = "D2")
-        coEvery { mockGetDonationsByDonorUseCase(any()) } returns listOf(d1, d2)
+        coEvery { mockGetDonationsByDonorUseCase(any()) } returns Result.success(listOf(d1, d2))
         viewModel.getDonationsByDonor("u1")
         advanceUntilIdle()
 
@@ -155,7 +154,7 @@ class DonationViewModelTest {
     @Test
     fun `test updateDonationVolume success and failure`() = runTest {
         val d1 = testDonation.copy(donationId = "D1", donationVolume = "100")
-        coEvery { mockGetDonationsByDonorUseCase(any()) } returns listOf(d1)
+        coEvery { mockGetDonationsByDonorUseCase(any()) } returns Result.success(listOf(d1))
         viewModel.getDonationsByDonor("u1")
         advanceUntilIdle()
 
@@ -180,11 +179,11 @@ class DonationViewModelTest {
 
     @Test
     fun `test approveDonation success and failure`() = runTest {
-        coEvery { mockApproveDonationUseCase("D1", "donor1") } returns Unit
+        coEvery { mockApproveDonationUseCase("D1", "donor1") } returns Result.success(Unit)
         
         val d1 = testDonation.copy(donationId = "D1")
         val d2 = testDonation.copy(donationId = "D2")
-        coEvery { mockGetDonationsByDonorUseCase(any()) } returns listOf(d1, d2)
+        coEvery { mockGetDonationsByDonorUseCase(any()) } returns Result.success(listOf(d1, d2))
         viewModel.getDonationsByDonor("u1")
         advanceUntilIdle()
         
@@ -195,7 +194,7 @@ class DonationViewModelTest {
         assertEquals("APPROVED", viewModel.uiState.value.donations.find { it.donationId == "D1" }?.status)
         assertEquals("PENDING", viewModel.uiState.value.donations.find { it.donationId == "D2" }?.status)
 
-        coEvery { mockApproveDonationUseCase("D1", "donor1") } throws Exception("Approve Fail")
+        coEvery { mockApproveDonationUseCase("D1", "donor1") } returns Result.failure(Exception("Approve Fail"))
         viewModel.approveDonation("D1", "donor1")
         advanceUntilIdle()
         assertEquals("Approve Fail", viewModel.uiState.value.errorMessage)
@@ -206,7 +205,7 @@ class DonationViewModelTest {
         coEvery { mockDeleteDonationUseCase("D1") } returns Result.success(Unit)
         
         val d1 = testDonation.copy(donationId = "D1")
-        coEvery { mockGetDonationsByDonorUseCase(any()) } returns listOf(d1)
+        coEvery { mockGetDonationsByDonorUseCase(any()) } returns Result.success(listOf(d1))
         viewModel.getDonationsByDonor("u1")
         advanceUntilIdle()
 
@@ -240,23 +239,19 @@ class DonationViewModelTest {
         
         coEvery { mockObserveDonationsByEventUseCase(eventId) } returns flowOf(donations)
         
-        // Call twice to test observeJob?.cancel()
         viewModel.observeDonationsByEvent(eventId)
         viewModel.observeDonationsByEvent(eventId)
         
         advanceUntilIdle()
         
-        // Check filtering logic
         assertEquals(1, viewModel.uiState.value.donations.size)
         assertEquals("MATCH", viewModel.uiState.value.donations[0].donationId)
 
-        // Test failure with message mapping
         coEvery { mockObserveDonationsByEventUseCase(eventId) } returns flow { throw Exception("Observe Fail") }
         viewModel.observeDonationsByEvent(eventId)
         advanceUntilIdle()
         assertEquals("Observe Fail", viewModel.uiState.value.errorMessage)
         
-        // Test failure with null message (Elvis branch)
         coEvery { mockObserveDonationsByEventUseCase(eventId) } returns flow { throw Exception() }
         viewModel.observeDonationsByEvent(eventId)
         advanceUntilIdle()
@@ -267,14 +262,14 @@ class DonationViewModelTest {
     fun `test getAllDonatedDonations success and failure`() = runTest {
         val d1 = testDonation.copy(status = "DONATED")
         val d2 = testDonation.copy(status = "PENDING")
-        coEvery { mockGetAllDonationsListUseCase() } returns listOf(d1, d2)
+        coEvery { mockGetAllDonationsListUseCase() } returns Result.success(listOf(d1, d2))
         
         viewModel.getAllDonatedDonations()
         advanceUntilIdle()
         assertEquals(1, viewModel.uiState.value.donatedList.size)
         assertEquals(d1, viewModel.uiState.value.donatedList[0])
 
-        coEvery { mockGetAllDonationsListUseCase() } throws Exception("All Donated Fail")
+        coEvery { mockGetAllDonationsListUseCase() } returns Result.failure(Exception("All Donated Fail"))
         viewModel.getAllDonatedDonations()
         advanceUntilIdle()
         assertEquals("All Donated Fail", viewModel.uiState.value.errorMessage)
@@ -291,7 +286,6 @@ class DonationViewModelTest {
 
     @Test
     fun `test clearMessages`() = runTest {
-        // Set some messages
         coEvery { mockAddDonationUseCase(any()) } returns Result.failure(Exception("Err"))
         viewModel.addDonation(testDonation)
         advanceUntilIdle()

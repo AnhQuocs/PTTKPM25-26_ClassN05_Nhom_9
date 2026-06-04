@@ -7,21 +7,23 @@ import com.example.heartbeat.domain.usecase.donation.DonationException
 class UpdateDonationVolumeUseCase(
     private val repository: DonationRepository
 ) {
-    suspend operator fun invoke(donationId: String, volume: String): Result<Donation> {
+    suspend operator fun invoke(donationId: String, volume: String): Result<Donation> = try {
         if (donationId.isBlank()) {
-            return Result.failure(DonationException.EmptyDonationId)
-        }
-        
-        val volumeValue = volume.toDoubleOrNull()
-        if (volumeValue == null || volumeValue <= 0) {
-            return Result.failure(DonationException.InvalidVolume)
-        }
-
-        val result = repository.updateDonationVolume(donationId, volume)
-        return if (result != null) {
-            Result.success(result)
+            Result.failure(DonationException.EmptyDonationId)
         } else {
-            Result.failure(Exception("Failed to update volume"))
+            val volumeValue = volume.toDoubleOrNull()
+            if (volumeValue == null || volumeValue <= 0) {
+                Result.failure(DonationException.InvalidVolume)
+            } else {
+                val result = repository.updateDonationVolume(donationId, volume)
+                if (result != null) {
+                    Result.success(result)
+                } else {
+                    Result.failure(Exception("Failed to update volume"))
+                }
+            }
         }
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 }

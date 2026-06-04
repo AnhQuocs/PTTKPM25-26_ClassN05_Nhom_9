@@ -1,17 +1,19 @@
 BAO CAO TOM TAT LOG KIEM THU
-Ngay cap nhat: 01/06/2026
+Ngay cap nhat: 04/06/2026
 Du an: Heartbeat Android App
 
 1. Nguon log da su dung
 - UI Automation Report:
   app/build/reports/androidTests/connected/debug/index.html
   app/build/reports/androidTests/connected/debug/com.example.heartbeat.UserFlowAutomationTest.html
+  app/build/reports/androidTests/connected/debug/com.example.heartbeat.FeatureFlowAutomationTest.html
 - Monkey Test Log:
   build/reports/monkey/monkey.log
 
 2. Ket qua UI Automation Test
 - Thiet bi/emulator: Pixel_6a(AVD) - Android 13
-- Test class: com.example.heartbeat.UserFlowAutomationTest
+- Test class dang nhap/logout: com.example.heartbeat.UserFlowAutomationTest
+- Test class tinh nang mo rong: com.example.heartbeat.FeatureFlowAutomationTest
 - Script chay test: scripts/run-ui-automation.ps1
 - Script record video: scripts/record-ui-test.ps1
 
@@ -36,10 +38,36 @@ Phan bo test theo tai khoan:
   - Thu tu chay: user truoc, admin sau.
   - Truoc moi luot tai khoan, script clear app data bang adb shell pm clear com.example.heartbeat de tranh dung lai session cu.
 
+Phan bo test theo tinh nang:
+- Tinh nang phia user:
+  - Chay bang lenh: .\scripts\run-ui-automation.ps1 -UserFeatures
+  - Cac test duoc chay:
+    + userSearchFlow_entersQueryOnSearchScreen
+      Mo ta: Kiem tra user mo tab Search, nhap tu khoa tim kiem va xac nhan o tim kiem nhan du lieu.
+    + userDonationFlow_opensUpcomingEventsForRegistration
+      Mo ta: Kiem tra user mo danh sach su kien sap toi va di vao luong dang ky hien mau neu Firebase co su kien hop le.
+      Luu y: Neu Firebase khong co su kien sap toi hoac du lieu su kien bi loi, test se duoc bo qua de tranh fail sai do du lieu moi truong.
+- Tinh nang phia admin/employee:
+  - Chay bang lenh: .\scripts\run-ui-automation.ps1 -AdminFeatures
+  - Cac test duoc chay:
+    + adminCreateEventFlow_opensFormAndEntersCoreFields
+      Mo ta: Kiem tra admin dang nhap qua LOGIN AS AN EMPLOYEE, mo tab tao su kien va nhap cac truong co ban cua form.
+    + adminApproveMemberFlow_opensPendingRequestsAndApprovesWhenAvailable
+      Mo ta: Kiem tra admin mo khu vuc yeu cau dang cho duyet va bam duyet neu co thanh vien dang cho.
+      Luu y: Neu Firebase khong co yeu cau dang cho duyet, test se chi xac nhan man hinh/khu vuc pending mo duoc.
+- Chay tat ca tinh nang:
+  - Chay bang lenh: .\scripts\run-ui-automation.ps1 -AllFeatures
+  - Thu tu chay: user feature flows truoc, admin feature flows sau.
+- Chay tat ca dang nhap va tinh nang:
+  - Chay bang 2 lenh:
+    .\scripts\run-ui-automation.ps1 -AllAccounts
+    .\scripts\run-ui-automation.ps1 -AllFeatures
+
 Nhan xet:
 - User flow kiem thu dang nhap va dang xuat tu man hinh cai dat.
 - Admin flow chi kiem thu dang nhap qua duong LOGIN AS AN EMPLOYEE nam ben duoi nut Login cua form user.
 - Khi chay admin, test phai chuyen sang man hinh employee login truoc roi moi nhap email, password va code HBST001.
+- Feature flow moi phu thuoc du lieu Firebase hien co, nen mot so buoc se skip neu khong co event/pending request hop le.
 
 Huong dan chay UI Automation hien tai:
 - Chay test tai khoan user:
@@ -48,12 +76,33 @@ Huong dan chay UI Automation hien tai:
   .\scripts\run-ui-automation.ps1 -Admin
 - Chay lan luot user va admin:
   .\scripts\run-ui-automation.ps1 -AllAccounts
+- Chay tinh nang user:
+  .\scripts\run-ui-automation.ps1 -UserFeatures
+- Chay tinh nang admin:
+  .\scripts\run-ui-automation.ps1 -AdminFeatures
+- Chay tat ca tinh nang:
+  .\scripts\run-ui-automation.ps1 -AllFeatures
+- Chay tat ca dang nhap va tinh nang:
+  .\scripts\run-ui-automation.ps1 -AllAccounts
+  .\scripts\run-ui-automation.ps1 -AllFeatures
+
+Huong dan record video UI Automation:
 - Record video tai khoan user:
   .\scripts\record-ui-test.ps1 -User
 - Record video tai khoan admin:
   .\scripts\record-ui-test.ps1 -Admin
 - Record video lan luot user va admin:
   .\scripts\record-ui-test.ps1 -AllAccounts
+- Record video tinh nang user:
+  .\scripts\record-ui-test.ps1 -UserFeatures
+- Record video tinh nang admin:
+  .\scripts\record-ui-test.ps1 -AdminFeatures
+- Record video tat ca tinh nang:
+  .\scripts\record-ui-test.ps1 -AllFeatures
+- Record video dang nhap va tinh nang thanh 2 file rieng de khong bi ghi de:
+  .\scripts\record-ui-test.ps1 -AllAccounts -Output login-flows.mp4
+  .\scripts\record-ui-test.ps1 -AllFeatures -Output feature-flows.mp4
+- Luu y: Neu khong truyen -Output, file mac dinh heartbeat-ui-automation.mp4 se bi ghi de moi lan record.
 
 Tai khoan kiem thu:
 - User:

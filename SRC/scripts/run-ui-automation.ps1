@@ -6,6 +6,9 @@ param(
     [switch]$User,
     [switch]$Admin,
     [switch]$AllAccounts,
+    [switch]$UserFeatures,
+    [switch]$AdminFeatures,
+    [switch]$AllFeatures,
     [string]$PackageName = "com.example.heartbeat",
     [string]$JavaHome = "C:\Program Files\Android\Android Studio\jbr",
     [string]$AdbPath = "$env:LOCALAPPDATA\Android\Sdk\platform-tools"
@@ -24,6 +27,9 @@ param(
 #   .\scripts\run-ui-automation.ps1 -User
 #   .\scripts\run-ui-automation.ps1 -Admin
 #   .\scripts\run-ui-automation.ps1 -AllAccounts
+#   .\scripts\run-ui-automation.ps1 -UserFeatures
+#   .\scripts\run-ui-automation.ps1 -AdminFeatures
+#   .\scripts\run-ui-automation.ps1 -AllFeatures
 
 $ErrorActionPreference = "Stop"
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -49,7 +55,16 @@ function Invoke-UiAutomation {
         Write-Host "Login path: normal user login."
     }
 
-    adb shell pm clear $PackageName | Out-Host
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $clearOutput = adb shell pm clear $PackageName 2>&1
+    $ErrorActionPreference = $previousErrorActionPreference
+    if (($clearOutput -join "`n") -match "Success") {
+        $clearOutput | Out-Host
+    }
+    else {
+        Write-Host "App data clear skipped: $($clearOutput -join ' ')"
+    }
 
     $loginAsEmployeeArg = $TestLoginAsEmployee.ToString().ToLowerInvariant()
 
@@ -73,11 +88,21 @@ try {
         Invoke-UiAutomation -AccountName "user" -TestEmail "anhquocs@gmail.com" -TestPassword "12345678" -TestCode "" -TestLoginAsEmployee $false
         Invoke-UiAutomation -AccountName "admin" -TestEmail "staff@gmail.com" -TestPassword "12345678" -TestCode "HBST001" -TestLoginAsEmployee $true -TestClass "com.example.heartbeat.UserFlowAutomationTest#loginFlow_entersCredentialsAndOpensHome"
     }
+    elseif ($AllFeatures.IsPresent) {
+        Invoke-UiAutomation -AccountName "user feature flows" -TestEmail "anhquocs@gmail.com" -TestPassword "12345678" -TestCode "" -TestLoginAsEmployee $false -TestClass "com.example.heartbeat.FeatureFlowAutomationTest#userSearchFlow_entersQueryOnSearchScreen,com.example.heartbeat.FeatureFlowAutomationTest#userDonationFlow_opensUpcomingEventsForRegistration"
+        Invoke-UiAutomation -AccountName "admin feature flows" -TestEmail "staff@gmail.com" -TestPassword "12345678" -TestCode "HBST001" -TestLoginAsEmployee $true -TestClass "com.example.heartbeat.FeatureFlowAutomationTest#adminCreateEventFlow_opensFormAndEntersCoreFields,com.example.heartbeat.FeatureFlowAutomationTest#adminApproveMemberFlow_opensPendingRequestsAndApprovesWhenAvailable"
+    }
     elseif ($Admin.IsPresent) {
         Invoke-UiAutomation -AccountName "admin" -TestEmail "staff@gmail.com" -TestPassword "12345678" -TestCode "HBST001" -TestLoginAsEmployee $true -TestClass "com.example.heartbeat.UserFlowAutomationTest#loginFlow_entersCredentialsAndOpensHome"
     }
     elseif ($User.IsPresent) {
         Invoke-UiAutomation -AccountName "user" -TestEmail "anhquocs@gmail.com" -TestPassword "12345678" -TestCode "" -TestLoginAsEmployee $false
+    }
+    elseif ($AdminFeatures.IsPresent) {
+        Invoke-UiAutomation -AccountName "admin feature flows" -TestEmail "staff@gmail.com" -TestPassword "12345678" -TestCode "HBST001" -TestLoginAsEmployee $true -TestClass "com.example.heartbeat.FeatureFlowAutomationTest#adminCreateEventFlow_opensFormAndEntersCoreFields,com.example.heartbeat.FeatureFlowAutomationTest#adminApproveMemberFlow_opensPendingRequestsAndApprovesWhenAvailable"
+    }
+    elseif ($UserFeatures.IsPresent) {
+        Invoke-UiAutomation -AccountName "user feature flows" -TestEmail "anhquocs@gmail.com" -TestPassword "12345678" -TestCode "" -TestLoginAsEmployee $false -TestClass "com.example.heartbeat.FeatureFlowAutomationTest#userSearchFlow_entersQueryOnSearchScreen,com.example.heartbeat.FeatureFlowAutomationTest#userDonationFlow_opensUpcomingEventsForRegistration"
     }
     else {
         $loginAsEmployeeValue = $LoginAsEmployee.IsPresent -or ![string]::IsNullOrWhiteSpace($Code)

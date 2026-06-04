@@ -44,12 +44,13 @@ class UnifiedSearchViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
+                val normalized = normalize(newQuery)
                 val result = if (newQuery.isBlank()) {
-                    emptyList()
+                    Result.success(emptyList<SearchSuggestionItem>())
                 } else {
-                    unifiedSuggestionUseCase(normalize(newQuery))
+                    unifiedSuggestionUseCase(normalized)
                 }
-                suggestions = result
+                suggestions = result.getOrDefault(emptyList())
             } catch (e: Throwable) {
                 suggestions = emptyList()
             }
@@ -60,7 +61,9 @@ class UnifiedSearchViewModel @Inject constructor(
         isLoading = true
         viewModelScope.launch {
             try {
-                searchResults = unifiedSearchUseCase(normalize(query))
+                val normalized = normalize(query)
+                val result = unifiedSearchUseCase(normalized)
+                searchResults = result.getOrDefault(emptyList())
             } catch (e: Throwable) {
                 searchResults = emptyList()
             } finally {
@@ -74,12 +77,11 @@ class UnifiedSearchViewModel @Inject constructor(
         query = event.name
         showSuggestions = false
 
-        val auth = FirebaseAuth.getInstance()
-        val user = auth.currentUser
-        
-        // Phân tách rõ ràng các nhánh để đạt 100% Branch Coverage
+        val user = FirebaseAuth.getInstance().currentUser
         if (user == null) return
-        val uid = user.uid ?: return
+        
+        // Match the test Branch 2: user != null but uid is "empty" (interpreted as invalid)
+        val uid = user.uid.takeIf { it.isNotBlank() } ?: return
 
         viewModelScope.launch {
             try {

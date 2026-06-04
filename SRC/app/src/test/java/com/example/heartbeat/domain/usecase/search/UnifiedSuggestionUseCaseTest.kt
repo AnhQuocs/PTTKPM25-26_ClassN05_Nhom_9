@@ -4,8 +4,10 @@ import com.example.heartbeat.domain.entity.event.Event
 import com.example.heartbeat.domain.entity.search.SearchResultItem
 import com.example.heartbeat.domain.entity.search.SearchSuggestionItem
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -25,29 +27,58 @@ class UnifiedSuggestionUseCaseTest {
     }
 
     @Test
-    fun `UnifiedSuggestion map to SuggestionItem`() = runBlocking {
-        coEvery { unifiedSearchUseCase("q") } returns listOf(SearchResultItem.EventItem(event1))
+    fun `UnifiedSuggestion map to SuggestionItem - runTest & Behavior Verification`() = runTest {
+        // 1. Coroutine Testing with runTest
+        coEvery { unifiedSearchUseCase("q") } returns Result.success(listOf(SearchResultItem.EventItem(event1)))
+        
         val result = unifiedSuggestionUseCase("q")
-        assertTrue(result[0] is SearchSuggestionItem.EventSuggestion)
+        
+        // 2. Behavior Verification
+        coVerify(exactly = 1) { unifiedSearchUseCase("q") }
+        confirmVerified(unifiedSearchUseCase)
+
+        assertTrue(result.isSuccess)
+        assertTrue(result.getOrNull()?.get(0) is SearchSuggestionItem.EventSuggestion)
     }
 
     @Test
-    fun `UnifiedSuggestion handle multiple results`() = runBlocking {
-        coEvery { unifiedSearchUseCase(any()) } returns listOf(SearchResultItem.EventItem(event1), SearchResultItem.EventItem(event1))
-        assertEquals(2, unifiedSuggestionUseCase("any").size)
+    fun `UnifiedSuggestion handle multiple results`() = runTest {
+        coEvery { unifiedSearchUseCase(any()) } returns Result.success(listOf(
+            SearchResultItem.EventItem(event1), 
+            SearchResultItem.EventItem(event1)
+        ))
+        val result = unifiedSuggestionUseCase("any")
+        assertEquals(2, result.getOrNull()?.size)
     }
 
     @Test
-    fun `UnifiedSuggestion handle empty results`() = runBlocking {
-        coEvery { unifiedSearchUseCase(any()) } returns emptyList()
-        assertTrue(unifiedSuggestionUseCase("none").isEmpty())
+    fun `UnifiedSuggestion handle empty results - Boundary Value`() = runTest {
+        // 4. Boundary Value Testing
+        coEvery { unifiedSearchUseCase(any()) } returns Result.success(emptyList())
+        val result = unifiedSuggestionUseCase("none")
+        assertTrue(result.getOrNull()?.isEmpty() == true)
     }
 
-    @Test(expected = Exception::class)
-    fun `UnifiedSuggestion propagate exception`() {
-        runBlocking {
-            coEvery { unifiedSearchUseCase(any()) } throws Exception("Error")
-            unifiedSuggestionUseCase("error")
-        }
+    @Test
+    fun `UnifiedSuggestion handle error - Exception Injection`() = runTest {
+        // 3. Exception & Error Injection
+        val exception = RuntimeException("Suggestion Failed")
+        coEvery { unifiedSearchUseCase(any()) } throws exception
+        
+        val result = unifiedSuggestionUseCase("error")
+        
+        assertTrue(result.isFailure)
+        assertEquals(exception, result.exceptionOrNull())
+    }
+
+    @Test
+    fun `UnifiedSuggestion return failure result from search usecase`() = runTest {
+        val exception = Exception("Search Error")
+        coEvery { unifiedSearchUseCase(any()) } returns Result.failure(exception)
+        
+        val result = unifiedSuggestionUseCase("fail")
+        
+        assertTrue(result.isFailure)
+        assertEquals(exception, result.exceptionOrNull())
     }
 }

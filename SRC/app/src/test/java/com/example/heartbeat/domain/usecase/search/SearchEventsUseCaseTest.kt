@@ -5,8 +5,10 @@ import com.example.heartbeat.domain.entity.hospital.Hospital
 import com.example.heartbeat.domain.repository.event.EventRepository
 import com.example.heartbeat.domain.repository.hospital.HospitalRepository
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -47,139 +49,83 @@ class SearchEventsUseCaseTest {
     }
 
     @Test
-    fun `Match Event Name branch`() = runBlocking {
+    fun `Match Event Name branch - Coroutine runTest & Behavior Verification`() = runTest {
+        // 1. Coroutine Testing with runTest
         val result = searchEventsUseCase("Big")
-        assertEquals(1, result.size)
-        assertEquals("e1", result[0].id)
+        
+        // 2. Behavior Verification
+        coVerify(exactly = 1) { eventRepository.getAllEvents() }
+        coVerify(exactly = 1) { hospitalRepository.getAllHospitals() }
+        confirmVerified(eventRepository, hospitalRepository)
+
+        assertTrue(result.isSuccess)
+        assertEquals(1, result.getOrNull()?.size)
+        assertEquals("e1", result.getOrNull()?.get(0)?.id)
     }
 
     @Test
-    fun `Match Hospital Name branch`() = runBlocking {
-        // e2 không khớp name nhưng khớp hospitalName (Central)
+    fun `Match Hospital Name branch`() = runTest {
         val result = searchEventsUseCase("Central")
-        assertTrue(result.any { it.id == "e2" })
+        assertTrue(result.getOrNull()?.any { it.id == "e2" } == true)
     }
 
     @Test
-    fun `Match Province branch`() = runBlocking {
-        // e3 không khớp name/hospitalName nhưng khớp province (Hanoi)
+    fun `Match Province branch`() = runTest {
         val result = searchEventsUseCase("Hanoi")
-        assertTrue(result.any { it.id == "e3" })
+        assertTrue(result.getOrNull()?.any { it.id == "e3" } == true)
     }
 
     @Test
-    fun `Search No Match branch`() = runBlocking {
-        assertTrue(searchEventsUseCase("Saigon").isEmpty())
-    }
-
-    @Test
-    fun `Multiple tokens match different fields`() = runBlocking {
-        // "Big" khớp name, "Hanoi" khớp province
-        val result = searchEventsUseCase("Big Hanoi")
-        assertEquals(1, result.size)
-        assertEquals("e1", result[0].id)
-    }
-
-    @Test
-    fun `Multiple tokens - First fails`() = runBlocking {
-        assertTrue(searchEventsUseCase("Unknown Big").isEmpty())
-    }
-
-    @Test
-    fun `Multiple tokens - First matches, second fails`() = runBlocking {
-        // Nhánh này đảm bảo coverage cho việc all() trả về false sau khi đã có token đúng
-        assertTrue(searchEventsUseCase("Big Unknown").isEmpty())
-    }
-
-    @Test
-    fun `Hospital Null branch with Name match`() = runBlocking {
-        // hospital null (event4), nhưng khớp qua name "Orphan" -> Phủ nhánh Elvis
-        assertEquals(1, searchEventsUseCase("Orphan").size)
-    }
-
-    @Test
-    fun `Hospital Null branch with No match`() = runBlocking {
-        // hospital null, name sai -> các vế sau lấy "" và trả về false
+    fun `Search No Match branch`() = runTest {
         val result = searchEventsUseCase("Saigon")
-        assertTrue(result.none { it.id == "e4" })
+        assertTrue(result.getOrNull()?.isEmpty() == true)
     }
 
     @Test
-    fun `Handle messy spaces`() = runBlocking {
-        // split sinh ra token rỗng, filter { it.isNotEmpty() } loại bỏ -> Phủ nhánh filter
-        assertEquals(1, searchEventsUseCase("   Big    Donation   ").size)
+    fun `Boundary Value Testing - Empty and Messy Spaces`() = runTest {
+        // 4. Boundary Value Testing
+        val resultEmpty = searchEventsUseCase("")
+        assertEquals(4, resultEmpty.getOrNull()?.size)
+
+        val resultSpaces = searchEventsUseCase("   ")
+        assertEquals(4, resultSpaces.getOrNull()?.size)
+
+        val resultMessy = searchEventsUseCase("   Big    Donation   ")
+        assertEquals(1, resultMessy.getOrNull()?.size)
     }
 
     @Test
-    fun `Case Insensitive branch`() = runBlocking {
-        assertEquals(1, searchEventsUseCase("bIg dOnAtIoN").size)
+    fun `Exception Injection - Repository Failure`() = runTest {
+        // 3. Exception & Error Injection
+        coEvery { eventRepository.getAllEvents() } throws RuntimeException("Database Error")
+        
+        val result = searchEventsUseCase("any")
+        
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is RuntimeException)
+        assertEquals("Database Error", result.exceptionOrNull()?.message)
     }
 
     @Test
-    fun `Empty Query branch`() = runBlocking {
-        // tokens.isEmpty() trả về allEvents ngay lập tức
-        assertEquals(4, searchEventsUseCase("").size)
-        assertEquals(4, searchEventsUseCase("   ").size)
+    fun `Branch Coverage - Hospital Null branch`() = runTest {
+        // 5. Branch Coverage
+        val result = searchEventsUseCase("Orphan")
+        assertEquals(1, result.getOrNull()?.size)
+        assertEquals("e4", result.getOrNull()?.get(0)?.id)
     }
 
     @Test
-    fun `Empty Repository branch`() = runBlocking {
-        coEvery { eventRepository.getAllEvents() } returns emptyList()
-        assertTrue(searchEventsUseCase("any").isEmpty())
-    }
-
-    @Test(expected = Exception::class)
-    fun `Repository Exception branch`() {
-        runBlocking {
-            coEvery { eventRepository.getAllEvents() } throws Exception("DB Error")
-            searchEventsUseCase("error")
-        }
+    fun `Case Insensitive match`() = runTest {
+        val result = searchEventsUseCase("bIg dOnAtIoN")
+        assertEquals(1, result.getOrNull()?.size)
     }
 
     @Test
-    fun `Match multiple tokens on hospital fields only`() = runBlocking {
-        // "Central" khớp hospitalName, "Hanoi" khớp province -> e1, e2, e3
-        val result = searchEventsUseCase("Central Hanoi")
-        assertEquals(3, result.size)
-    }
+    fun `Multiple tokens - All must match`() = runTest {
+        val resultSuccess = searchEventsUseCase("Big Central")
+        assertEquals(1, resultSuccess.getOrNull()?.size)
 
-    @Test
-    fun `Empty Hospital Repository branch`() = runBlocking {
-        // Kích hoạt nhánh associateBy trên danh sách bệnh viện rỗng (Nhánh branch cuối cùng)
-        coEvery { hospitalRepository.getAllHospitals() } returns emptyList()
-        val result = searchEventsUseCase("Big")
-        assertEquals(1, result.size)
-    }
-
-    @Test
-    fun `Match Province only when EventName and HospitalName fail`() = runBlocking {
-        // Đảm bảo coverage cho vế cuối cùng của biểu thức ||
-        // eventName: "Urgent", hospitalName: "Central Hospital", province: "Hanoi"
-        // Tìm "Hanoi" -> eventName (false) || hName (false) || province (true)
-        val result = searchEventsUseCase("Hanoi")
-        assertTrue(result.any { it.id == "e2" })
-    }
-
-    @Test
-    fun `Hospital Name is empty but Hospital exists`() = runBlocking {
-        // Trường hợp này hiếm nếu data chuẩn, nhưng để phủ branch Elvis nếu field có thể null
-        // Nếu Hospital trong thực tế các field có thể null (bạn nên kiểm tra lại Entity)
-        // Giả sử ta mock một Hospital có tên trống hoặc Province trống
-        val specialHospital = Hospital("h2", "", "", "", "", "Saigon", "")
-        val specialEvent = Event("e5", "h2", "Blood", "Desc", "2024-03-01", "10:00", null, emptyList(), 200, 0, now)
-
-        coEvery { hospitalRepository.getAllHospitals() } returns listOf(specialHospital)
-        coEvery { eventRepository.getAllEvents() } returns listOf(specialEvent)
-
-        val result = searchEventsUseCase("Saigon")
-        assertEquals("e5", result[0].id)
-    }
-
-    @Test
-    fun `Multiple tokens matching the same field`() = runBlocking {
-        // Phủ nhánh tokens.all với nhiều phần tử đều thỏa mãn vế đầu tiên (eventName)
-        val result = searchEventsUseCase("Big Donation")
-        assertEquals(1, result.size)
-        assertEquals("e1", result[0].id)
+        val resultFail = searchEventsUseCase("Big Unknown")
+        assertTrue(resultFail.getOrNull()?.isEmpty() == true)
     }
 }

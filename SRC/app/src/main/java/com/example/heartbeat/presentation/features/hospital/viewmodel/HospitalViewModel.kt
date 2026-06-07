@@ -16,42 +16,36 @@ import javax.inject.Inject
 class HospitalViewModel @Inject constructor(
     private val hospitalUseCase: HospitalUseCase
 ) : ViewModel() {
-
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
 
-    // ĐỔI từ delegate sang backing state
-    private val _hospitals = mutableStateOf<List<Hospital>>(emptyList())
-    val hospitals: List<Hospital> get() = _hospitals.value
+    var hospitals by mutableStateOf<List<Hospital>>(emptyList())
+        private set
 
-    private val _hospitalDetails = mutableStateOf<Map<String, Hospital>>(emptyMap())
-    val hospitalDetails: Map<String, Hospital> get() = _hospitalDetails.value
+    var hospitalDetails by mutableStateOf<Map<String, Hospital>>(emptyMap())
+        private set
 
     fun loadHospitals() {
-        _isLoading.value = true
         viewModelScope.launch {
-            try {
-                val data = hospitalUseCase.getAllHospitalsUseCase()
-                _hospitals.value = data
-            } catch (e: Throwable) {
-                // Xử lý lỗi
-            } finally {
-                _isLoading.value = false
-            }
+            _isLoading.value = true
+            val data = hospitalUseCase.getAllHospitalsUseCase()
+            hospitals = data
+            _isLoading.value = false
         }
     }
 
     fun loadHospitalById(hospitalId: String) {
-        if (_hospitalDetails.value.containsKey(hospitalId)) return
+        val normalizedHospitalId = hospitalId.trim()
+        if (
+            normalizedHospitalId.isEmpty() ||
+            normalizedHospitalId == "hospitals" ||
+            hospitalDetails.containsKey(normalizedHospitalId)
+        ) return
 
         viewModelScope.launch {
-            try {
-                val hospital = hospitalUseCase.getHospitalByIdUseCase(hospitalId)
-                hospital?.let {
-                    _hospitalDetails.value += (hospitalId to it)
-                }
-            } catch (e: Throwable) {
-                // Đảm bảo coroutine kết thúc an toàn
+            val hospital = hospitalUseCase.getHospitalByIdUseCase(normalizedHospitalId)
+            hospital?.let {
+                hospitalDetails = hospitalDetails + (normalizedHospitalId to it)
             }
         }
     }

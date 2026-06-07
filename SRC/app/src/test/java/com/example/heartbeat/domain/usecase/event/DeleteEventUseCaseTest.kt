@@ -28,11 +28,6 @@ class DeleteEventUseCaseTest {
         coVerify(exactly = 1) { repository.deleteEvent(eventId) }
     }
 
-    /**
-     * Kịch bản TEST CHẮC CHẮN FAIL để làm báo cáo:
-     * Mong đợi: Nếu ID trống thì KHÔNG được gọi repository.
-     * Kết quả hiện tại: Code chưa check nên vẫn gọi -> Test sẽ báo Fail ở dòng coVerify.
-     */
     @Test
     fun `DeleteEvent with blank ID should NOT call repository`() = runBlocking {
         val eventId = ""
@@ -40,8 +35,7 @@ class DeleteEventUseCaseTest {
 
         deleteEventUseCase(eventId)
 
-        // Mong đợi số lần gọi là 0 (exactly = 0)
-        // Lệnh này sẽ ném ra lỗi vì thực tế code đang gọi 1 lần
+
         coVerify(exactly = 0) { repository.deleteEvent(any()) }
     }
 }

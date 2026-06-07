@@ -49,7 +49,6 @@ class HospitalViewModelTest {
 
     @Test
     fun `initial state is correct`() {
-        // Phủ getter mặc định của isLoading, hospitals và hospitalDetails
         assertNotNull(viewModel.isLoading)
         assertFalse(viewModel.isLoading.value)
         assertTrue(viewModel.hospitals.isEmpty())
@@ -64,11 +63,9 @@ class HospitalViewModelTest {
         }
         
         viewModel.loadHospitals()
-        // Kiểm tra isLoading = true (Đồng bộ)
         assertTrue(viewModel.isLoading.value)
         
         advanceUntilIdle()
-        // Kiểm tra isLoading = false (Sau finally)
         assertFalse(viewModel.isLoading.value)
     }
 
@@ -80,7 +77,6 @@ class HospitalViewModelTest {
         viewModel.loadHospitals()
         advanceUntilIdle()
         
-        // Phủ setter và getter của hospitals
         assertEquals(list, viewModel.hospitals)
     }
 
@@ -101,7 +97,6 @@ class HospitalViewModelTest {
         viewModel.loadHospitalById("H1")
         advanceUntilIdle()
         
-        // Phủ setter và getter của hospitalDetails
         assertEquals(testHospital, viewModel.hospitalDetails["H1"])
     }
 
@@ -112,7 +107,6 @@ class HospitalViewModelTest {
         viewModel.loadHospitalById("H1")
         advanceUntilIdle()
         
-        // Nhánh containsKey == true -> return sớm
         viewModel.loadHospitalById("H1")
         advanceUntilIdle()
         
@@ -160,7 +154,6 @@ class HospitalViewModelTest {
         viewModel.loadHospitalById("ANY")
         advanceUntilIdle()
         
-        // Nhánh let block không chạy
         assertTrue(viewModel.hospitalDetails.isEmpty())
     }
 
@@ -169,11 +162,8 @@ class HospitalViewModelTest {
         coEvery { getAllHospitalsUseCase() } returns emptyList()
         
         viewModel.loadHospitals()
-        // Khẳng định tính đồng bộ sau khi đã fix source code
         assertTrue("isLoading must be true synchronously", viewModel.isLoading.value)
     }
-
-    // --- CÁC KỊCH BẢN BỔ SUNG ĐỂ ĐẠT 100% METHOD COVERAGE ---
 
     @Test
     fun `hospitalUseCase is wired correctly via dependency injection`() = runTest {
@@ -188,7 +178,6 @@ class HospitalViewModelTest {
 
     @Test
     fun `loadHospitals finally block coverage on error`() = runTest {
-        // Phủ khối catch và finally khi UseCase ném lỗi
         coEvery { getAllHospitalsUseCase() } coAnswers {
             throw RuntimeException("Expected error for coverage")
         }
@@ -201,7 +190,6 @@ class HospitalViewModelTest {
 
     @Test
     fun `loadHospitalById catch block coverage on error`() = runTest {
-        // Phủ khối catch của loadHospitalById
         coEvery { getHospitalByIdUseCase(any()) } coAnswers {
             throw RuntimeException("Expected error for coverage")
         }

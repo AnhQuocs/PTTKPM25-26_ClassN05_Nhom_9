@@ -44,11 +44,6 @@ class AddEventUseCaseTest {
         coVerify(exactly = 1) { repository.addEvent(event) }
     }
 
-    /**
-     * KỊCH BẢN TEST CHẮC CHẮN FAIL ĐỂ LÀM BÁO CÁO (Trường hợp 1)
-     * Mong đợi: Nếu tên sự kiện trống, KHÔNG được gọi repository để tránh lưu dữ liệu bẩn.
-     * Hiện tại: FAIL vì code UseCase chưa có validation, vẫn gọi repo 1 lần.
-     */
     @Test
     fun `AddEvent with blank name should NOT call repository`() = runBlocking {
         val invalidEvent = createDummyEvent(name = "")
@@ -56,15 +51,9 @@ class AddEventUseCaseTest {
 
         addEventUseCase(invalidEvent)
 
-        // Mong đợi số lần gọi là 0 (exactly = 0)
         coVerify(exactly = 0) { repository.addEvent(any()) }
     }
 
-    /**
-     * KỊCH BẢN TEST CHẮC CHẮN FAIL ĐỂ LÀM BÁO CÁO (Trường hợp 2)
-     * Mong đợi: Nếu sức chứa không hợp lệ (<= 0), KHÔNG được gọi repository.
-     * Hiện tại: FAIL vì code chưa có bước kiểm tra sức chứa.
-     */
     @Test
     fun `AddEvent with zero capacity should NOT call repository`() = runBlocking {
         val invalidEvent = createDummyEvent(capacity = 0)

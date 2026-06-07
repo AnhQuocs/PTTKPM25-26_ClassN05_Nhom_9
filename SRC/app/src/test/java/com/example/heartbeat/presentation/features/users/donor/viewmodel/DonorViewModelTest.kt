@@ -35,13 +35,11 @@ class DonorViewModelTest {
         mockkStatic(Base64::class)
         mockkStatic(Log::class)
 
-        // Mock static Log methods with explicit types to satisfy compiler
         every { Log.d(any<String>(), any<String>()) } returns 0
         every { Log.e(any<String>(), any<String>()) } returns 0
         every { Log.e(any<String>(), any<String>(), any<Throwable>()) } returns 0
         every { Log.w(any<String>(), any<String>()) } returns 0
 
-        // Mock Base64 behavior
         every { Base64.encodeToString(any<ByteArray>(), any<Int>()) } returns "base64_encoded_string"
 
         viewModel = DonorViewModel(donorUseCase)
@@ -75,55 +73,45 @@ class DonorViewModelTest {
         about = "Bio"
     )
 
-    // --- 1. Nhánh setLocalAvatar (uri?.toString() ?: "") ---
     @Test
     fun `setLocalAvatar branches`() {
-        // Nhánh uri == null (bao phủ ?: "")
         viewModel.setLocalAvatar(null)
         assertEquals("", viewModel.formState.value.profileAvatar)
 
-        // Nhánh uri != null (bao phủ uri?.toString())
         val mockUri = mockk<Uri>()
         every { mockUri.toString() } returns "content://photo"
         viewModel.setLocalAvatar(mockUri)
         assertEquals("content://photo", viewModel.formState.value.profileAvatar)
     }
 
-    // --- 2. Các nhánh userId ?: return ---
     @Test
     fun `all methods should return early if userId is null`() = runTest {
-        mockFirebaseAuth(null) // Mock user is not logged in
+        mockFirebaseAuth(null)
         
-        // submitDonor return early
         viewModel.submitDonor(mockk())
         advanceUntilIdle()
         coVerify(exactly = 0) { donorUseCase.addDonorUseCase(any()) }
 
-        // getCurrentDonor return early
         viewModel.getCurrentDonor()
         advanceUntilIdle()
         coVerify(exactly = 0) { donorUseCase.isDonorProfileExistUseCase(any()) }
 
-        // updateDonor return early
         viewModel.updateDonor(createSampleDonor())
         advanceUntilIdle()
         coVerify(exactly = 0) { donorUseCase.updateDonorUseCase(any(), any()) }
     }
 
-    // --- 3. Nhánh if (avatarUri.isNotBlank() && avatarUri.startsWith("content://")) ---
     @Test
     fun `submitDonor avatar logic branches`() = runTest {
         mockFirebaseAuth("uid")
         val context = mockk<Context>()
         
-        // Nhánh 1: avatarUri.isNotBlank() == false
         viewModel.setLocalAvatar(null)
         coEvery { donorUseCase.addDonorUseCase(any()) } just Runs
         viewModel.submitDonor(context)
         advanceUntilIdle()
         coVerify(exactly = 0) { donorUseCase.uploadAvatarUseCase(any(), any()) }
 
-        // Nhánh 2: isNotBlank == true nhưng startsWith == false
         val mockUri = mockk<Uri>()
         every { mockUri.toString() } returns "http://already.uploaded/image.jpg"
         viewModel.setLocalAvatar(mockUri)
@@ -131,7 +119,6 @@ class DonorViewModelTest {
         advanceUntilIdle()
         coVerify(exactly = 0) { donorUseCase.uploadAvatarUseCase(any(), any()) }
         
-        // Nhánh 3: Cả 2 điều kiện đều true (Upload thành công)
         val contentUri = mockk<Uri>()
         val contentResolver = mockk<ContentResolver>()
         every { contentUri.toString() } returns "content://local/photo"
@@ -148,7 +135,6 @@ class DonorViewModelTest {
         coVerify(exactly = 1) { donorUseCase.uploadAvatarUseCase("uid", "base64_encoded_string") }
     }
 
-    // --- 4. Các nhánh Exception và Logic còn lại ---
     @Test
     fun `submitDonor uriToBase64 throw IOException`() = runTest {
         mockFirebaseAuth("uid")
@@ -172,7 +158,6 @@ class DonorViewModelTest {
     fun `getCurrentDonor success and exception branches`() = runTest {
         mockFirebaseAuth("uid")
         
-        // Trường hợp profile tồn tại
         coEvery { donorUseCase.isDonorProfileExistUseCase("uid") } returns true
         val donor = createSampleDonor("uid")
         coEvery { donorUseCase.getCurrentDonorUseCase("uid") } returns donor
@@ -183,14 +168,12 @@ class DonorViewModelTest {
         assertEquals(true, profileExists)
         assertEquals("John", viewModel.formState.value.name)
 
-        // Trường hợp profile tồn tại nhưng UseCase trả về null (NPE branch !!)
         coEvery { donorUseCase.getCurrentDonorUseCase("uid") } returns null
         viewModel.getCurrentDonor { profileExists = it }
         advanceUntilIdle()
         assertEquals(false, profileExists)
         assertNotNull(viewModel.formState.value.error)
 
-        // Trường hợp lỗi (catch block)
         coEvery { donorUseCase.isDonorProfileExistUseCase("uid") } throws Exception("Database Error")
         viewModel.getCurrentDonor { profileExists = it }
         advanceUntilIdle()
@@ -228,7 +211,6 @@ class DonorViewModelTest {
         assertTrue(viewModel.formState.value.isSubmitSuccess)
         verify { Log.d(any<String>(), match<String> { it.contains("updated successfully") }) }
         
-        // Thất bại
         val ex = Exception("Update Failed")
         coEvery { donorUseCase.updateDonorUseCase("uid", any()) } throws ex
         viewModel.updateDonor(createSampleDonor())

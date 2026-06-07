@@ -68,7 +68,6 @@ class EventReadUseCasesTest {
         val mockList = listOf(mockk<Event>())
         every { repository.observeEventsByDate(any()) } returns flowOf(mockList)
 
-        // Phủ nhánh default parameter
         ObserveEventsByDateUseCase(repository).invoke().collect {
             assertEquals(mockList, it)
         }

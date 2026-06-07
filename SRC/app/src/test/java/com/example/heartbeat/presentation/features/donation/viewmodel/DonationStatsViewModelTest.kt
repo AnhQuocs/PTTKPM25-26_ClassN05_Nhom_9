@@ -90,14 +90,12 @@ class DonationStatsViewModelTest {
 
     @Test
     fun `test load all stats error management`() = runTest {
-        // Cập nhật: Giả lập trả về Result.failure thay vì ném Exception
         coEvery { donationUseCases.getDonationsByDayUseCase(any()) } returns Result.failure(Exception("Error"))
         
         viewModel.loadAllStats()
         assertTrue(viewModel.isLoading.value)
         advanceUntilIdle()
         assertFalse(viewModel.isLoading.value)
-        // Khi lỗi, count sẽ là null do dùng .getOrNull() trong ViewModel
         assertNull(viewModel.dayCount.value)
     }
 

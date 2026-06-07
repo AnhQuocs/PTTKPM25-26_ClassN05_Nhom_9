@@ -69,14 +69,12 @@ class UnifiedSearchViewModelTest {
 
     @Test
     fun `comprehensive property coverage and initial state`() {
-        // Accessing properties to cover synthetic getters
         assertEquals("", viewModel.query)
         assertTrue(viewModel.suggestions.isEmpty())
         assertTrue(viewModel.searchResults.isEmpty())
         assertFalse(viewModel.isLoading)
         assertFalse(viewModel.showSuggestions)
 
-        // Accessing internal fields to cover their getters
         assertNotNull(viewModel.unifiedSearchUseCase)
         assertNotNull(viewModel.unifiedSuggestionUseCase)
         assertNotNull(viewModel.recentSearchUseCase)
@@ -87,7 +85,6 @@ class UnifiedSearchViewModelTest {
         val mockSuggestions = listOf(SearchSuggestionItem.EventSuggestion(testEvent))
         coEvery { unifiedSuggestionUseCase(any()) } returns Result.success(mockSuggestions)
 
-        // Input with multiple spaces to verify normalize() regex
         viewModel.onQueryChanged("  Blood    Drive  ")
 
         assertEquals("  Blood    Drive  ", viewModel.query)
@@ -100,13 +97,11 @@ class UnifiedSearchViewModelTest {
 
     @Test
     fun `onQueryChanged with blank text variants covers all isBlank branches`() = runTest {
-        // Case 1: Absolute empty string
         viewModel.onQueryChanged("")
         assertFalse(viewModel.showSuggestions)
         advanceUntilIdle()
         assertTrue(viewModel.suggestions.isEmpty())
 
-        // Case 2: Blank with multiple spaces
         viewModel.onQueryChanged("   ")
         assertFalse(viewModel.showSuggestions)
         advanceUntilIdle()
@@ -135,7 +130,7 @@ class UnifiedSearchViewModelTest {
         advanceUntilIdle()
 
         assertEquals(mockResults, viewModel.searchResults)
-        assertFalse(viewModel.isLoading) // Finally block
+        assertFalse(viewModel.isLoading)
     }
 
     @Test
@@ -147,7 +142,7 @@ class UnifiedSearchViewModelTest {
         advanceUntilIdle()
 
         assertTrue(viewModel.searchResults.isEmpty())
-        assertFalse(viewModel.isLoading) // Finally block hit on error
+        assertFalse(viewModel.isLoading)
     }
 
     @Test
@@ -157,20 +152,17 @@ class UnifiedSearchViewModelTest {
         val user = mockk<FirebaseUser>()
         every { FirebaseAuth.getInstance() } returns auth
 
-        // Branch 1: user == null
         every { auth.currentUser } returns null
         viewModel.onSuggestionClicked(suggestion)
         assertEquals(testEvent.name, viewModel.query)
         assertFalse(viewModel.showSuggestions)
         coVerify(exactly = 0) { addRecentSearchUseCase(any(), any()) }
 
-        // Branch 2: user != null but uid is null (Covers ?: return)
         every { auth.currentUser } returns user
         every { user.uid } returns ""
         viewModel.onSuggestionClicked(suggestion)
         coVerify(exactly = 0) { addRecentSearchUseCase(any(), any()) }
 
-        // Branch 3: Success path
         every { user.uid } returns "user_123"
         coEvery { addRecentSearchUseCase(any(), any()) } returns Result.success(Unit)
         viewModel.onSuggestionClicked(suggestion)
@@ -192,7 +184,6 @@ class UnifiedSearchViewModelTest {
         viewModel.onSuggestionClicked(suggestion)
         advanceUntilIdle()
 
-        // Ensure state is updated even if history fails
         assertEquals(testEvent.name, viewModel.query)
     }
 

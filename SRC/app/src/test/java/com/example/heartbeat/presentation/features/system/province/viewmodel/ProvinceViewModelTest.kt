@@ -30,7 +30,6 @@ class ProvinceViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        // Mặc định trả về rỗng cho khối init để tránh crash nếu chưa mock cụ thể
         coEvery { getAllProvincesUseCase() } returns emptyList()
     }
 
@@ -52,7 +51,7 @@ class ProvinceViewModelTest {
         coEvery { getAllProvincesUseCase() } returns testProvinces
         
         viewModel = ProvinceViewModel(getAllProvincesUseCase, getProvinceByIdUseCase)
-        advanceUntilIdle() // Đợi coroutine trong init chạy xong
+        advanceUntilIdle()
         
         assertEquals(testProvinces, viewModel.provinces.value)
     }
@@ -110,14 +109,12 @@ class ProvinceViewModelTest {
         
         viewModel = ProvinceViewModel(getAllProvincesUseCase, getProvinceByIdUseCase)
         
-        // Gọi lần 1: Nạp cache
         viewModel.getProvinceById("P2")
         
-        // Gọi lần 2: Lấy từ cache
         val result = viewModel.getProvinceById("P2")
         
         assertEquals(province, result)
-        coVerify(exactly = 1) { getProvinceByIdUseCase("P2") } // Vẫn chỉ gọi 1 lần
+        coVerify(exactly = 1) { getProvinceByIdUseCase("P2") }
     }
 
     @Test
@@ -147,7 +144,6 @@ class ProvinceViewModelTest {
         assertEquals(p1, res1)
         assertEquals(p2, res2)
         
-        // Verify cache hit cho cả 2
         viewModel.getProvinceById("P1")
         viewModel.getProvinceById("P2")
         

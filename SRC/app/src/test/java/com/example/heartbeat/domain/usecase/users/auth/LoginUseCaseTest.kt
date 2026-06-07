@@ -25,15 +25,12 @@ class LoginUseCaseTest {
         loginWithCodeUseCase = LoginWithCodeUseCase(repository)
     }
 
-    // --- 1. Boundary Value Testing (Kiểm thử giá trị biên) ---
-
     @Test
     fun `Login with blank email (only spaces) should return EmptyField`() = runTest {
         val result = loginUseCase("   ", "password")
         assertTrue(result.isFailure)
         assertEquals(AuthException.EmptyField, result.exceptionOrNull())
         
-        // Behavior Verification: Đảm bảo repository không được gọi khi dữ liệu đầu vào không hợp lệ
         coVerify(exactly = 0) { repository.login(any(), any()) }
     }
 
@@ -43,8 +40,6 @@ class LoginUseCaseTest {
         assertTrue(result.isFailure)
         assertEquals(AuthException.EmptyField, result.exceptionOrNull())
     }
-
-    // --- 2. Behavior Verification Testing (Xác minh hành vi) ---
 
     @Test
     fun `Login with valid data should call repository exactly once and return success`() = runTest {
@@ -58,12 +53,9 @@ class LoginUseCaseTest {
         assertTrue(result.isSuccess)
         assertEquals(mockUser, result.getOrNull())
 
-        // Xác minh UseCase đã gọi đúng phương thức của repository với tham số chính xác
         coVerify(exactly = 1) { repository.login(email, password) }
         confirmVerified(repository)
     }
-
-    // --- 3. Exception & Error Injection Testing (Tiêm lỗi) ---
 
     @Test
     fun `Login should return failure when repository throws unexpected exception`() = runTest {
@@ -71,7 +63,6 @@ class LoginUseCaseTest {
         val password = "password123"
         val errorMessage = "Network Connection Error"
         
-        // Giả lập Repository ném ra một ngoại lệ (ví dụ lỗi mạng)
         coEvery { repository.login(email, password) } throws Exception(errorMessage)
 
         val result = loginUseCase(email, password)
@@ -80,14 +71,11 @@ class LoginUseCaseTest {
         assertEquals(errorMessage, result.exceptionOrNull()?.message)
     }
 
-    // --- 4. Negative Testing (Kiểm thử trường hợp thất bại từ nghiệp vụ) ---
-
     @Test
     fun `Login with incorrect credentials should return repository failure result`() = runTest {
         val email = "wrong@gmail.com"
         val password = "wrongpassword"
         
-        // Giả lập Repository trả về kết quả thất bại theo nghiệp vụ (ví dụ: Sai mật khẩu)
         coEvery { repository.login(email, password) } returns Result.failure(AuthException.InvalidCredentials)
 
         val result = loginUseCase(email, password)
@@ -97,8 +85,6 @@ class LoginUseCaseTest {
         
         coVerify(exactly = 1) { repository.login(email, password) }
     }
-
-    // --- Bổ sung cho LoginWithCode để tăng độ bao phủ ---
 
     @Test
     fun `LoginWithCode with blank email should return EmptyField`() = runTest {

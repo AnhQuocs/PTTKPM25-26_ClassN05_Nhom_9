@@ -39,7 +39,7 @@ class LogOutUseCaseTest {
         try {
             logoutUseCase()
         } catch (e: Exception) {
-            // Đảm bảo ngoại lệ được ném ra hoặc xử lý tùy theo logic nghiệp vụ
+            //
         }
         
         coVerify(exactly = 1) { repository.logout() }

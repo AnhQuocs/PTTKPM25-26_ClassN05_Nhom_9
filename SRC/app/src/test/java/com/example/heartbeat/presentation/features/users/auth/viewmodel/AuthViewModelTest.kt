@@ -70,11 +70,10 @@ class AuthViewModelTest {
 
     private fun createSuccessUser() = AuthUser("1", "test@test.com", "Tester", "user")
 
-    // ========== 1. VALIDATION EXHAUSTIVE PERMUTATIONS (Yellow Lines) ==========
 
     @Test
     fun `signUp validation exhaustive permutations`() = runTest {
-        // Case 1: Email fail
+        // Sai email
         every { AuthValidator.isValidEmail(any()) } returns false
         every { AuthValidator.isValidPassword(any()) } returns true
         every { AuthValidator.isValidUsername(any()) } returns true
@@ -82,47 +81,47 @@ class AuthViewModelTest {
         assertEquals("Invalid email format", viewModel.emailError.value)
         coVerify(exactly = 0) { signUpUseCase(any(), any(), any()) }
 
-        // Case 2: Email ok, Pass fail
+        // Email đúng, mk sai
         every { AuthValidator.isValidEmail(any()) } returns true
         every { AuthValidator.isValidPassword(any()) } returns false
         viewModel.signUp("e", "p", "u")
-        assertNull(viewModel.emailError.value) // Cover true branch (null)
+        assertNull(viewModel.emailError.value)
         assertEquals("Password must be at least 8 characters long", viewModel.passwordError.value)
 
-        // Case 3: E/P ok, User fail
+        // Email, mk đúng, user sai
         every { AuthValidator.isValidPassword(any()) } returns true
         every { AuthValidator.isValidUsername(any()) } returns false
         viewModel.signUp("e", "p", "u")
-        assertNull(viewModel.passwordError.value) // Cover true branch (null)
+        assertNull(viewModel.passwordError.value)
         assertEquals("Username cannot be empty", viewModel.usernameError.value)
 
-        // Case 4: All ok
+        // Tất cả đúng
         every { AuthValidator.isValidUsername(any()) } returns true
         coEvery { signUpUseCase(any(), any(), any()) } returns Result.success(createSuccessUser())
         viewModel.signUp("e", "p", "u")
         advanceUntilIdle()
-        assertNull(viewModel.usernameError.value) // Cover true branch (null)
+        assertNull(viewModel.usernameError.value)
     }
 
     @Test
     fun `signUpWithStaffCode validation exhaustive permutations`() = runTest {
         mockAllValid()
-        // Code fail
+        // Code sai
         viewModel.signUpWithStaffCode("e", "p", "u", " ")
         assertEquals("Staff code cannot be empty", viewModel.codeError.value)
 
-        // Username fail
+        // Username sai
         every { AuthValidator.isValidUsername(any()) } returns false
         viewModel.signUpWithStaffCode("e", "p", "u", "CODE")
         assertEquals("Username cannot be empty", viewModel.usernameError.value)
 
-        // Password fail
+        // Password sai
         every { AuthValidator.isValidUsername(any()) } returns true
         every { AuthValidator.isValidPassword(any()) } returns false
         viewModel.signUpWithStaffCode("e", "p", "u", "CODE")
         assertEquals("Password must be at least 8 characters long", viewModel.passwordError.value)
 
-        // Email fail
+        // Email sai
         every { AuthValidator.isValidPassword(any()) } returns true
         every { AuthValidator.isValidEmail(any()) } returns false
         viewModel.signUpWithStaffCode("e", "p", "u", "CODE")
@@ -138,7 +137,6 @@ class AuthViewModelTest {
 
     @Test
     fun `login and loginWithCode validation exhaustive permutations`() = runTest {
-        // Login permutations
         every { AuthValidator.isValidEmail(any()) } returns false
         every { AuthValidator.isValidPassword(any()) } returns true
         viewModel.login("e", "p")
@@ -149,7 +147,6 @@ class AuthViewModelTest {
         viewModel.login("e", "p")
         assertEquals("Password must be at least 8 characters long", viewModel.passwordError.value)
 
-        // LoginWithCode permutations
         every { AuthValidator.isValidPassword(any()) } returns true
         viewModel.loginWithCode("e", "p", "")
         assertEquals("Staff code cannot be empty", viewModel.codeError.value)
@@ -164,19 +161,15 @@ class AuthViewModelTest {
         assertEquals("Invalid email format", viewModel.emailError.value)
     }
 
-    // ========== 2. SUCCESS PATHS & MAPPING (Red Lines) ==========
-
     @Test
     fun `loginWithCode result mapping exhaustive coverage`() = runTest {
         mockAllValid()
-        // Case: Result.failure -> getOrNull() is null
         coEvery { loginWithCodeUseCase(any(), any(), any()) } returns Result.failure(Exception("Fail"))
         viewModel.loginWithCode("e", "p", "c")
         advanceUntilIdle()
         assertTrue(viewModel.authState.value?.isFailure == true)
         assertEquals("Login failed", viewModel.authState.value?.exceptionOrNull()?.message)
 
-        // Case: Success(user) -> else branch
         val user = createSuccessUser()
         coEvery { loginWithCodeUseCase(any(), any(), any()) } returns Result.success(user)
         viewModel.loginWithCode("e", "p", "c")
@@ -217,34 +210,28 @@ class AuthViewModelTest {
         viewModel.resetPassword("test@test.com")
         advanceUntilIdle()
         assertTrue(viewModel.isSendEmail.value)
-        assertNull(viewModel.emailError.value) // Coverage for _emailError.value = null
+        assertNull(viewModel.emailError.value)
     }
-
-    // ========== 3. ELVIS & EXCEPTION BRANCHES ==========
 
     @Test
     fun `exhaustive error elvis operator coverage`() = runTest {
         mockAllValid()
 
-        // updateUsername onFailure null message
         coEvery { updateUserNameUseCase(any()) } returns Result.failure(Exception())
         viewModel.updateUsername("name")
         advanceUntilIdle()
         assertEquals("Failed to update username", viewModel.errorMessage.value)
 
-        // updatePassword catch null message
         coEvery { updatePasswordUseCase(any()) } throws Exception()
         viewModel.updatePassword("pass")
         advanceUntilIdle()
         assertEquals("An error occurred", viewModel.errorMessage.value)
 
-        // resetPassword onFailure null message
         coEvery { resetPasswordUseCase(any()) } returns Result.failure(Exception())
         viewModel.resetPassword("e@e.com")
         advanceUntilIdle()
         assertEquals("Failed to send email", viewModel.errorMessage.value)
 
-        // resetPassword catch null message
         coEvery { resetPasswordUseCase(any()) } throws Exception()
         viewModel.resetPassword("e@e.com")
         advanceUntilIdle()

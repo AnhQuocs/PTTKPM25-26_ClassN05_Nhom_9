@@ -15,11 +15,8 @@ class FirebaseHospitalDataSource {
     }
 
     suspend fun fetchHospitalById(hospitalId: String): HospitalDto? {
-        val normalizedHospitalId = hospitalId.trim()
-        if (normalizedHospitalId.isEmpty() || normalizedHospitalId == "hospitals") return null
-
         val doc = collection
-            .document(normalizedHospitalId)
+            .document(hospitalId)
             .get()
             .await()
 
